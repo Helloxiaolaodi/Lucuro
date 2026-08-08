@@ -5,6 +5,17 @@ import { storage } from './utils/storage'
 
 const STORAGE_LOCALE = 'lucuro_locale_v1'
 
+function createSafeMessageCompiler(message) {
+  const source = String(message ?? '')
+  return (context) =>
+    source.replace(/\{([0-9a-zA-Z]+)\}/g, (match, key) => {
+      const value = /^\d+$/.test(key)
+        ? context.list ? context.list(Number(key)) : undefined
+        : context.named ? context.named(key) : undefined
+      return value === undefined || value === null ? match : String(value)
+    })
+}
+
 function detectLocale() {
   const language = (navigator.language || 'en').toLowerCase()
   return language.includes('zh') ? 'zh' : 'en'
@@ -14,6 +25,7 @@ export const i18n = createI18n({
   legacy: false,
   locale: detectLocale(),
   fallbackLocale: 'en',
+  messageCompiler: createSafeMessageCompiler,
   messages: { en, zh }
 })
 
