@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Lucuro - 鹿客司南",
+  "version": "1.0.0",
+  "description": "极简开箱的纯前端浏览器起始页。搭载毛玻璃古典美学、自定义每日语录与随身手记，无缝跨屏同步，为你指引数字世界的探索之旅。",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Add current page to Lucuro",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab"
+  ],
+  "optional_permissions": [
+    "bookmarks"
+  ],
+  "host_permissions": [
+    "https://*.workers.dev/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.workers.dev"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "lucuro@helloxiaolaodi.github.io",
+      "strict_min_version": "109.0"
+    }
+  }
+}

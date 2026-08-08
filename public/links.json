@@ -1,0 +1,2596 @@
+{
+    "version": 1,
+    "appName": "Sun-Panel-Config",
+    "exportTime": "2026-08-07 13:50:23",
+    "appVersion": "",
+    "icons": [
+        {
+            "title": "Programming Learning - Programmer Forum",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/linux.do-1.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "LINUX DO",
+                    "url": "https://linux.do/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Forum"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/credit.linux.do-2.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "LINUX DO Credit",
+                    "url": "https://credit.linux.do/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Forum"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/cdk.linux.do-3.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "LINUX DO CDK",
+                    "url": "https://cdk.linux.do/dashboard",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Forum"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.v2ex.com-4.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "V2EX",
+                    "url": "https://www.v2ex.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Forum"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Programming Learning - Programming Language Tutorial",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/docs.python.org-5.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Python",
+                    "url": "https://docs.python.org/3/tutorial/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.runoob.com-6.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Python Chinese",
+                    "url": "https://www.runoob.com/python3/python3-tutorial.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/wesmckinney.com-7.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Python for Data Analysis(3e)",
+                    "url": "https://wesmckinney.com/book/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/cran.rstudio.com-8.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "R",
+                    "url": "https://cran.rstudio.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "R"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/r4ds.hadley.nz-5.jpg",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "R for Data Science (2e)",
+                    "url": "https://r4ds.hadley.nz/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "R"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/nodejs.cn-10.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Nodejs",
+                    "url": "https://nodejs.cn/learn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/pandas.pydata.org-6.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "pandas",
+                    "url": "https://pandas.pydata.org/docs/user_guide/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/kimtanyo.github.io-12.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "jupyter-lab",
+                    "url": "https://kimtanyo.github.io/post/jupyter-lab-ji-chu-shi-yong-yu-cha-jian-kuo-zhan/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python",
+                        "Git"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Programming Learning - Website Deployment and Maintenance",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.cloudflare.com-13.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Cloudflare",
+                    "url": "https://www.cloudflare.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/vercel.com-14.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Vercel",
+                    "url": "https://vercel.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/supabase.com-7.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Supabase",
+                    "url": "https://supabase.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/huggingface.co-8.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Hugging Face",
+                    "url": "https://huggingface.co/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/hf-mirror.com-17.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "HF-Mirror",
+                    "url": "https://hf-mirror.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/hugging-face.cn-9.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Hugging Face文档",
+                    "url": "https://hugging-face.cn/docs",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/resend.com-11.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Resend",
+                    "url": "https://resend.com",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.namesilo.com-12.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Namesilo",
+                    "url": "https://www.namesilo.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Microbiology Field",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.chinagut.cn-22.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "热心肠",
+                    "url": "https://www.chinagut.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/cctcc.whu.edu.cn-13.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "中国典型培养物保藏中心",
+                    "url": "https://cctcc.whu.edu.cn/portal/dictionary/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/cn.bio-protocol.org-24.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "bio101",
+                    "url": "https://cn.bio-protocol.org/bio101/default.aspx",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/blast.ncbi.nlm.nih.gov-25.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Blast",
+                    "url": "https://blast.ncbi.nlm.nih.gov/Blast.cgi",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome",
+                        "Bioinformatics",
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ncbi.nlm.nih.gov-26.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCBI Run Selector",
+                    "url": "https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA807496&o=acc_s%3Aa",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome",
+                        "Bioinformatics",
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/liulab-dfci.github.io-14.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Introduction to Bioinformatics and Computational Biology",
+                    "url": "https://liulab-dfci.github.io/bioinfo-combio/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Microbiome",
+                        "Git"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Database Website",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ncbi.nlm.nih.gov-26.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCBI",
+                    "url": "https://www.ncbi.nlm.nih.gov/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/ftp.microbio.me-15.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Greengenes",
+                    "url": "https://ftp.microbio.me/greengenes_release/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/homd.org-16.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "HOMD",
+                    "url": "https://homd.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/gtdb.ecogenomic.org-30.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "GTDB",
+                    "url": "https://gtdb.ecogenomic.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/qiita.ucsd.edu-17.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Qiita",
+                    "url": "https://qiita.ucsd.edu/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ebi.ac.uk-32.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "ENA",
+                    "url": "https://www.ebi.ac.uk/ena/browser/home",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ddbj.nig.ac.jp-18.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "DDBJ",
+                    "url": "https://www.ddbj.nig.ac.jp/index-e.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.cncb.ac.cn-19.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "CNCB",
+                    "url": "https://www.cncb.ac.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/metacyc.org-20.gif",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "MetaCyc",
+                    "url": "https://metacyc.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/rrndb.umms.med.umich.edu-21.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "RRNDB",
+                    "url": "https://rrndb.umms.med.umich.edu/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/jbrowse.org-22.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "JBrowse2",
+                    "url": "https://jbrowse.org/jb2/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Tool Tutorial(EN)",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/git-scm.com-38.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Git",
+                    "url": "https://git-scm.com/learn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Git"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.bioconductor.org-39.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Bioconductor",
+                    "url": "https://www.bioconductor.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "R"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.anaconda.com-40.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Anaconda",
+                    "url": "https://www.anaconda.com/docs/getting-started/main",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.anaconda.com-40.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Miniconda",
+                    "url": "https://www.anaconda.com/docs/getting-started/concepts/anaconda-or-miniconda#miniconda",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/docs.qiime2.org-23.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "QIIME 2-2024.10.1",
+                    "url": "https://docs.qiime2.org/2024.10/tutorials/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "QIIME2"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/github.com-42.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "MaAsLin 3",
+                    "url": "https://github.com/biobakery/biobakery/wiki/MaAsLin3",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Git"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/github.com-42.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Picrust2",
+                    "url": "https://github.com/picrust/picrust2/wiki/Full-pipeline-script",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Git"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/biocyc.org-24.gif",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Biocyc",
+                    "url": "https://biocyc.org/webinar.shtml",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.bioconductor.org-39.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "MaAsLin 3-02",
+                    "url": "https://www.bioconductor.org/packages//release/bioc/vignettes/maaslin3/inst/doc/maaslin3_tutorial.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "R"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/drive5.com-44.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Usearch",
+                    "url": "https://drive5.com/usearch/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/docs.overleaf.com-25.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Latex",
+                    "url": "https://docs.overleaf.com/getting-started/latex-tutorials",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/quarto.org-26.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Quarto",
+                    "url": "https://quarto.org/docs/get-started/hello/jupyter.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Python"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Tool Tutorial(CN)",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.runoob.com-6.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Linux Chinese",
+                    "url": "https://www.runoob.com/linux/linux-tutorial.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.runoob.com-6.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Git Chinese",
+                    "url": "https://www.runoob.com/git/git-tutorial.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "Git"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/forum.qiime2.org-52.svg",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "QIIME2 Chinese Manual",
+                    "url": "https://forum.qiime2.org/t/qiime2-chinese-manual/838",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial",
+                        "QIIME2"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.runoob.com-vscode-vscode-shortcut-keys.html-48.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "VS Code Chinese",
+                    "url": "https://www.runoob.com/vscode/vscode-shortcut-keys.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.runoob.com-latex-latex-intro.html-49.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Latex Chinese",
+                    "url": "https://www.runoob.com/latex/latex-intro.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Tutorial"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Common Websites",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/xulab.pages.dev-50.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "xu-lab",
+                    "url": "https://xulab.pages.dev/en/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/rnaer.pages.dev-28.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "xu-lab-guide",
+                    "url": "https://rnaer.pages.dev/lab_guide",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/github.com-42.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "GitHub",
+                    "url": "https://github.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Git"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.google.com-29.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Google",
+                    "url": "https://www.google.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/mirrors.tuna.tsinghua.edu.cn-30.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Tsinghua mirror",
+                    "url": "https://mirrors.tuna.tsinghua.edu.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.scopus.com-31.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Scopus",
+                    "url": "https://www.scopus.com/pages/home",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.elsevier.com-55.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Elsevier",
+                    "url": "https://www.elsevier.com/en-gb",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/qiime2.org-62.svg",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Qiime 2",
+                    "url": "https://qiime2.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "QIIME2"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/library.qiime2.org-57.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Qiime 2 library",
+                    "url": "https://library.qiime2.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "QIIME2"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/seeing-theory.brown.edu-33.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Seeing Theory",
+                    "url": "https://seeing-theory.brown.edu/#firstPage",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.grammarly.com-34.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Grammarly",
+                    "url": "https://www.grammarly.com/?msockid=0955e7d2aa426a280202f09eab016bb7",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Writing"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/quillbot.com-60.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Quillbot",
+                    "url": "https://quillbot.com/?msockid=0955e7d2aa426a280202f09eab016bb7",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Writing"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/paperbert.com-35.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Paperbert",
+                    "url": "http://paperbert.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Writing"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Literature search",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ablesci.com-62.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "科研通",
+                    "url": "https://www.ablesci.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/scholar.google.com-36.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Google scholar",
+                    "url": "https://scholar.google.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/pubmed.ncbi.nlm.nih.gov-64.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "PubMed",
+                    "url": "https://pubmed.ncbi.nlm.nih.gov/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature",
+                        "Bioinformatics",
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/medcite.cn-65.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "MedCite",
+                    "url": "https://medcite.cn/home",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature",
+                        "Database"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/gfsoso.99lb.net-66.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "谷粉学术",
+                    "url": "https://gfsoso.99lb.net",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.storkapp.me-67.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Stork",
+                    "url": "https://www.storkapp.me",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/9312.net-68.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "小鲸鱼文献",
+                    "url": "http://9312.net",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/sc.panda985.com-69.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "学术搜索",
+                    "url": "https://sc.panda985.com/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/so.673.org-70.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "考拉学术搜索",
+                    "url": "https://so.673.org/index.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/scholar.lanfanshu.cn-71.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "学术资源搜索",
+                    "url": "https://scholar.lanfanshu.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/x.sci-hub.org.cn-72.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Sci-Hub文献检索",
+                    "url": "https://x.sci-hub.org.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/xs.gupiaoq.com-73.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "巨人学术搜索",
+                    "url": "https://xs.gupiaoq.com",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Academic Research - Journal classification",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.scidown.cn-74.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "SCI期刊分区检索",
+                    "url": "https://www.scidown.cn/rank.html",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.letpub.com.cn-75.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "LetPub",
+                    "url": "https://www.letpub.com.cn/index.php?page=journalapp&view=search",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/forums.zotero.org-37.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "zotero",
+                    "url": "https://forums.zotero.org/discussions",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/zotero-chinese.com-38.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Zotero 中文社区",
+                    "url": "https://zotero-chinese.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.citexs.com-78.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "基金查询|citexs",
+                    "url": "https://www.citexs.com/nsfc",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Personal Section - Helloxiaolaodi",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/github.com-42.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Github",
+                    "url": "https://github.com/Helloxiaolaodi",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Git"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.cnblogs.com-79.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "cnblogs",
+                    "url": "https://www.cnblogs.com/Helloxiaolaodi",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.galibierhub.org-80.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "GalibierHub",
+                    "url": "https://galibierhub.20211003.xyz",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.paypal.com-81.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "PayPal C2",
+                    "url": "https://www.paypal.com/c2/home",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.perlego.com-39.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Con il cuore nel fango",
+                    "url": "https://www.perlego.com/book/3392381/con-il-cuore-nel-fango-lepica-del-ciclismo-nella-storia-del-cobra-pdf",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/archive.org-40.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Son of heaven",
+                    "url": "https://archive.org/details/sonofheavenabiog0000fitz/mode/2up",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Bioinformatics"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Online Translation - Translation Website",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/translate.google.com-41.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Google translate",
+                    "url": "https://translate.google.com/?sl=auto&tl=zh-CN&op=translate",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/dict.cnki.net-85.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "CNKI翻译",
+                    "url": "https://dict.cnki.net/index",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/fanyi.youdao.com-86.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "有道翻译",
+                    "url": "https://fanyi.youdao.com/index.html?keyfrom=baidu2#/TextTranslate",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/ankiweb.net-42.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "AnkiWeb",
+                    "url": "https://ankiweb.net/about",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - Cloud Storage Miscellaneous",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.baidu.com-88.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Baidu",
+                    "url": "https://www.baidu.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/infini-cloud.net-43.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Infinicloud",
+                    "url": "https://infini-cloud.net/en/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/alistgo.com-90.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Aliyundrive",
+                    "url": "https://alistgo.com/tool/aliyundrive/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/webmail.linux.do-44.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "LINUX DO Mail",
+                    "url": "https://webmail.linux.do/sso/login?url=/webmail/?homepage",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/2fa.fun-45.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "2FA FUN",
+                    "url": "https://2fa.fun/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.toolhelper.cn-93.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Base64 编码/解码",
+                    "url": "https://www.toolhelper.cn/EncodeDecode/Base64",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/clash.tkbond.us-46.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Clash配置生成器",
+                    "url": "https://clash.tkbond.us/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.iconfont.cn-95.svg",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "iconfont",
+                    "url": "https://www.iconfont.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/open.spotify.com-47.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Spotify",
+                    "url": "https://open.spotify.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/pkmer.cn-48.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "PKMER",
+                    "url": "https://pkmer.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - Cycling",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.procyclingstats.com-49.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "ProCyclingStats",
+                    "url": "https://www.procyclingstats.com",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.uci.org-99.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "UCI",
+                    "url": "https://www.uci.org",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.letour.fr-100.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Tour de France",
+                    "url": "https://www.letour.fr/en/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.giroditalia.it-101.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Giro d'Italia",
+                    "url": "https://www.giroditalia.it/en/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.lavuelta.es-102.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "La Vuelta",
+                    "url": "https://www.lavuelta.es/en/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.paris-roubaix.fr-103.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Paris–Roubaix",
+                    "url": "https://www.paris-roubaix.fr/en",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - References",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/rintze.zelle.me-50.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Reference Extractor",
+                    "url": "https://rintze.zelle.me/ref-extractor/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/anystyle.io-51.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "AnyStyle",
+                    "url": "https://anystyle.io/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.doi2bib.org-106.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "doi2bib",
+                    "url": "https://www.doi2bib.org/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/editor.citationstyles.org-52.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Visual CSL Editor",
+                    "url": "https://editor.citationstyles.org/about/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "Literature"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - Online Conversion",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/ttsmaker.cn-108.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "TTSMaker",
+                    "url": "https://ttsmaker.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.online-convert.com-109.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Online converter",
+                    "url": "https://www.online-convert.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.alltoall.net-53.jpg",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "PDF to Word",
+                    "url": "https://www.alltoall.net/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/smallpdf.com-111.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "smallpdf",
+                    "url": "https://smallpdf.com/cn/pdf-to-excel",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - Ladder Proxy",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/clash.download-54.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Clash下载站",
+                    "url": "https://clash.download/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/guatizi.com-113.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "挂梯子导航",
+                    "url": "https://guatizi.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/sakura-cat-cdn1.com-114.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "SakuraCat",
+                    "url": "https://sakura-cat-cdn1.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/mojie.app-115.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Mojie",
+                    "url": "https://mojie.app/login",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "Tools - AI model",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/opencode.ai-116.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "OpenCode Go",
+                    "url": "https://opencode.ai/go",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/chat.deepseek.com-117.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "DeepSeek",
+                    "url": "https://chat.deepseek.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/platform.deepseek.com-118.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "DeepSeek开放平台",
+                    "url": "https://platform.deepseek.com/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/gemini.google.com-55.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "Gemini",
+                    "url": "https://gemini.google.com",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [
+                        "AI"
+                    ],
+                    "isVpnRequired": true,
+                    "clickCount": 0
+                }
+            ]
+        },
+        {
+            "title": "NCU - Daily affairs",
+            "sort": 0,
+            "children": [
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/gmsadm.ncu.edu.cn-120.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 研究生管理信息系统",
+                    "url": "https://gmsadm.ncu.edu.cn/navigation/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/www.ncu.edu.cn-56.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 官网",
+                    "url": "https://www.ncu.edu.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/yjsy.ncu.edu.cn-57.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 研究生院",
+                    "url": "https://yjsy.ncu.edu.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/sfst.ncu.edu.cn-58.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 食品学院",
+                    "url": "https://sfst.ncu.edu.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/lib.ncu.edu.cn-59.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 图书馆",
+                    "url": "https://lib.ncu.edu.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/cwc.ncu.edu.cn-60.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 计划财务处",
+                    "url": "https://cwc.ncu.edu.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/mail.email.ncu.edu.cn-61.ico",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU 邮件系统",
+                    "url": "http://mail.email.ncu.edu.cn",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                },
+                {
+                    "icon": {
+                        "text": "",
+                        "itemType": 2,
+                        "src": "./icons/webvpn.ncu.edu.cn-62.png",
+                        "backgroundColor": ""
+                    },
+                    "sort": 99999,
+                    "title": "NCU VPN",
+                    "url": "https://webvpn.ncu.edu.cn/",
+                    "openMethod": 1,
+                    "lanUrl": "",
+                    "description": "",
+                    "tags": [],
+                    "isVpnRequired": false,
+                    "clickCount": 0
+                }
+            ]
+        }
+    ],
+    "md5": "d745a88484c7cad2620b937def8d8b2e"
+}

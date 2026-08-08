@@ -1,0 +1,26 @@
+{
+  "name": "lucuro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A digital compass for endless exploration. Stay lucky, stay curious.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "generate:icons": "node scripts/generate-icons.mjs"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.468.0",
+    "sortablejs": "^1.15.6",
+    "vue": "^3.5.13",
+    "vue-i18n": "^9.14.2",
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "sharp": "^0.35.3",
+    "vite": "^6.0.5"
+  }
+}
