@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { Bold, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
+import { Bold, ChevronRight, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from './stores/lucuro'
 import Sidebar from './components/Sidebar.vue'
@@ -231,7 +231,7 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
               <div>
                 <h3 class="category-title">
                   <template v-for="(part, partIndex) in entry.parts" :key="`${part}-${partIndex}`">
-                    <span v-if="partIndex > 0" class="category-breadcrumb-separator" aria-hidden="true">/</span>
+                    <ChevronRight v-if="partIndex > 0" :size="14" class="category-breadcrumb-separator" aria-hidden="true" />
                     <span :class="partIndex === entry.parts.length - 1 ? 'category-breadcrumb-current' : 'category-breadcrumb-parent'">{{ part }}</span>
                   </template>
                 </h3>
