@@ -4,7 +4,7 @@
 
 Stay lucky, stay curious. 指引数字世界的琉璃司南。
 
-极简开箱的纯前端浏览器起始页。搭载毛玻璃古典美学、自定义每日语录与随身手记，无缝跨屏同步，为你指引数字世界的探索之旅。
+极简开箱的纯前端浏览器起始页。搭载毛玻璃古典美学、自定义每日语录与随身手记，为你指引数字世界的探索之旅。
 
 **GitHub:** [https://github.com/Helloxiaolaodi/Lucuro](https://github.com/Helloxiaolaodi/Lucuro)
 
@@ -12,7 +12,7 @@ Language: **English** | [简体中文](./README.zh-CN.md) | [Issues](https://git
 
 Detailed build guide: see the deployment notes under `docs/` and the browser store publishing checklist below.
 
-Stack: Vue 3 | Vite | Vue I18n | lucide-vue-next | SortableJS | webextension-polyfill | Cloudflare Workers | rollup-plugin-visualizer
+Stack: Vue 3 | Vite | Vue I18n | lucide-vue-next | SortableJS | webextension-polyfill | rollup-plugin-visualizer
 
 ![License](https://img.shields.io/github/license/Helloxiaolaodi/Lucuro?style=flat-square)
 ![Stars](https://img.shields.io/github/stars/Helloxiaolaodi/Lucuro?style=flat-square)
@@ -37,14 +37,14 @@ Stack: Vue 3 | Vite | Vue I18n | lucide-vue-next | SortableJS | webextension-pol
 11. [License](#license)
 
 
-- The default theme is a light glassmorphism gradient; deep dark mode uses a indigo/night palette.
-- The custom daily quote is now a "一言" feature that users can edit from settings.
+- The default theme is a light glassmorphism gradient; deep dark mode uses an indigo/night palette.
+- The custom daily quote is a "一言" feature that users can edit from settings.
 - Pocket notes support Markdown input with debounced auto-save.
-- Local snapshot history keeps up to eight restore points.
-- Optional Chrome bookmark import reads the browser bookmark tree without uploading data.
+- The sidebar auto-hides and slides in from the left edge of the page.
+- Optional browser bookmark capture reads the native bookmark tree locally and never uploads it.
 - The toolbar popup can add the current page and toggle the new tab override.
 - Native sync uses `chrome.storage.sync` with a `chrome.storage.local` fallback.
-- Pickup-code sharing uses a temporary Cloudflare Worker and a 6-digit code that expires after 10 minutes.
+- Background and avatar images can be uploaded from local files or set to a remote URL.
 - Overseas support uses Ko-fi; domestic support uses the WeChat QR code shipped with the extension.
 - `rollup-plugin-visualizer` writes `stats.html` after every build for bundle size review.
 
@@ -52,12 +52,12 @@ Stack: Vue 3 | Vite | Vue I18n | lucide-vue-next | SortableJS | webextension-pol
 
 Lucuro is a Manifest V3 browser extension built with Vue 3. It replaces the browser new tab page with a personal navigation workbench and provides a compact toolbar popup for quick capture and settings.
 
-- **New Tab Dashboard**: sidebar categories, search box, recommended cards, year/day progress, draggable link grid, custom quote, and pocket notes.
-- **Toolbar Popup**: add the current page to a selected category, toggle the new tab override, and open settings.
-- **Settings**: theme, glass blur, quote text, search engine, layout lock, sync, bookmark import, and support.
-- **Local Data**: links, settings, click statistics, and snapshot history are stored in browser extension storage.
-- **Sync**: browser-managed native sync for personal devices, plus an ephemeral pickup code for cross-account or cross-browser transfers.
-- **Privacy**: core usage requires no account, analytics, or telemetry; outbound requests only happen when the user triggers a pickup-code share.
+- **New Tab Dashboard**: auto-hide sidebar categories, search box, draggable link grid, custom quote, and pocket notes.
+- **Toolbar Popup**: add the current page to a selected category, toggle the new tab override, and enable native bookmark capture.
+- **Settings**: language, links, theme, accent color, card size, glass radius, quote text, notes, background, avatar, and support.
+- **Local Data**: links, settings, and click statistics are stored in browser extension storage.
+- **Sync**: browser-managed native sync for personal devices; no external sync server is required.
+- **Privacy**: core usage requires no account, analytics, or telemetry; bookmark data stays in the browser.
 
 The wuxia-inspired glass look is the default skin, not a hard constraint. Users can customize quotes, links, theme, and layout without changing code.
 
@@ -71,9 +71,8 @@ Store listing screenshots are maintained separately from the extension source. T
 
 #### Search & Discovery
 
-- Search bookmarks or enter a search command from the center search box.
-- Switch search engines from the settings panel.
-- See recommended cards based on local click frequency.
+- Search bookmark cards from the center search box.
+- Switch search engines from the top search bar menu.
 - Use keyboard shortcuts such as `Ctrl/Cmd+K`, `Ctrl/Cmd+Shift+L`, `Ctrl/Cmd+Shift+N`, and `Ctrl/Cmd+Shift+Q`.
 
 #### Visual Layout
@@ -83,7 +82,7 @@ Store listing screenshots are maintained separately from the extension source. T
 - Enable layout lock to prevent accidental drag changes.
 - Sort by default, frequency, alphabetical order, or added time.
 - Add, edit, and remove categories and cards from the local editor.
-- Adjust glass blur and switch between light and dark themes.
+- Adjust glass blur, card radius, card size, accent color, and switch between light and dark themes.
 
 #### Quote & Notes
 
@@ -92,56 +91,52 @@ Store listing screenshots are maintained separately from the extension source. T
 - Write pocket notes with Markdown formatting.
 - Notes auto-save after a short debounce.
 
-#### Progress & Focus
+#### Focus & Privacy
 
-- View year and day progress bars on the dashboard.
 - Keep the dashboard light so it opens almost instantly in a new tab.
 - Store all personal data locally instead of depending on a remote account.
+- Read browser bookmarks only when the user explicitly enables optional bookmark capture.
 
-#### Sync & Backup
+#### Sync
 
 - Use browser-native `chrome.storage.sync` for personal multi-device sync.
-- Create local snapshot history with up to eight restore points.
-- Share a full configuration snapshot with another account or browser using a 6-digit pickup code.
-- Manually force a push or pull from the settings panel when needed.
+- Fall back to `chrome.storage.local` when sync storage is unavailable.
+- Keep the extension free of Cloudflare Workers, share codes, and manual push/pull UIs.
 
 #### Popup & Browser Integration
 
 - Add the current page to Lucuro from the toolbar popup.
 - Toggle whether Lucuro owns the new tab.
-- When the override is disabled, the extension redirects to a blank new tab page.
-- Optionally import the Chrome bookmark tree after granting the `bookmarks` optional permission.
+- When the override is disabled, the extension redirects to the browser's own default new tab page.
+- Capture the native browser bookmark tree after granting the `bookmarks` optional permission.
 
 ### For fork users
 
 - The core is pure frontend and local-first, so it can be packaged for Chrome, Edge, and Firefox.
 - The permission surface is intentionally small: `storage`, `unlimitedStorage`, `activeTab`, and optional `bookmarks`.
-- The only external host is the optional Worker domain used for pickup-code sharing.
+- There are no host permissions and no external API endpoints.
 - Data structure and settings are generic enough to support new themes, quote sources, and navigation layouts.
 
 ## Architecture and Sync Model
 
-Lucuro separates three concerns:
+Lucuro separates two concerns:
 
 - Local data in browser extension storage
 - Browser-managed native sync through `chrome.storage.sync`
-- Optional ephemeral sharing through a Cloudflare Worker + KV
 
 Recommended production layout:
 
-1. Build the extension with `npm run build`
+1. Build the extension from the source repository with `npm run build`
 2. Load the unpacked `dist/` folder for local testing
 3. Package `dist/` for Chrome Web Store, Microsoft Edge Add-ons, or Firefox AMO
-4. Deploy the pickup-code Worker only when cross-account sharing is required
+4. Publish the same built package to each store
 
 ### Current sync strategy
 
 - Native sync is browser-managed and requires the same browser account on multiple devices.
-- Writes are debounced to avoid quota churn.
+- Writes are debounced where needed to avoid quota churn.
 - If sync is unavailable, the extension falls back to local storage.
-- Pickup-code sharing uses `POST /api/share` and `GET /api/share/:code`.
-- Codes are six digits and expire after 10 minutes.
-- The default Worker endpoint is `https://lucuro-share.helloxiaolaodi.workers.dev`.
+- No Worker, pickup code, share service, or manual sync UI is included.
 - Favicon CDN URLs keep icon payloads out of storage, so configuration remains small enough for native sync.
 
 ## Quick Start
@@ -149,8 +144,8 @@ Recommended production layout:
 ### 1. Install
 
 ```bash
-git clone https://github.com/Helloxiaolaodi/Lucuro.git
-cd Lucuro
+git clone https://github.com/Helloxiaolaodi/Lucuro-vue.git
+cd Lucuro-vue
 npm install
 ```
 
@@ -168,7 +163,7 @@ For extension testing, open `chrome://extensions/`, enable Developer mode, and l
 npm run build
 ```
 
-The build writes `dist/index.html`, `dist/popup.html`, `dist/blank.html`, `dist/manifest.json`, `dist/assets/`, and `dist/icons/`. It also writes `stats.html` with gzip and brotli sizes for bundle analysis.
+The build writes `dist/index.html`, `dist/popup.html`, `dist/manifest.json`, `dist/assets/`, and `dist/icons/`. It also writes `stats.html` with gzip and brotli sizes for bundle analysis.
 
 ### 4. Package for a browser store
 
@@ -184,7 +179,7 @@ Zip only the files inside `dist/`, with `manifest.json` at the zip root. Verify:
 - `icons` includes 16, 32, 48, and 128 pixel PNG assets
 - `permissions` are limited to `storage`, `unlimitedStorage`, and `activeTab`
 - `optional_permissions` includes only `bookmarks`
-- `host_permissions` is limited to the Worker domain
+- `host_permissions` is empty
 
 ### 5. Publish
 
@@ -201,8 +196,7 @@ The extension uses these storage keys:
 
 - `lucuro_links_v1`: link tree, categories, cards, icons, and ordering
 - `lucuro_settings_v1`: theme, quote, engine, layout lock, and preferences
-- `lucuro_stats_v1`: click frequency for recommended cards
-- `lucuro_history_v1`: bounded local snapshot history, maximum eight entries
+- `lucuro_stats_v1`: click frequency used by the frequency sort mode
 
 Data is plain JSON and does not contain image payloads.
 
@@ -211,37 +205,19 @@ Data is plain JSON and does not contain image payloads.
 Native sync is the default personal-device flow:
 
 1. The user signs into the same browser account on multiple devices.
-2. Lucuro writes debounced configuration changes to `chrome.storage.sync`.
+2. Lucuro writes configuration changes to `chrome.storage.sync`.
 3. The browser handles background synchronization.
-4. If sync is unavailable, Lucuro falls back to local storage.
+4. If sync is unavailable, Lucuro falls back to `chrome.storage.local`.
 
-Users can force a push or pull from settings when automatic sync is delayed.
-
-### Pickup-code sharing
-
-Pickup-code sharing is for cross-account or cross-browser transfers:
-
-1. The sending device posts a configuration snapshot to the Worker.
-2. The Worker stores the payload under a random 6-digit code with a 10-minute TTL.
-3. The receiving device enters the code.
-4. The receiving device fetches the payload and applies it locally.
-
-The Worker stores only temporary payloads and does not retain user accounts or long-term history.
-
-### Snapshot history
-
-- Snapshots are local and bounded.
-- Restore only overwrites the selected data scope.
-- Settings can be preserved when intended.
-- Restore is tested as a real user workflow, not an optional utility.
+There is no separate account, upload service, or cloud dependency.
 
 ## Bookmark Import and Popup Workflows
 
-### Bookmark import
+### Bookmark capture
 
-Bookmark import is optional:
+Bookmark capture is optional:
 
-1. The user grants the `bookmarks` optional permission from settings.
+1. The user grants the `bookmarks` optional permission from the popup or settings.
 2. Lucuro calls `chrome.bookmarks.getTree()`.
 3. The bookmark tree is converted into Lucuro categories and cards.
 4. The user reviews the result before saving.
@@ -255,7 +231,8 @@ The toolbar popup provides:
 - Add current page
 - Select the target category
 - Toggle the new tab override
-- Open settings
+- Enable or disable browser bookmark capture
+- Capture and import browser bookmarks
 
 The popup and the new tab page share the same storage keys.
 
@@ -263,12 +240,13 @@ The popup and the new tab page share the same storage keys.
 
 ### Repository structure
 
+- `D:\YL2026\Vue\Lucuro-vue`: extension source, build config, and extension assets
 - `index.html`: new tab page HTML entry
 - `popup.html`: toolbar popup HTML entry
 - `src/`: Vue components, stores, utilities, styles, and locales
-- `public/`: manifest, static assets, icons, blank page, profile image, and WeChat QR code
-- `worker/`: optional pickup-code Worker template
-- `docs/`: deployment and maintenance notes
+- `public/`: manifest, static assets, icons, and WeChat QR code
+- `vite.config.js`: Vite build configuration and bundle visualizer
+- `package.json`: dependencies and build scripts
 
 ### Minimal files to keep
 
@@ -279,7 +257,6 @@ Keep these for the current feature set:
 - `popup.html`
 - `public/manifest.json`
 - `public/icons/`
-- `public/blank.html`
 - `public/qrcode-wechat.png`
 - `vite.config.js`
 - `package.json`
@@ -304,7 +281,7 @@ Recommended checks before push:
 npm run build
 ```
 
-Verify the new tab page, popup, settings, storage, sync, bookmark import, snapshot restore, and pickup-code share with real browser extension storage.
+Verify the new tab page, popup, settings, storage, native sync, bookmark capture, and support links with real browser extension storage.
 
 ## Tech Stack and References
 
@@ -320,7 +297,6 @@ Lucuro builds on an open-source stack for UI rendering, local storage, extension
 | [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) | `^0.12.0` | Cross-browser extension API compatibility | GitHub repository |
 | [rollup-plugin-visualizer](https://github.com/btd/rollup-plugin-visualizer) | `^5.12.0` | Bundle size visualization | GitHub repository |
 | [sharp](https://sharp.pixelplumbing.com/) | `^0.35.3` | Icon processing workflows | Official docs |
-| [Cloudflare Workers](https://developers.cloudflare.com/workers/) | latest | Optional pickup-code sharing endpoint | Official docs |
 
 Additional community link:
 
@@ -332,7 +308,7 @@ Additional community link:
 
 - Core navigation does not require an account, analytics, or telemetry.
 - User notes, tokens, and private configuration stay in browser extension storage.
-- No data is uploaded unless the user explicitly triggers a pickup-code share.
+- No data is uploaded to a Lucuro-owned server.
 
 ### Least privilege
 
@@ -340,22 +316,16 @@ Additional community link:
 - Do not add `<all_urls>` or unrelated permissions.
 - Keep the manifest honest for store review and user trust.
 
-### Worker boundary
-
-- Restrict `host_permissions` to the Worker domain.
-- The Worker accepts bounded payloads and enforces TTLs.
-- The Worker does not store user accounts or long-term history.
-
 ### CSP
 
 - Local scripts only.
 - No remote code execution.
-- `connect-src` allows only the Worker domain used by Lucuro.
+- No `connect-src` dependency on external APIs.
 
 ### Store review readiness
 
 - Publish a privacy policy.
-- Explain native sync, optional Worker sharing, and optional bookmark import.
+- Explain native sync and optional bookmark import.
 - Avoid hidden permissions.
 - Keep the package free of secrets and developer paths.
 
@@ -389,19 +359,3 @@ Lucuro has also been developed with support from the following AI tools during p
 This project is licensed under the [MIT License](LICENSE).
 
 [Back to top](#readme-top)
-
-## Recent Updates
-
-- Initial Manifest V3 release with new tab override and toolbar popup.
-- Added default light gradient theme and deep indigo/night dark mode.
-- Added custom daily quote as a "一言" feature.
-- Added pocket notes with Markdown and debounced auto-save.
-- Added draggable card grid, layout lock, and multiple sort modes.
-- Added year/day progress bars and recommended cards.
-- Added local snapshot history with up to eight restore points.
-- Added optional Chrome bookmark import.
-- Added popup add-current-page and new-tab toggle.
-- Added native `chrome.storage.sync` with local fallback.
-- Added 6-digit pickup-code sharing through a Cloudflare Worker.
-- Added `rollup-plugin-visualizer` for gzip and brotli bundle analysis.
-- Set overseas support to Ko-fi and domestic support to WeChat QR code.
