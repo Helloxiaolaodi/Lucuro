@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Plus, Settings2, X } from 'lucide-vue-next'
+import { Settings2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './LucuroLogo.vue'
 
@@ -14,7 +14,7 @@ const props = defineProps({
   stats: { type: Object, default: () => ({}) }
 })
 
-const emit = defineEmits(['select-tag', 'select-category', 'manage-links', 'toggle', 'add-link'])
+const emit = defineEmits(['select-tag', 'select-category', 'manage-links', 'toggle'])
 const { t } = useI18n()
 
 const categoryCounts = computed(() => {
@@ -46,7 +46,6 @@ const totalClicks = computed(() => props.categories.reduce((total, category) => 
       <LucuroLogo :size="42" />
       <div>
         <h1>{{ settings.workspaceTitle || 'Lucuro' }}</h1>
-        <small>{{ settings.workspaceSubtitle || 'Stay lucky, stay curious' }}</small>
       </div>
     </div>
 
@@ -101,10 +100,6 @@ const totalClicks = computed(() => props.categories.reduce((total, category) => 
       <button class="btn full-width" type="button" @click="emit('manage-links')">
         <Settings2 :size="15" />
         {{ t('sidebar.manageLinks') }}
-      </button>
-      <button class="btn full-width" type="button" @click="$emit('add-link')">
-        <Plus :size="15" />
-        {{ t('sidebar.addLink') }}
       </button>
     </div>
   </div>

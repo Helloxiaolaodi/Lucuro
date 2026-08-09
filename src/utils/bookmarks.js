@@ -1,5 +1,6 @@
 import { uid } from '../data/defaults'
 import {
+  createBookmark,
   getBookmarkTree,
   hasOptionalPermission,
   removeOptionalPermission,
@@ -16,7 +17,6 @@ export function bookmarkCard(node) {
     },
     title: node.title || url,
     url,
-    openMethod: 1,
     lanUrl: '',
     description: '',
     tags: [],
@@ -38,14 +38,24 @@ export function parseBookmarkTreeToGroups(nodes = []) {
   nodes.forEach((node) => {
     if (!node) return
     if (node.children?.length) {
-      const children = parseBookmarkNodes(node.children)
-      if (children.length) {
-        groups.push({
-          title: node.title || 'Imported bookmarks',
-          subtitle: '',
-          children
-        })
-      }
+      const rootTitle = node.title || 'Imported bookmarks'
+      const directCards = []
+      node.children.forEach((child) => {
+        if (!child) return
+        if (child.children?.length) {
+          const subChildren = parseBookmarkNodes(child.children)
+          if (subChildren.length) {
+            pushOrMergeGroup(
+              groups,
+              `${rootTitle} - ${child.title || 'Bookmarks'}`,
+              subChildren
+            )
+          }
+        } else if (child.url) {
+          directCards.push(bookmarkCard(child))
+        }
+      })
+      if (directCards.length) pushOrMergeGroup(groups, rootTitle, directCards)
     } else if (node.url) {
       groups.push({
         title: 'Imported bookmarks',
@@ -55,6 +65,34 @@ export function parseBookmarkTreeToGroups(nodes = []) {
     }
   })
   return groups
+}
+
+function pushOrMergeGroup(groups, title, cards) {
+  const normalizedTitle = String(title || 'Imported bookmarks').trim()
+  const existing = groups.find(
+    (group) => String(group.title || '').trim().toLowerCase() === normalizedTitle.toLowerCase()
+  )
+  if (existing) {
+    existing.children.push(...cards)
+    return
+  }
+  groups.push({
+    id: uid('category'),
+    title: normalizedTitle,
+    subtitle: '',
+    children: cards
+  })
+}
+
+export async function createBookmarkFolder(title) {
+  const result = await createBookmark({ title, type: 'folder' })
+  return result?.id || null
+}
+
+export async function createBookmarkLink({ parentId, title, url }) {
+  if (!parentId || !title || !url) return false
+  const result = await createBookmark({ parentId, title, url })
+  return Boolean(result?.id)
 }
 
 export function normalizeBookmarkUrl(url) {

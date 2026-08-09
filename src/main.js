@@ -12,8 +12,35 @@ Promise.all([
 ]).then(([, settings, syncedSettings]) => {
   const saved = normalizeSettings(settings || syncedSettings || {})
   if (saved.newTabEnabled === false) {
-    window.location.replace('./blank.html')
+    redirectToBrowserDefault()
     return
   }
   createApp(App).use(i18n).mount('#app')
 })
+
+function redirectToBrowserDefault() {
+  const browserApi = globalThis.browser || globalThis.chrome
+  const defaultNewTabUrl = globalThis.browser ? 'about:newtab' : 'chrome://newtab/'
+  try {
+    window.location.replace(defaultNewTabUrl)
+    return
+  } catch {
+    // Fall through to the tabs API when direct navigation is blocked.
+  }
+  if (browserApi?.tabs?.update) {
+    try {
+      const result = browserApi.tabs.update({ url: defaultNewTabUrl })
+      if (result?.catch) {
+        result.catch(() => window.close())
+      }
+      return
+    } catch {
+      // Fall through.
+    }
+  }
+  try {
+    window.close()
+  } catch {
+    // The page may remain open; the fallback is intentionally empty.
+  }
+}

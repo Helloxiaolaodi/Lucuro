@@ -28,11 +28,8 @@
   "optional_permissions": [
     "bookmarks"
   ],
-  "host_permissions": [
-    "https://*.workers.dev/*"
-  ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.workers.dev"
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: blob: https: http:"
   },
   "browser_specific_settings": {
     "gecko": {
