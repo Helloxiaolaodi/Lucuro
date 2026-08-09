@@ -128,15 +128,14 @@
   },
   "popup": {
     "title": "Lucuro - 鹿客司南",
-    "save": "保存设置",
-    "saved": "已应用",
-    "savedMessage": "新标签页启动方式已更新。",
     "readSettingsError": "无法读取设置。",
     "saveFailed": "保存失败，请稍后重试。",
-    "newTabMode": "新标签页的启动方式",
-    "newTabModeHelp": "选择新标签页的启动方式：Lucuro 主页或浏览器默认主页。",
-    "newTabTakeover": "Lucuro 主页",
-    "newTabBlank": "浏览器默认主页"
+    "extensionToggle": "Lucuro 插件",
+    "extensionToggleHelp": "默认由 Lucuro 接管新标签页。关闭后，新标签页将恢复为浏览器默认主页。",
+    "enabled": "已开启",
+    "disabled": "已关闭",
+    "turnOn": "开启 Lucuro",
+    "turnOff": "关闭 Lucuro"
   },
   "toast": {
     "addCategoryFirst": "请先添加分类",

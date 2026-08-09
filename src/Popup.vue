@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { Save } from 'lucide-vue-next'
+import { Power, PowerOff } from 'lucide-vue-next'
 import { storage, syncStorage } from './utils/storage'
 import { normalizeSettings } from './data/defaults'
 import { useI18n } from 'vue-i18n'
@@ -8,8 +8,7 @@ import LucuroLogo from './components/LucuroLogo.vue'
 
 const STORAGE_SETTINGS = 'lucuro_settings_v1'
 
-const newTabMode = ref('lucuro')
-const saveSuccess = ref(false)
+const lucuroEnabled = ref(true)
 const errorMessage = ref('')
 const { t } = useI18n()
 
@@ -20,25 +19,25 @@ onMounted(async () => {
       syncStorage.get(STORAGE_SETTINGS)
     ])
     const settings = normalizeSettings(saved || synced || {})
-    newTabMode.value = settings.newTabEnabled === false ? 'default' : 'lucuro'
+    lucuroEnabled.value = settings.newTabEnabled !== false
   } catch {
     errorMessage.value = t('popup.readSettingsError')
   }
 })
 
-async function saveToLucuro() {
+async function toggleLucuro() {
   errorMessage.value = ''
+  const nextValue = !lucuroEnabled.value
   try {
     const [saved, synced] = await Promise.all([
       storage.get(STORAGE_SETTINGS),
       syncStorage.get(STORAGE_SETTINGS)
     ])
     const settings = normalizeSettings(saved || synced || {})
-    settings.newTabEnabled = newTabMode.value === 'lucuro'
+    settings.newTabEnabled = nextValue
     await storage.set(STORAGE_SETTINGS, settings)
     await syncStorage.set(STORAGE_SETTINGS, settings).catch(() => {})
-    saveSuccess.value = true
-    setTimeout(() => window.close(), 900)
+    lucuroEnabled.value = nextValue
   } catch {
     errorMessage.value = t('popup.saveFailed')
   }
@@ -55,22 +54,28 @@ async function saveToLucuro() {
     </header>
 
     <main class="popup-body">
-      <div class="field">
-        <label for="popup-new-tab">{{ t('popup.newTabMode') }}</label>
-        <select id="popup-new-tab" v-model="newTabMode" class="select">
-          <option value="lucuro">{{ t('popup.newTabTakeover') }}</option>
-          <option value="default">{{ t('popup.newTabBlank') }}</option>
-        </select>
+      <div class="toggle-card">
+        <div class="toggle-summary">
+          <span class="toggle-title">{{ t('popup.extensionToggle') }}</span>
+          <span class="toggle-state" :class="{ 'is-on': lucuroEnabled }">
+            {{ lucuroEnabled ? t('popup.enabled') : t('popup.disabled') }}
+          </span>
+        </div>
+        <p class="toggle-help">{{ t('popup.extensionToggleHelp') }}</p>
+        <button
+          class="toggle-btn"
+          :class="{ 'is-on': lucuroEnabled }"
+          type="button"
+          :aria-pressed="lucuroEnabled"
+          @click="toggleLucuro"
+        >
+          <Power v-if="lucuroEnabled" :size="16" />
+          <PowerOff v-else :size="16" />
+          {{ lucuroEnabled ? t('popup.turnOff') : t('popup.turnOn') }}
+        </button>
       </div>
 
-      <button class="save-btn" type="button" :disabled="saveSuccess" @click="saveToLucuro">
-        <Save :size="16" />
-        {{ saveSuccess ? t('popup.saved') : t('popup.save') }}
-      </button>
-
-      <p v-if="saveSuccess" class="popup-success">{{ t('popup.savedMessage') }}</p>
       <p v-if="errorMessage" class="popup-error">{{ errorMessage }}</p>
     </main>
-
   </div>
 </template>
