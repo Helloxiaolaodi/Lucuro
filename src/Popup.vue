@@ -1,32 +1,21 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { Bookmark, Save, X } from 'lucide-vue-next'
+import { nextTick, onMounted, ref } from 'vue'
+import { Save, X } from 'lucide-vue-next'
 import { storage, syncStorage } from './utils/storage'
-import { normalizeLinks, normalizeSettings, uid } from './data/defaults'
-import {
-  ensureBookmarkPermission,
-  fetchBrowserBookmarkGroups,
-  hasBookmarkPermission,
-  mergeBookmarkGroups,
-  revokeBookmarkPermission
-} from './utils/bookmarks'
+import { normalizeLinks, uid } from './data/defaults'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './components/LucuroLogo.vue'
 
 const STORAGE_LINKS = 'lucuro_links_v1'
-const STORAGE_SETTINGS = 'lucuro_settings_v1'
+const STORAGE_LAST_CATEGORY = 'lucuro_last_category_v1'
 
+const titleInput = ref(null)
 const linkTitle = ref('')
 const linkUrl = ref('')
 const selectedCategory = ref('')
 const saveSuccess = ref(false)
 const errorMessage = ref('')
-const newTabEnabled = ref(true)
-const bookmarkEnabled = ref(false)
-const bookmarkImporting = ref(false)
-const bookmarkMessage = ref('')
 const categories = ref([])
-let loadedSettings = null
 const { t } = useI18n()
 
 onMounted(async () => {
@@ -38,23 +27,20 @@ onMounted(async () => {
     errorMessage.value = t('popup.readTabError')
   }
 
-  const saved = await storage.get(STORAGE_LINKS)
-  if (Array.isArray(saved)) {
-    categories.value = normalizeLinks(saved)
-  } else {
-    categories.value = []
-  }
+  const [saved, synced] = await Promise.all([
+    storage.get(STORAGE_LINKS),
+    syncStorage.get(STORAGE_LINKS)
+  ])
+  categories.value = normalizeLinks(Array.isArray(saved) ? saved : Array.isArray(synced) ? synced : [])
 
   if (categories.value.length) {
-    selectedCategory.value = categories.value[0].id
+    const lastCategory = await storage.get(STORAGE_LAST_CATEGORY)
+    const remembered = categories.value.find((category) => category.id === lastCategory)
+    selectedCategory.value = remembered?.id || categories.value[0].id
   }
 
-  const savedSettings = await storage.get(STORAGE_SETTINGS)
-  const syncedSettings = await syncStorage.get(STORAGE_SETTINGS)
-  loadedSettings = normalizeSettings(savedSettings || syncedSettings || {})
-  newTabEnabled.value = loadedSettings.newTabEnabled !== false
-
-  bookmarkEnabled.value = await hasBookmarkPermission()
+  await nextTick()
+  titleInput.value?.focus()
 })
 
 function queryActiveTab() {
@@ -104,79 +90,18 @@ async function saveToLucuro() {
   })
 
   await storage.set(STORAGE_LINKS, normalized)
+  await storage.set(STORAGE_LAST_CATEGORY, selectedCategory.value)
+  syncStorage.set(STORAGE_LINKS, normalized).catch(() => {})
+  syncStorage.set(STORAGE_LAST_CATEGORY, selectedCategory.value).catch(() => {})
   saveSuccess.value = true
   setTimeout(() => window.close(), 900)
-}
-
-async function setNewTabMode(enabled) {
-  newTabEnabled.value = enabled
-  const nextSettings = normalizeSettings({
-    ...(loadedSettings || {}),
-    newTabEnabled: enabled
-  })
-  loadedSettings = nextSettings
-  await Promise.all([
-    storage.set(STORAGE_SETTINGS, nextSettings),
-    syncStorage.set(STORAGE_SETTINGS, nextSettings)
-  ])
-}
-
-async function toggleBookmarkCapture() {
-  bookmarkMessage.value = ''
-  if (bookmarkEnabled.value) {
-    await revokeBookmarkPermission()
-    bookmarkEnabled.value = false
-    bookmarkMessage.value = t('popup.bookmarkCaptureDisabled')
-    return
-  }
-  const granted = await ensureBookmarkPermission()
-  bookmarkEnabled.value = Boolean(granted)
-  if (granted) {
-    bookmarkMessage.value = t('popup.bookmarkCaptureEnabled')
-  } else {
-    bookmarkMessage.value = t('popup.bookmarkCapturePermissionDenied')
-  }
-}
-
-async function captureBrowserBookmarks() {
-  bookmarkMessage.value = ''
-  if (!bookmarkEnabled.value) {
-    bookmarkMessage.value = t('popup.bookmarkCapturePermissionDenied')
-    return
-  }
-  if (bookmarkImporting.value) return
-  bookmarkImporting.value = true
-  try {
-    const groups = await fetchBrowserBookmarkGroups()
-    if (!groups.length) {
-      bookmarkMessage.value = t('popup.bookmarkCaptureEmpty')
-      return
-    }
-    const current = await storage.get(STORAGE_LINKS)
-    const normalized = normalizeLinks(Array.isArray(current) ? current : categories.value)
-    const merged = mergeBookmarkGroups(normalized, groups)
-    categories.value = merged.links
-    if (merged.addedCount) {
-      await Promise.all([
-        storage.set(STORAGE_LINKS, merged.links),
-        syncStorage.set(STORAGE_LINKS, merged.links)
-      ])
-    }
-    bookmarkMessage.value = merged.addedCount
-      ? t('popup.bookmarkCaptureImported', { count: merged.addedCount })
-      : t('popup.bookmarkCaptureNoNew')
-  } catch {
-    bookmarkMessage.value = t('popup.bookmarkCaptureFailed')
-  } finally {
-    bookmarkImporting.value = false
-  }
 }
 </script>
 
 <template>
   <div class="popup-shell">
     <header class="popup-header">
-      <LucuroLogo :size="44" />
+      <LucuroLogo :size="40" />
       <div>
         <h1>{{ t('popup.title') }}</h1>
         <p>{{ t('popup.subtitle') }}</p>
@@ -186,7 +111,7 @@ async function captureBrowserBookmarks() {
     <main class="popup-body">
       <div class="field">
         <label for="popup-title">{{ t('popup.name') }}</label>
-        <input id="popup-title" v-model="linkTitle" class="input" :placeholder="t('popup.name')" />
+        <input id="popup-title" ref="titleInput" v-model="linkTitle" class="input" :placeholder="t('popup.name')" />
       </div>
 
       <div class="field">
@@ -198,66 +123,6 @@ async function captureBrowserBookmarks() {
           </option>
         </select>
       </div>
-
-      <section class="newtab-mode" aria-label="New tab mode">
-        <div class="newtab-mode-head">
-          <strong>{{ t('popup.newTabMode') }}</strong>
-          <span>{{ t('popup.newTabModeHelp') }}</span>
-        </div>
-        <div class="segmented">
-          <button
-            type="button"
-            class="segment"
-            :class="{ active: newTabEnabled }"
-            @click="setNewTabMode(true)"
-          >
-            {{ t('popup.newTabTakeover') }}
-          </button>
-          <button
-            type="button"
-            class="segment"
-            :class="{ active: !newTabEnabled }"
-            @click="setNewTabMode(false)"
-          >
-            {{ t('popup.newTabBlank') }}
-          </button>
-        </div>
-      </section>
-
-      <section class="newtab-mode bookmark-mode" aria-label="Browser bookmarks">
-        <div class="newtab-mode-head">
-          <strong>{{ t('popup.bookmarkCapture') }}</strong>
-          <span>{{ t('popup.bookmarkCaptureHelp') }}</span>
-        </div>
-        <div class="segmented">
-          <button
-            type="button"
-            class="segment"
-            :class="{ active: bookmarkEnabled }"
-            @click="toggleBookmarkCapture"
-          >
-            {{ t('popup.bookmarkCaptureEnable') }}
-          </button>
-          <button
-            type="button"
-            class="segment"
-            :class="{ active: !bookmarkEnabled }"
-            @click="toggleBookmarkCapture"
-          >
-            {{ t('popup.bookmarkCaptureDisable') }}
-          </button>
-        </div>
-        <button
-          class="bookmark-capture-btn"
-          type="button"
-          :disabled="!bookmarkEnabled || bookmarkImporting"
-          @click="captureBrowserBookmarks"
-        >
-          <Bookmark :size="15" />
-          {{ bookmarkImporting ? t('popup.bookmarkCaptureImporting') : t('popup.bookmarkCaptureImport') }}
-        </button>
-        <p v-if="bookmarkMessage" class="bookmark-message">{{ bookmarkMessage }}</p>
-      </section>
 
       <button class="save-btn" type="button" :disabled="saveSuccess" @click="saveToLucuro">
         <Save :size="16" />

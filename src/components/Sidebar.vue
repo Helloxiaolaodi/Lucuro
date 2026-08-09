@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
-import { Settings2, X } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { Plus, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './LucuroLogo.vue'
 
@@ -14,8 +14,9 @@ const props = defineProps({
   stats: { type: Object, default: () => ({}) }
 })
 
-const emit = defineEmits(['select-tag', 'select-category', 'manage-links', 'toggle'])
+const emit = defineEmits(['select-tag', 'select-category', 'add-tag', 'remove-tag', 'toggle'])
 const { t } = useI18n()
+const newTag = ref('')
 
 const categoryCounts = computed(() => {
   const counts = {}
@@ -34,6 +35,12 @@ function clicksFor(category) {
 }
 
 const totalClicks = computed(() => props.categories.reduce((total, category) => total + clicksFor(category), 0))
+
+function submitTag() {
+  if (!newTag.value.trim()) return
+  emit('add-tag', newTag.value.trim())
+  newTag.value = ''
+}
 </script>
 
 <template>
@@ -60,17 +67,38 @@ const totalClicks = computed(() => props.categories.reduce((total, category) => 
         >
           {{ t('sidebar.all') }}
         </button>
-        <button
-          v-for="tag in tags"
-          :key="tag"
-          type="button"
-          class="tag-chip"
-          :class="{ active: activeTag === tag }"
-          @click="emit('select-tag', tag)"
-        >
-          {{ tag }}
-        </button>
+        <span v-for="tag in tags" :key="tag" class="tag-item">
+          <button
+            type="button"
+            class="tag-chip"
+            :class="{ active: activeTag === tag }"
+            @click="emit('select-tag', tag)"
+          >
+            {{ tag }}
+          </button>
+          <button
+            class="tag-remove"
+            type="button"
+            :title="t('sidebar.removeTag')"
+            :aria-label="t('sidebar.removeTag', { tag })"
+            @click="emit('remove-tag', tag)"
+          >
+            <X :size="12" />
+          </button>
+        </span>
       </div>
+      <form class="tag-manage" @submit.prevent="submitTag">
+        <input
+          v-model.trim="newTag"
+          class="tag-input"
+          type="text"
+          :placeholder="t('sidebar.tagPlaceholder')"
+          :aria-label="t('sidebar.tagPlaceholder')"
+        />
+        <button class="mini-btn" type="submit" :title="t('sidebar.addTag')" :aria-label="t('sidebar.addTag')">
+          <Plus :size="13" />
+        </button>
+      </form>
 
       <div class="side-label">{{ t('sidebar.categories') }}</div>
       <div class="category-links">
@@ -97,10 +125,6 @@ const totalClicks = computed(() => props.categories.reduce((total, category) => 
           <div class="profile-meta">{{ t('sidebar.profileMeta', { categories: categories.length, clicks: totalClicks }) }}</div>
         </div>
       </div>
-      <button class="btn full-width" type="button" @click="emit('manage-links')">
-        <Settings2 :size="15" />
-        {{ t('sidebar.manageLinks') }}
-      </button>
     </div>
   </div>
 </template>

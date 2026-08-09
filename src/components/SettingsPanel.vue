@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Bookmark, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, Trash2, Upload, X } from 'lucide-vue-next'
+import { Bookmark, Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, Trash2, Upload, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from '../stores/lucuro'
 import { setSavedLocale } from '../i18n'
@@ -18,6 +18,7 @@ const { t, locale } = useI18n()
 
 const backgroundInput = ref(null)
 const avatarInput = ref(null)
+const jsonInput = ref(null)
 const showWechatPay = ref(false)
 
 function setTab(tab) {
@@ -37,6 +38,11 @@ function uploadAvatar(event) {
   store.uploadAvatar(event.target.files?.[0])
   event.target.value = ''
 }
+
+function importJson(event) {
+  store.importLinksFile(event.target.files?.[0])
+  event.target.value = ''
+}
 </script>
 
 <template>
@@ -52,6 +58,7 @@ function uploadAvatar(event) {
       <div class="tabs">
         <button class="tab-btn" :class="{ active: activeTab === 'links' }" type="button" @click="setTab('links')">{{ t('settings.links') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'appearance' }" type="button" @click="setTab('appearance')">{{ t('settings.appearance') }}</button>
+        <button class="tab-btn" :class="{ active: activeTab === 'browser' }" type="button" @click="setTab('browser')">{{ t('settings.browser') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'support' }" type="button" @click="setTab('support')">{{ t('settings.support') }}</button>
       </div>
 
@@ -66,6 +73,15 @@ function uploadAvatar(event) {
               <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="store.importBrowserBookmarks">
                 <Bookmark :size="15" />
                 {{ t('settings.importBookmarks') }}
+              </button>
+              <input ref="jsonInput" class="visually-hidden" type="file" accept=".json,application/json" @change="importJson" />
+              <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="jsonInput?.click()">
+                <Upload :size="15" />
+                {{ t('settings.importJson') }}
+              </button>
+              <button class="btn" type="button" @click="store.exportJson">
+                <Download :size="15" />
+                {{ t('settings.exportJson') }}
               </button>
               <button class="btn" type="button" @click="emit('open-category', null)">
                 <FolderPlus :size="15" />
@@ -135,6 +151,10 @@ function uploadAvatar(event) {
                 <option value="cozy">{{ t('settings.cozy') }}</option>
               </select>
             </div>
+            <div class="field">
+              <label for="settings-font-size">{{ t('settings.cardFontSize') }}</label>
+              <input id="settings-font-size" class="input" type="range" min="11" max="24" step="1" :value="settings.cardFontSize" @input="store.setSettings({ cardFontSize: Number($event.target.value) })" />
+            </div>
           </div>
 
           <div class="form-grid">
@@ -185,6 +205,64 @@ function uploadAvatar(event) {
                 </button>
                 <input class="input" :value="settings.profileAvatar" @input="store.setSettings({ profileAvatar: $event.target.value })" placeholder="https://example.com/avatar.jpg" />
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="activeTab === 'browser'" class="settings-section">
+          <div class="section-heading">
+            <div>
+              <h3 class="section-title">{{ t('settings.browserIntegration') }}</h3>
+              <p class="section-help">{{ t('settings.browserIntegrationHelp') }}</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field full">
+              <label for="settings-new-tab">{{ t('settings.newTabMode') }}</label>
+              <div class="segmented-row">
+                <button
+                  type="button"
+                  class="segment-btn"
+                  :class="{ active: settings.newTabEnabled !== false }"
+                  @click="store.setSettings({ newTabEnabled: true })"
+                >
+                  {{ t('settings.newTabTakeover') }}
+                </button>
+                <button
+                  type="button"
+                  class="segment-btn"
+                  :class="{ active: settings.newTabEnabled === false }"
+                  @click="store.setSettings({ newTabEnabled: false })"
+                >
+                  {{ t('settings.newTabBlank') }}
+                </button>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label>{{ t('settings.browserBookmarks') }}</label>
+              <div class="file-field">
+                <button
+                  class="btn"
+                  :class="{ 'btn-primary': store.state.bookmarkEnabled }"
+                  type="button"
+                  @click="store.toggleBookmarkPermission"
+                >
+                  <Bookmark :size="15" />
+                  {{ store.state.bookmarkEnabled ? t('settings.disableBookmarks') : t('settings.enableBookmarks') }}
+                </button>
+                <button
+                  class="btn"
+                  type="button"
+                  :disabled="!store.state.bookmarkEnabled || store.state.bookmarkImporting"
+                  @click="store.importBrowserBookmarks"
+                >
+                  <Bookmark :size="15" />
+                  {{ store.state.bookmarkImporting ? t('settings.importingBookmarks') : t('settings.importBookmarks') }}
+                </button>
+              </div>
+              <p class="section-help">{{ t('settings.bookmarkCaptureHelp') }}</p>
             </div>
           </div>
         </div>

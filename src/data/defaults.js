@@ -34,11 +34,13 @@ export const DEFAULT_SETTINGS = {
   accent: '#0087eb',
   cardSize: 'default',
   cardRadius: 14,
+  cardFontSize: 15,
   background: '',
   profileName: 'Lucuro Explorer',
   profileAvatar: '',
   workspaceTitle: 'Lucuro - 鹿客司南',
   newTabEnabled: true,
+  customTags: [],
   defaultEngineId: 'google',
   engines: DEFAULT_ENGINES,
   hitokoto: '',
@@ -70,14 +72,16 @@ function normalizeChild(child, index = 0) {
 
 export function normalizeCard(child, index = 0) {
   const icon = child.icon && typeof child.icon === 'object' ? child.icon : {}
+  const rawSrc = String(icon.src || '')
+  const src = /^(https?:|data:|blob:|\/\/)/i.test(rawSrc) ? rawSrc : ''
   return {
     id: child.id || `card-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`,
     icon: {
       text: icon.text || '',
       itemType: icon.itemType ?? 2,
-      src: icon.src || '',
+      src,
       name: icon.name || '',
-      source: icon.source || (icon.src ? 'image' : 'auto'),
+      source: icon.source || (src ? 'image' : 'auto'),
       backgroundColor: icon.backgroundColor || ''
     },
     title: child.title || 'Untitled',

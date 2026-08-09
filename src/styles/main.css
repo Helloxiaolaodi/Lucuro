@@ -14,6 +14,7 @@
   --sidebar-bg: rgba(255, 255, 255, 0.66);
   --chip-bg: rgba(255, 255, 255, 0.74);
   --card-radius: 14px;
+  --card-font-size: 15px;
   --shadow: 0 8px 28px rgba(0, 135, 235, 0.12);
   --bg-image: none;
   --card-size: 220px;
@@ -231,6 +232,57 @@ a {
   color: var(--accent);
   border-color: var(--accent);
   background: var(--accent-soft);
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.72;
+}
+
+.tag-remove:hover {
+  color: var(--danger);
+  background: rgba(220, 38, 38, 0.1);
+  opacity: 1;
+}
+
+.tag-manage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 2px;
+}
+
+.tag-input {
+  min-width: 0;
+  flex: 1;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tag-input:focus {
+  border-color: var(--accent);
+  outline: 0;
 }
 
 .category-links {
@@ -703,7 +755,7 @@ html[data-card-size='compact'] .card-icon {
 
 .card-title {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--card-font-size);
   font-weight: 800;
   line-height: 1.25;
   white-space: nowrap;
@@ -723,7 +775,7 @@ html[data-card-size='compact'] .card-icon {
 .card-description {
   margin: 3px 0 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: calc(var(--card-font-size) * 0.75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -741,7 +793,7 @@ html[data-card-size='compact'] .card-icon {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 9px;
+  font-size: calc(var(--card-font-size) * 0.62);
   font-weight: 800;
 }
 
@@ -1055,6 +1107,34 @@ html[data-card-size='compact'] .card-icon {
   flex-wrap: wrap;
 }
 
+.segmented-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.segment-btn {
+  min-height: 42px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.segment-btn:hover {
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.segment-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 .color-input {
   min-height: 42px;
   padding: 4px;
@@ -1317,6 +1397,15 @@ html[data-card-size='compact'] .card-icon {
 
 .support-button {
   width: 100%;
+}
+
+.support-button.btn-primary,
+.support-button.btn-primary:hover,
+.support-button.btn-primary:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  filter: brightness(1.1);
 }
 
 .wechat-pay-modal {
