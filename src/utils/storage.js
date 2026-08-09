@@ -133,13 +133,42 @@ async function callApi(apiMethod, args = [], fallback = false) {
 }
 
 export async function getBookmarkTree() {
-  if (!extensionBookmarks?.getTree) return []
-  const tree = await callApi(extensionBookmarks.getTree.bind(extensionBookmarks), [], [])
+  if (!extensionBookmarks?.getTree) {
+    throw new Error('Bookmarks API is unavailable')
+  }
+  const tree = await callBookmarksApi(extensionBookmarks.getTree.bind(extensionBookmarks))
   return Array.isArray(tree) ? tree : []
 }
 
 export async function createBookmark(payload) {
   if (!extensionBookmarks?.create) return false
-  const result = await callApi(extensionBookmarks.create.bind(extensionBookmarks), [payload], false)
+  const result = await callBookmarksApi(extensionBookmarks.create.bind(extensionBookmarks), [payload])
   return result && typeof result === 'object' ? result : false
+}
+
+async function callBookmarksApi(apiMethod, args = []) {
+  try {
+    const result = apiMethod(...args)
+    if (result && typeof result.then === 'function') {
+      return await result
+    }
+    if (result !== undefined) return result
+  } catch (error) {
+    throw error
+  }
+
+  return new Promise((resolve, reject) => {
+    try {
+      apiMethod(...args, (value) => {
+        const lastError = globalThis.chrome?.runtime?.lastError
+        if (lastError) {
+          reject(new Error(lastError.message))
+          return
+        }
+        resolve(value)
+      })
+    } catch (error) {
+      reject(error)
+    }
+  })
 }

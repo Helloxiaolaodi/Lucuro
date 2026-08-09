@@ -14,10 +14,12 @@ npm run build
 
 生产构建输出到 `dist/`，每次构建后由 `rollup-plugin-visualizer` 生成 `stats.html`。
 
+商店上传包生成在 `D:\YL2026\Vue\lucuro-chrome-edge-v0.1.0.zip`（Chrome/Edge）与 `D:\YL2026\Vue\lucuro-firefox-v0.1.0.zip`（Firefox），ZIP 根目录直接包含 `manifest.json`。
+
 ## 功能
 
 - 新标签页工作台：树状侧边栏分类、搜索、拖拽卡片、自定义一言、今日手记 Markdown 工具栏、撤销/清空与自动隐藏侧边栏
-- 工具栏弹窗：切换新标签页启动方式，可选 Lucuro 主页或浏览器默认主页
+- 工具栏弹窗：切换新标签页启动方式，可选 Lucuro 主页或浏览器默认主页；浏览器默认主页通过 `tabs.create({})` 打开浏览器原生新标签页
 - 通过内置 `bookmarks` 权限自动导入浏览器原生书签树
 - 数据来源互斥切换：浏览器书签或用户上传的本地 JSON 文件
 - 背景图片支持模糊与选区裁剪，默认头像使用 Lucuro 标识
