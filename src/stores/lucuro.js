@@ -27,7 +27,9 @@ const state = reactive({
   categoryModal: null,
   toastMessage: '',
   currentHitokoto: '',
-  bookmarkImporting: false
+  bookmarkImporting: false,
+  bookmarkSyncStatus: 'idle',
+  lastBookmarkSyncAt: 0
 })
 
 function t(key, params) {
@@ -97,6 +99,9 @@ async function load() {
   if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
   await loadLinks()
+  if (state.settings.dataSource !== 'json') {
+    await importBrowserBookmarks({ silent: true, replace: true, startup: true })
+  }
   state.loaded = true
   refreshHitokoto()
   applySettings()
@@ -186,33 +191,42 @@ async function importBrowserBookmarks(options = {}) {
   if (state.bookmarkImporting) return
   const silent = Boolean(options?.silent)
   const replace = options?.replace !== false
+  const startup = Boolean(options?.startup)
   state.bookmarkImporting = true
+  state.bookmarkSyncStatus = 'syncing'
   try {
     const imported = await fetchBrowserBookmarkGroups()
     if (!imported.length) {
-      if (replace) {
+      if (replace && !startup) {
         state.links = []
         await persistLinks().catch(() => {})
       }
+      state.bookmarkSyncStatus = 'empty'
       if (!silent) toast(t('toast.bookmarksEmpty'))
       return
     }
     if (replace) {
       state.links = imported
       await persistLinks().catch(() => {})
+      state.bookmarkSyncStatus = 'synced'
+      state.lastBookmarkSyncAt = Date.now()
       if (!silent) toast(t('toast.bookmarksImported', { count: imported.reduce((total, group) => total + group.children.length, 0) }))
       return
     }
     const merged = mergeBookmarkGroups(state.links, imported)
     const addedCount = merged.addedCount
     state.links = merged.links
+    state.bookmarkSyncStatus = 'synced'
+    state.lastBookmarkSyncAt = Date.now()
     if (!addedCount && !silent) {
       toast(t('toast.bookmarksNoNew'))
       return
     }
     await persistLinks().catch(() => {})
     if (!silent && addedCount) toast(t('toast.bookmarksImported', { count: addedCount }))
-  } catch {
+  } catch (error) {
+    state.bookmarkSyncStatus = 'error'
+    console.error('[Lucuro] Browser bookmark sync failed:', error)
     if (!silent) toast(t('toast.bookmarksFailed'))
   } finally {
     state.bookmarkImporting = false

@@ -23,11 +23,6 @@ let autoLockTimer = null
 
 onMounted(() => {
   load()
-    .then(() => {
-      if (state.settings.dataSource !== 'json') {
-        return store.importBrowserBookmarks({ silent: true, replace: true }).catch(() => {})
-      }
-    })
     .catch(() => {})
   window.addEventListener('keydown', handleShortcut)
   window.addEventListener('pointerdown', handleActivity, { passive: true })
