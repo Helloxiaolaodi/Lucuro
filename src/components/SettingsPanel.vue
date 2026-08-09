@@ -165,89 +165,119 @@ function importJson(event) {
           </SortableList>
         </div>
 
-        <div v-else-if="activeTab === 'appearance'" class="settings-section">
-          <div class="form-grid">
-            <div class="field">
-              <label for="settings-language">{{ t('settings.language') }}</label>
-              <select id="settings-language" class="select" :value="locale" @change="changeLanguage">
-                <option value="en">{{ t('settings.english') }}</option>
-                <option value="zh">{{ t('settings.chinese') }}</option>
-              </select>
+        <div v-else-if="activeTab === 'appearance'" class="settings-section appearance-settings">
+          <div class="appearance-group">
+            <div class="appearance-group-head">
+              <h3 class="appearance-group-title">{{ t('settings.appearanceBasic') }}</h3>
+              <p class="section-help">{{ t('settings.appearanceBasicHelp') }}</p>
             </div>
-            <div class="field">
-              <label for="settings-title">{{ t('settings.workspaceTitle') }}</label>
-              <input id="settings-title" class="input" :value="settings.workspaceTitle" @input="store.setSettings({ workspaceTitle: $event.target.value })" />
-            </div>
-          </div>
-
-          <div class="form-grid settings-extra-grid">
-            <div class="field">
-              <label for="settings-radius">{{ t('settings.cardRadius') }}</label>
-              <input id="settings-radius" class="input" type="range" min="0" max="28" step="2" :value="settings.cardRadius" @input="store.setSettings({ cardRadius: Number($event.target.value) })" />
-            </div>
-            <div class="field">
-              <label for="settings-size">{{ t('settings.cardSize') }}</label>
-              <select id="settings-size" class="select" :value="settings.cardSize" @change="store.setSettings({ cardSize: $event.target.value })">
-                <option value="compact">{{ t('settings.compact') }}</option>
-                <option value="default">{{ t('settings.default') }}</option>
-                <option value="cozy">{{ t('settings.cozy') }}</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="settings-font-size">{{ t('settings.cardFontSize') }}</label>
-              <input id="settings-font-size" class="input" type="range" min="11" max="24" step="1" :value="settings.cardFontSize" @input="store.setSettings({ cardFontSize: Number($event.target.value) })" />
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="field full">
-              <label for="settings-hitokoto">{{ t('settings.hitokoto') }}</label>
-              <textarea
-                id="settings-hitokoto"
-                class="textarea"
-                :value="settings.hitokoto"
-                :placeholder="t('settings.hitokotoPlaceholder')"
-                @input="store.setHitokoto($event.target.value)"
-              ></textarea>
-              <p class="section-help">{{ t('settings.hitokotoHelp') }}</p>
-            </div>
-            <div class="field full">
-              <label for="settings-notes">{{ t('settings.notes') }}</label>
-              <textarea
-                id="settings-notes"
-                class="textarea"
-                :value="settings.notes"
-                :placeholder="t('settings.notesPlaceholder')"
-                @input="store.setNotes($event.target.value)"
-              ></textarea>
-              <p class="section-help">{{ t('settings.notesHelp') }}</p>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="field">
-              <label>{{ t('settings.backgroundImage') }}</label>
-              <div class="file-field">
-                <input ref="backgroundInput" class="visually-hidden" type="file" accept="image/*" @change="uploadBackground" />
-                <button class="btn" type="button" @click="backgroundInput?.click()">
-                  <Upload :size="15" />
-                  {{ t('settings.uploadLocalImage') }}
-                </button>
-                <button v-if="settings.background" class="btn btn-ghost" type="button" @click="store.setSettings({ background: '' })">{{ t('settings.remove') }}</button>
+            <div class="form-grid">
+              <div class="field">
+                <label for="settings-language">{{ t('settings.language') }}</label>
+                <select id="settings-language" class="select" :value="locale" @change="changeLanguage">
+                  <option value="en">{{ t('settings.english') }}</option>
+                  <option value="zh">{{ t('settings.chinese') }}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="settings-title">{{ t('settings.workspaceTitle') }}</label>
+                <input id="settings-title" class="input" :value="settings.workspaceTitle" @input="store.setSettings({ workspaceTitle: $event.target.value })" />
               </div>
             </div>
-            <div class="field">
-              <label for="settings-background-blur">{{ t('settings.backgroundBlur') }}</label>
-              <input id="settings-background-blur" class="input" type="range" min="0" max="24" step="1" :value="settings.backgroundBlur" @input="store.setSettings({ backgroundBlur: Number($event.target.value) })" />
+          </div>
+
+          <hr class="settings-divider" />
+
+          <div class="appearance-group">
+            <div class="appearance-group-head">
+              <h3 class="appearance-group-title">{{ t('settings.appearanceCards') }}</h3>
+              <p class="section-help">{{ t('settings.appearanceCardsHelp') }}</p>
             </div>
-            <div class="field">
-              <label>{{ t('settings.profileAvatar') }}</label>
-              <div class="file-field">
-                <input ref="avatarInput" class="visually-hidden" type="file" accept="image/*" @change="uploadAvatar" />
-                <button class="btn" type="button" @click="avatarInput?.click()">
-                  <Upload :size="15" />
-                  {{ t('settings.uploadAvatar') }}
-                </button>
+            <div class="form-grid appearance-cards-grid">
+              <div class="field">
+                <label for="settings-radius">{{ t('settings.cardRadius') }}</label>
+                <input id="settings-radius" class="input" type="range" min="0" max="28" step="2" :value="settings.cardRadius" @input="store.setSettings({ cardRadius: Number($event.target.value) })" />
+              </div>
+              <div class="field">
+                <label for="settings-size">{{ t('settings.cardSize') }}</label>
+                <select id="settings-size" class="select" :value="settings.cardSize" @change="store.setSettings({ cardSize: $event.target.value })">
+                  <option value="compact">{{ t('settings.compact') }}</option>
+                  <option value="default">{{ t('settings.default') }}</option>
+                  <option value="cozy">{{ t('settings.cozy') }}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="settings-font-size">{{ t('settings.cardFontSize') }}</label>
+                <input id="settings-font-size" class="input" type="range" min="11" max="24" step="1" :value="settings.cardFontSize" @input="store.setSettings({ cardFontSize: Number($event.target.value) })" />
+              </div>
+            </div>
+          </div>
+
+          <hr class="settings-divider" />
+
+          <div class="appearance-group">
+            <div class="appearance-group-head">
+              <h3 class="appearance-group-title">{{ t('settings.appearanceBackground') }}</h3>
+              <p class="section-help">{{ t('settings.appearanceBackgroundHelp') }}</p>
+            </div>
+            <div class="form-grid appearance-background-grid">
+              <div class="field">
+                <label>{{ t('settings.backgroundImage') }}</label>
+                <div class="file-field">
+                  <input ref="backgroundInput" class="visually-hidden" type="file" accept="image/*" @change="uploadBackground" />
+                  <button class="btn" type="button" @click="backgroundInput?.click()">
+                    <Upload :size="15" />
+                    {{ t('settings.uploadLocalImage') }}
+                  </button>
+                  <button v-if="settings.background" class="btn btn-ghost" type="button" @click="store.setSettings({ background: '' })">{{ t('settings.remove') }}</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="settings-background-blur">{{ t('settings.backgroundBlur') }}</label>
+                <input id="settings-background-blur" class="input" type="range" min="0" max="24" step="1" :value="settings.backgroundBlur" @input="store.setSettings({ backgroundBlur: Number($event.target.value) })" />
+              </div>
+              <div class="field">
+                <label>{{ t('settings.profileAvatar') }}</label>
+                <div class="file-field">
+                  <input ref="avatarInput" class="visually-hidden" type="file" accept="image/*" @change="uploadAvatar" />
+                  <button class="btn" type="button" @click="avatarInput?.click()">
+                    <Upload :size="15" />
+                    {{ t('settings.uploadAvatar') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="settings-divider" />
+
+          <div class="appearance-group">
+            <div class="appearance-group-head">
+              <h3 class="appearance-group-title">{{ t('settings.appearanceContent') }}</h3>
+              <p class="section-help">{{ t('settings.appearanceContentHelp') }}</p>
+            </div>
+            <div class="form-grid">
+              <div class="field full">
+                <label for="settings-hitokoto">{{ t('settings.hitokoto') }}</label>
+                <textarea
+                  id="settings-hitokoto"
+                  class="textarea"
+                  :value="settings.hitokoto"
+                  :placeholder="t('settings.hitokotoPlaceholder')"
+                  @input="store.setHitokoto($event.target.value)"
+                ></textarea>
+                <p class="section-help">{{ t('settings.hitokotoHelp') }}</p>
+              </div>
+              <div class="field full">
+                <label for="settings-notes">{{ t('settings.notes') }}</label>
+                <textarea
+                  id="settings-notes"
+                  class="textarea"
+                  :value="settings.notes"
+                  :placeholder="t('settings.notesPlaceholder')"
+                  @input="store.setNotes($event.target.value)"
+                ></textarea>
+                <p class="section-help">{{ t('settings.notesHelp') }}</p>
               </div>
             </div>
           </div>
