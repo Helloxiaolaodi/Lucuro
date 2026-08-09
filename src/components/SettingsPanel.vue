@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
-import { Bookmark, Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, Trash2, Upload, X } from 'lucide-vue-next'
+import { Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Trash2, Upload, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from '../stores/lucuro'
 import { setSavedLocale } from '../i18n'
+import { readFileAsDataUrl } from '../utils/storage'
 import SortableList from './SortableList.vue'
+import BackgroundCropModal from './BackgroundCropModal.vue'
 
 const props = defineProps({
   links: { type: Array, default: () => [] },
@@ -20,6 +22,8 @@ const backgroundInput = ref(null)
 const avatarInput = ref(null)
 const jsonInput = ref(null)
 const showWechatPay = ref(false)
+const cropModalOpen = ref(false)
+const pendingBackgroundDataUrl = ref('')
 
 function setTab(tab) {
   store.state.settingsTab = tab
@@ -29,9 +33,21 @@ function changeLanguage(event) {
   setSavedLocale(event.target.value)
 }
 
-function uploadBackground(event) {
-  store.uploadBackground(event.target.files?.[0])
+async function uploadBackground(event) {
+  const file = event.target.files?.[0]
   event.target.value = ''
+  if (!file) return
+  try {
+    pendingBackgroundDataUrl.value = await readFileAsDataUrl(file)
+    cropModalOpen.value = true
+  } catch {
+    store.toast(t('toast.imageReadFailed'))
+  }
+}
+
+function applyCroppedBackground(dataUrl) {
+  store.setSettings({ background: dataUrl })
+  cropModalOpen.value = false
 }
 
 function uploadAvatar(event) {
@@ -58,27 +74,58 @@ function importJson(event) {
       <div class="tabs">
         <button class="tab-btn" :class="{ active: activeTab === 'links' }" type="button" @click="setTab('links')">{{ t('settings.links') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'appearance' }" type="button" @click="setTab('appearance')">{{ t('settings.appearance') }}</button>
-        <button class="tab-btn" :class="{ active: activeTab === 'browser' }" type="button" @click="setTab('browser')">{{ t('settings.browser') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'support' }" type="button" @click="setTab('support')">{{ t('settings.support') }}</button>
       </div>
 
       <div class="settings-body">
         <div v-if="activeTab === 'links'" class="settings-section">
+          <div class="field full data-source-field">
+            <label>{{ t('settings.dataSource') }}</label>
+            <div class="segmented-row">
+              <button
+                class="segment-btn"
+                :class="{ active: settings.dataSource !== 'json' }"
+                type="button"
+                @click="store.setDataSource('browser')"
+              >
+                {{ t('settings.dataSourceBrowser') }}
+              </button>
+              <button
+                class="segment-btn"
+                :class="{ active: settings.dataSource === 'json' }"
+                type="button"
+                @click="store.setDataSource('json')"
+              >
+                {{ t('settings.dataSourceJson') }}
+              </button>
+            </div>
+            <p class="section-help">{{ t('settings.dataSourceHelp') }}</p>
+          </div>
+
           <div class="section-heading">
             <div>
               <h3 class="section-title">{{ t('settings.categories') }}</h3>
               <p class="section-help">{{ t('settings.categoriesHelp') }}</p>
             </div>
             <div class="row-actions">
-              <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="store.importBrowserBookmarks">
-                <Bookmark :size="15" />
-                {{ t('settings.importBookmarks') }}
-              </button>
-              <input ref="jsonInput" class="visually-hidden" type="file" accept=".json,application/json" @change="importJson" />
-              <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="jsonInput?.click()">
-                <Upload :size="15" />
-                {{ t('settings.importJson') }}
-              </button>
+              <template v-if="settings.dataSource === 'json'">
+                <input ref="jsonInput" class="visually-hidden" type="file" accept=".json,application/json" @change="importJson" />
+                <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="jsonInput?.click()">
+                  <Upload :size="15" />
+                  {{ t('settings.importJson') }}
+                </button>
+              </template>
+              <template v-else>
+                <button
+                  class="btn"
+                  type="button"
+                  :disabled="store.state.bookmarkImporting"
+                  @click="store.importBrowserBookmarks({ silent: false, replace: true })"
+                >
+                  <RefreshCw :size="15" />
+                  {{ t('settings.syncBrowserBookmarks') }}
+                </button>
+              </template>
               <button class="btn" type="button" @click="store.exportJson">
                 <Download :size="15" />
                 {{ t('settings.exportJson') }}
@@ -89,7 +136,6 @@ function importJson(event) {
               </button>
             </div>
           </div>
-          <p class="section-help">{{ t('settings.importBookmarksHelp') }}</p>
 
           <SortableList
             item-class="category-row"
@@ -135,10 +181,6 @@ function importJson(event) {
           </div>
 
           <div class="form-grid settings-extra-grid">
-            <div class="field">
-              <label for="settings-accent">{{ t('settings.accentColor') }}</label>
-              <input id="settings-accent" class="input color-input" type="color" :value="settings.accent" @input="store.setSettings({ accent: $event.target.value })" />
-            </div>
             <div class="field">
               <label for="settings-radius">{{ t('settings.cardRadius') }}</label>
               <input id="settings-radius" class="input" type="range" min="0" max="28" step="2" :value="settings.cardRadius" @input="store.setSettings({ cardRadius: Number($event.target.value) })" />
@@ -191,9 +233,12 @@ function importJson(event) {
                   <Upload :size="15" />
                   {{ t('settings.uploadLocalImage') }}
                 </button>
-                <input class="input" :value="settings.background.startsWith('data:') ? 'Custom local background' : settings.background" @input="store.setSettings({ background: $event.target.value })" placeholder="https://example.com/wallpaper.jpg" />
                 <button v-if="settings.background" class="btn btn-ghost" type="button" @click="store.setSettings({ background: '' })">{{ t('settings.remove') }}</button>
               </div>
+            </div>
+            <div class="field">
+              <label for="settings-background-blur">{{ t('settings.backgroundBlur') }}</label>
+              <input id="settings-background-blur" class="input" type="range" min="0" max="24" step="1" :value="settings.backgroundBlur" @input="store.setSettings({ backgroundBlur: Number($event.target.value) })" />
             </div>
             <div class="field">
               <label>{{ t('settings.profileAvatar') }}</label>
@@ -203,66 +248,7 @@ function importJson(event) {
                   <Upload :size="15" />
                   {{ t('settings.uploadAvatar') }}
                 </button>
-                <input class="input" :value="settings.profileAvatar" @input="store.setSettings({ profileAvatar: $event.target.value })" placeholder="https://example.com/avatar.jpg" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="activeTab === 'browser'" class="settings-section">
-          <div class="section-heading">
-            <div>
-              <h3 class="section-title">{{ t('settings.browserIntegration') }}</h3>
-              <p class="section-help">{{ t('settings.browserIntegrationHelp') }}</p>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="field full">
-              <label for="settings-new-tab">{{ t('settings.newTabMode') }}</label>
-              <div class="segmented-row">
-                <button
-                  type="button"
-                  class="segment-btn"
-                  :class="{ active: settings.newTabEnabled !== false }"
-                  @click="store.setSettings({ newTabEnabled: true })"
-                >
-                  {{ t('settings.newTabTakeover') }}
-                </button>
-                <button
-                  type="button"
-                  class="segment-btn"
-                  :class="{ active: settings.newTabEnabled === false }"
-                  @click="store.setSettings({ newTabEnabled: false })"
-                >
-                  {{ t('settings.newTabBlank') }}
-                </button>
-              </div>
-            </div>
-
-            <div class="field full">
-              <label>{{ t('settings.browserBookmarks') }}</label>
-              <div class="file-field">
-                <button
-                  class="btn"
-                  :class="{ 'btn-primary': store.state.bookmarkEnabled }"
-                  type="button"
-                  @click="store.toggleBookmarkPermission"
-                >
-                  <Bookmark :size="15" />
-                  {{ store.state.bookmarkEnabled ? t('settings.disableBookmarks') : t('settings.enableBookmarks') }}
-                </button>
-                <button
-                  class="btn"
-                  type="button"
-                  :disabled="!store.state.bookmarkEnabled || store.state.bookmarkImporting"
-                  @click="store.importBrowserBookmarks"
-                >
-                  <Bookmark :size="15" />
-                  {{ store.state.bookmarkImporting ? t('settings.importingBookmarks') : t('settings.importBookmarks') }}
-                </button>
-              </div>
-              <p class="section-help">{{ t('settings.bookmarkCaptureHelp') }}</p>
             </div>
           </div>
         </div>
@@ -280,19 +266,18 @@ function importJson(event) {
               <p>{{ t('settings.supportQuote') }}</p>
               <p class="support-quote-en">{{ t('settings.supportQuoteEn') }}</p>
             </div>
-            <div class="support-meta">
-              <span>{{ t('settings.supportAuthor') }}</span>
-              <span>Helloxiaolaodi</span>
-            </div>
             <div class="support-actions">
               <a class="btn btn-primary support-button" href="https://ko-fi.com/helloxiaolaodi" target="_blank" rel="noopener noreferrer">
                 <HeartHandshake :size="15" />
                 {{ t('settings.supportKoFi') }}
               </a>
-              <button class="btn support-button" type="button" @click="showWechatPay = true">
+              <button class="btn btn-primary support-button" type="button" @click="showWechatPay = true">
                 <QrCode :size="15" />
                 {{ t('settings.supportWechat') }}
               </button>
+            </div>
+            <div class="support-meta">
+              <span>{{ t('settings.supportAuthor') }}</span>
             </div>
           </div>
         </div>
@@ -315,4 +300,11 @@ function importJson(event) {
       </div>
     </div>
   </div>
+
+  <BackgroundCropModal
+    v-if="cropModalOpen"
+    :src="pendingBackgroundDataUrl"
+    @confirm="applyCroppedBackground"
+    @close="cropModalOpen = false"
+  />
 </template>

@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill'
 
 const extensionStorage = browser?.storage?.local || globalThis.chrome?.storage?.local
-const extensionTabs = browser?.tabs || globalThis.chrome?.tabs
 const extensionSyncStorage = browser?.storage?.sync || globalThis.chrome?.storage?.sync
 const extensionBookmarks = browser?.bookmarks || globalThis.chrome?.bookmarks
 
@@ -107,82 +106,40 @@ export function getExtensionRuntime() {
   return browser?.runtime || globalThis.chrome?.runtime || null
 }
 
-export function getExtensionTabs() {
-  return extensionTabs
-}
-
-function promisify(apiMethod, ...args) {
-  return new Promise((resolve) => {
-    let settled = false
-    const done = (value) => {
-      if (settled) return
-      settled = true
-      resolve(value)
+async function callApi(apiMethod, args = [], fallback = false) {
+  try {
+    const result = apiMethod(...args)
+    if (result && typeof result.then === 'function') {
+      const resolved = await result
+      if (resolved !== undefined) return resolved
+    } else if (result !== undefined) {
+      return result
     }
+  } catch {
+    // Fall through to callback-style APIs, used by non-promisified Chrome contexts.
+  }
+  return new Promise((resolve) => {
     try {
-      const result = apiMethod(...args, done)
+      const result = apiMethod(...args, (value) => resolve(value === undefined ? fallback : value))
       if (result && typeof result.then === 'function') {
-        result.then(done).catch(() => done(false))
+        result
+          .then((value) => resolve(value === undefined ? fallback : value))
+          .catch(() => resolve(fallback))
       }
     } catch {
-      done(false)
+      resolve(fallback)
     }
   })
 }
 
-export function getBookmarkTree() {
-  if (!extensionBookmarks?.getTree) return Promise.resolve([])
-  return promisify(extensionBookmarks.getTree.bind(extensionBookmarks))
+export async function getBookmarkTree() {
+  if (!extensionBookmarks?.getTree) return []
+  const tree = await callApi(extensionBookmarks.getTree.bind(extensionBookmarks), [], [])
+  return Array.isArray(tree) ? tree : []
 }
 
-export function createBookmark(payload) {
-  if (!extensionBookmarks?.create) return Promise.resolve(false)
-  return promisify(extensionBookmarks.create.bind(extensionBookmarks), payload)
-}
-
-export async function requestOptionalPermission(permission) {
-  const api = browser?.permissions || globalThis.chrome?.permissions
-  if (!api?.request) return true
-  const request = { permissions: [permission] }
-  const hasPermission = await promisify(api.contains.bind(api), request)
-  if (hasPermission) return true
-  return Boolean(await promisify(api.request.bind(api), request))
-}
-
-export async function hasOptionalPermission(permission) {
-  const api = browser?.permissions || globalThis.chrome?.permissions
-  if (!api?.contains) return true
-  return Boolean(await promisify(api.contains.bind(api), { permissions: [permission] }))
-}
-
-export async function removeOptionalPermission(permission) {
-  const api = browser?.permissions || globalThis.chrome?.permissions
-  if (!api?.remove) return false
-  return Boolean(await promisify(api.remove.bind(api), { permissions: [permission] }))
-}
-
-export function queryActiveTab() {
-  if (!extensionTabs) {
-    return Promise.resolve([{ title: window.document.title, url: window.location.href }])
-  }
-  return extensionTabs.query({ active: true, currentWindow: true })
-}
-
-export async function ensureOriginPermission(url) {
-  let origin
-  try {
-    origin = new URL(url).origin
-  } catch {
-    return true
-  }
-  const permissionsApi = browser?.permissions || globalThis.chrome?.permissions
-  if (!permissionsApi?.contains || !permissionsApi?.request) return true
-  const permission = { origins: [`${origin}/*`] }
-  try {
-    const hasPermission = await permissionsApi.contains(permission)
-    if (hasPermission) return true
-    return Boolean(await permissionsApi.request(permission))
-  } catch {
-    return true
-  }
+export async function createBookmark(payload) {
+  if (!extensionBookmarks?.create) return false
+  const result = await callApi(extensionBookmarks.create.bind(extensionBookmarks), [payload], false)
+  return result && typeof result === 'object' ? result : false
 }

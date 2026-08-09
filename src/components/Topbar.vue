@@ -1,11 +1,10 @@
 <script setup>
-import { Lock, Menu, Moon, NotebookPen, Settings, Sun, Unlock } from 'lucide-vue-next'
+import { Lock, Moon, Settings, Sun, Unlock } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 defineProps({
-  title: { type: String, default: 'Lucuro' },
   engines: { type: Array, default: () => [] },
   defaultEngineId: { type: String, default: 'google' },
   theme: { type: String, default: 'light' },
@@ -14,7 +13,7 @@ defineProps({
   sortMode: { type: String, default: 'default' }
 })
 
-const emit = defineEmits(['toggle-sidebar', 'toggle-theme', 'open-settings', 'search', 'engine-change', 'query-change', 'toggle-lock', 'toggle-notes', 'sort-change'])
+const emit = defineEmits(['toggle-theme', 'open-settings', 'search', 'engine-change', 'query-change', 'toggle-lock', 'sort-change'])
 
 function onInput(value) {
   emit('query-change', value)
@@ -23,13 +22,6 @@ function onInput(value) {
 
 <template>
   <header class="topbar">
-    <div class="brand-line">
-      <button class="icon-btn mobile-menu" type="button" :aria-label="t('topbar.toggleSidebar')" @click="emit('toggle-sidebar')">
-        <Menu :size="18" />
-      </button>
-      <h1>{{ title || 'Lucuro' }}</h1>
-    </div>
-
     <div class="topbar-tools">
       <div class="search-wrap">
         <form class="search-box" @submit.prevent="emit('search')">
@@ -62,7 +54,6 @@ function onInput(value) {
             <option value="default">{{ t('topbar.sortDefault') }}</option>
             <option value="frequency">{{ t('topbar.sortFrequency') }}</option>
             <option value="alphabetical">{{ t('topbar.sortAlphabetical') }}</option>
-            <option value="added">{{ t('topbar.sortAdded') }}</option>
           </select>
         </form>
       </div>
@@ -71,9 +62,6 @@ function onInput(value) {
         <button class="icon-btn" type="button" :aria-label="t('topbar.toggleLock')" :title="t('topbar.toggleLock')" @click="emit('toggle-lock')">
           <Lock v-if="layoutLocked" :size="18" />
           <Unlock v-else :size="18" />
-        </button>
-        <button class="icon-btn" type="button" :aria-label="t('topbar.toggleNotes')" :title="t('topbar.toggleNotes')" @click="emit('toggle-notes')">
-          <NotebookPen :size="18" />
         </button>
         <button class="icon-btn" type="button" :aria-label="t('topbar.toggleTheme')" :title="t('topbar.toggleTheme')" @click="emit('toggle-theme')">
           <Sun v-if="theme === 'light'" :size="18" />

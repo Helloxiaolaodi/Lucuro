@@ -1,11 +1,5 @@
 import { uid } from '../data/defaults'
-import {
-  createBookmark,
-  getBookmarkTree,
-  hasOptionalPermission,
-  removeOptionalPermission,
-  requestOptionalPermission
-} from './storage'
+import { createBookmark, getBookmarkTree } from './storage'
 
 export function bookmarkCard(node) {
   const url = String(node.url || '').trim()
@@ -35,35 +29,23 @@ export function parseBookmarkNodes(nodes = []) {
 
 export function parseBookmarkTreeToGroups(nodes = []) {
   const groups = []
-  nodes.forEach((node) => {
-    if (!node) return
-    if (node.children?.length) {
-      const rootTitle = node.title || 'Imported bookmarks'
-      const directCards = []
-      node.children.forEach((child) => {
-        if (!child) return
-        if (child.children?.length) {
-          const subChildren = parseBookmarkNodes(child.children)
-          if (subChildren.length) {
-            pushOrMergeGroup(
-              groups,
-              `${rootTitle} - ${child.title || 'Bookmarks'}`,
-              subChildren
-            )
-          }
-        } else if (child.url) {
-          directCards.push(bookmarkCard(child))
-        }
-      })
-      if (directCards.length) pushOrMergeGroup(groups, rootTitle, directCards)
-    } else if (node.url) {
-      groups.push({
-        title: 'Imported bookmarks',
-        subtitle: '',
-        children: [bookmarkCard(node)]
-      })
+  const walk = (items, parentTitle) => {
+    const directCards = []
+    items.forEach((node) => {
+      if (!node) return
+      if (node.url) {
+        directCards.push(bookmarkCard(node))
+        return
+      }
+      const folderTitle = node.title || 'Bookmarks'
+      const pathTitle = parentTitle ? `${parentTitle} - ${folderTitle}` : folderTitle
+      walk(node.children || [], pathTitle)
+    })
+    if (directCards.length) {
+      pushOrMergeGroup(groups, parentTitle || 'Imported bookmarks', directCards)
     }
-  })
+  }
+  walk(nodes, '')
   return groups
 }
 
@@ -132,18 +114,6 @@ export function mergeBookmarkGroups(currentLinks, groups = []) {
   })
 
   return { links, addedCount }
-}
-
-export async function ensureBookmarkPermission() {
-  return requestOptionalPermission('bookmarks')
-}
-
-export async function hasBookmarkPermission() {
-  return hasOptionalPermission('bookmarks')
-}
-
-export async function revokeBookmarkPermission() {
-  return removeOptionalPermission('bookmarks')
 }
 
 export async function fetchBrowserBookmarkGroups() {

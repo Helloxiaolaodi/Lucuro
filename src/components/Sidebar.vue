@@ -1,8 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { Plus, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './LucuroLogo.vue'
+import CategoryTreeNode from './CategoryTreeNode.vue'
+import { useLucuro } from '../stores/lucuro'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -16,18 +18,20 @@ const props = defineProps({
 
 const emit = defineEmits(['select-tag', 'select-category', 'add-tag', 'remove-tag', 'toggle'])
 const { t } = useI18n()
+const store = useLucuro()
 const newTag = ref('')
+const addingTag = ref(false)
+const tagInput = ref(null)
+const profileName = ref(String(props.settings.profileName || 'Lucuro'))
 
-const categoryCounts = computed(() => {
-  const counts = {}
-  props.categories.forEach((category, index) => {
-    counts[index] = category.children.length
-  })
-  return counts
+watch(() => props.settings.profileName, (value) => {
+  profileName.value = String(value || 'Lucuro')
 })
 
-function categoryTitle(category) {
-  return (category.title || '').split(' - ')[0] || 'Uncategorized'
+function saveProfileName() {
+  const name = profileName.value.trim() || 'Lucuro'
+  profileName.value = name
+  store.setSettings({ profileName: name })
 }
 
 function clicksFor(category) {
@@ -36,10 +40,70 @@ function clicksFor(category) {
 
 const totalClicks = computed(() => props.categories.reduce((total, category) => total + clicksFor(category), 0))
 
-function submitTag() {
-  if (!newTag.value.trim()) return
-  emit('add-tag', newTag.value.trim())
+const categoryTree = computed(() => {
+  const root = {
+    name: '',
+    pathKey: '',
+    children: new Map(),
+    categoryIndex: null,
+    count: 0,
+    descendantIndexes: []
+  }
+
+  props.categories.forEach((category, index) => {
+    const title = String(category.title || 'Uncategorized').trim()
+    const parts = title.split(' - ').map((part) => part.trim()).filter(Boolean)
+    const segments = parts.length ? parts : ['Uncategorized']
+    let node = root
+
+    segments.forEach((part, partIndex) => {
+      const name = part || 'Uncategorized'
+      const pathKey = partIndex === 0 ? name : `${node.pathKey} / ${name}`
+      if (!node.children.has(name)) {
+        node.children.set(name, {
+          name,
+          pathKey,
+          children: new Map(),
+          categoryIndex: null,
+          count: 0,
+          descendantIndexes: []
+        })
+      }
+      node = node.children.get(name)
+      node.count += Number(category.children?.length || 0)
+      node.descendantIndexes.push(index)
+    })
+
+    node.categoryIndex = index
+  })
+
+  return toTree(root.children)
+})
+
+const sortedTags = computed(() => [...props.tags].sort((a, b) => String(a).localeCompare(String(b))))
+
+function toTree(children) {
+  return [...children.values()].map((node) => ({
+    ...node,
+    children: toTree(node.children)
+  }))
+}
+
+async function openTagInput() {
+  addingTag.value = true
+  await nextTick()
+  tagInput.value?.focus()
+}
+
+function closeTagInput() {
+  addingTag.value = false
   newTag.value = ''
+}
+
+function submitTag() {
+  const name = newTag.value.trim()
+  if (name) emit('add-tag', name)
+  closeTagInput()
 }
 </script>
 
@@ -67,7 +131,7 @@ function submitTag() {
         >
           {{ t('sidebar.all') }}
         </button>
-        <span v-for="tag in tags" :key="tag" class="tag-item">
+        <span v-for="tag in sortedTags" :key="tag" class="tag-chip-wrap">
           <button
             type="button"
             class="tag-chip"
@@ -77,51 +141,69 @@ function submitTag() {
             {{ tag }}
           </button>
           <button
-            class="tag-remove"
+            class="tag-chip-remove"
             type="button"
             :title="t('sidebar.removeTag')"
             :aria-label="t('sidebar.removeTag', { tag })"
             @click="emit('remove-tag', tag)"
           >
-            <X :size="12" />
+            <X :size="10" />
           </button>
         </span>
       </div>
-      <form class="tag-manage" @submit.prevent="submitTag">
-        <input
-          v-model.trim="newTag"
-          class="tag-input"
-          type="text"
-          :placeholder="t('sidebar.tagPlaceholder')"
-          :aria-label="t('sidebar.tagPlaceholder')"
-        />
-        <button class="mini-btn" type="submit" :title="t('sidebar.addTag')" :aria-label="t('sidebar.addTag')">
+      <div class="tag-add">
+        <button v-if="!addingTag" class="tag-add-trigger" type="button" @click="openTagInput">
           <Plus :size="13" />
+          {{ t('sidebar.addTag') }}
         </button>
-      </form>
+        <form v-else class="tag-manage" @submit.prevent="submitTag">
+          <input
+            ref="tagInput"
+            v-model.trim="newTag"
+            class="tag-input"
+            type="text"
+            :placeholder="t('sidebar.tagPlaceholder')"
+            :aria-label="t('sidebar.tagPlaceholder')"
+            @blur="closeTagInput"
+            @keydown.esc="closeTagInput"
+          />
+          <button class="tag-add-submit" type="submit" :title="t('sidebar.addTag')" :aria-label="t('sidebar.addTag')" @mousedown.prevent>
+            <Plus :size="14" />
+          </button>
+        </form>
+      </div>
 
       <div class="side-label">{{ t('sidebar.categories') }}</div>
       <div class="category-links">
-        <a
-          v-for="(category, index) in categories"
-          :key="category.id || index"
-          class="category-link"
-          :class="{ active: activeCategory === index }"
-          :href="`#main-group-${index}`"
-          @click="emit('select-category', index)"
-        >
-          <span>{{ categoryTitle(category) }}</span>
-          <span class="badge">{{ categoryCounts[index] || 0 }}</span>
-        </a>
+        <div v-if="categoryTree.length" class="category-tree">
+          <CategoryTreeNode
+            v-for="node in categoryTree"
+            :key="node.pathKey"
+            :node="node"
+            :active-category="activeCategory"
+            @select-category="emit('select-category', $event)"
+          />
+        </div>
+        <p v-else class="category-empty">{{ t('sidebar.emptyCategories') }}</p>
       </div>
     </nav>
 
     <div class="sidebar-footer">
       <div class="profile-row">
         <img v-if="settings.profileAvatar" class="profile-avatar" :src="settings.profileAvatar" alt="Profile avatar" />
-        <div v-else class="profile-avatar profile-avatar-fallback" aria-hidden="true">鹿</div>
+        <div v-else class="profile-avatar profile-avatar-fallback profile-avatar-logo" aria-hidden="true">
+          <LucuroLogo :size="32" />
+        </div>
         <div class="profile-copy">
-          <div class="profile-name">{{ settings.profileName || 'Lucuro Explorer' }}</div>
+          <input
+            v-model="profileName"
+            class="profile-name-input"
+            type="text"
+            :aria-label="t('sidebar.profileName')"
+            :title="t('sidebar.profileName')"
+            @blur="saveProfileName"
+            @keydown.enter.prevent="$event.target.blur()"
+          />
           <div class="profile-meta">{{ t('sidebar.profileMeta', { categories: categories.length, clicks: totalClicks }) }}</div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { ExternalLink, GripVertical, NotebookPen, Pencil, Plus, RefreshCw, Trash2, X } from 'lucide-vue-next'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { Bold, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from './stores/lucuro'
 import Sidebar from './components/Sidebar.vue'
@@ -16,17 +16,49 @@ const { state, load } = store
 const { t } = useI18n()
 const sidebarOpen = ref(false)
 const notesOpen = ref(false)
+const notesTextarea = ref(null)
+const noteHistory = ref([])
+const AUTO_LOCK_DELAY = 30000
+let autoLockTimer = null
 
 onMounted(() => {
   load()
+    .then(() => {
+      if (state.settings.dataSource !== 'json') {
+        return store.importBrowserBookmarks({ silent: true, replace: true }).catch(() => {})
+      }
+    })
+    .catch(() => {})
   window.addEventListener('keydown', handleShortcut)
+  window.addEventListener('pointerdown', handleActivity, { passive: true })
+  window.addEventListener('pointermove', handleActivity, { passive: true })
+  window.addEventListener('keydown', handleActivity, { passive: true })
+  window.addEventListener('wheel', handleActivity, { passive: true })
+  window.addEventListener('touchstart', handleActivity, { passive: true })
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleShortcut)
+  window.removeEventListener('pointerdown', handleActivity)
+  window.removeEventListener('pointermove', handleActivity)
+  window.removeEventListener('keydown', handleActivity)
+  window.removeEventListener('wheel', handleActivity)
+  window.removeEventListener('touchstart', handleActivity)
+  clearTimeout(autoLockTimer)
 })
 
-const visibleGroups = computed(() => store.filteredCategories())
+function categoryParts(title) {
+  const parts = String(title || 'Uncategorized')
+    .split(' - ')
+    .map((part) => part.trim())
+    .filter(Boolean)
+  return parts.length ? parts : ['Uncategorized']
+}
+
+const visibleGroups = computed(() => store.filteredCategories().map((entry) => ({
+  ...entry,
+  parts: categoryParts(entry.category.title)
+})))
 
 function handleShortcut(event) {
   const mod = event.ctrlKey || event.metaKey
@@ -40,7 +72,7 @@ function handleShortcut(event) {
   const key = event.key.toLowerCase()
   if (key === 'l') {
     event.preventDefault()
-    store.setSettings({ layoutLocked: !state.settings.layoutLocked })
+    toggleLayoutLock()
   } else if (key === 'n') {
     event.preventDefault()
     notesOpen.value = !notesOpen.value
@@ -52,6 +84,63 @@ function handleShortcut(event) {
 
 function toggleTheme() {
   store.setSettings({ theme: state.settings.theme === 'dark' ? 'light' : 'dark' })
+}
+
+function toggleLayoutLock() {
+  store.setSettings({ layoutLocked: !state.settings.layoutLocked })
+}
+
+function scheduleAutoLock() {
+  clearTimeout(autoLockTimer)
+  autoLockTimer = setTimeout(() => {
+    if (!state.settings.layoutLocked) store.setSettings({ layoutLocked: true })
+  }, AUTO_LOCK_DELAY)
+}
+
+function handleActivity() {
+  if (!state.settings.layoutLocked) scheduleAutoLock()
+}
+
+watch(() => state.settings.layoutLocked, (locked) => {
+  if (locked) {
+    clearTimeout(autoLockTimer)
+  } else {
+    scheduleAutoLock()
+  }
+})
+
+function insertMarkdown(prefix, suffix = '') {
+  const textarea = notesTextarea.value
+  if (!textarea) return
+  const start = textarea.selectionStart ?? textarea.value.length
+  const end = textarea.selectionEnd ?? textarea.value.length
+  const selected = textarea.value.slice(start, end)
+  const inserted = `${prefix}${selected}${suffix}`
+  const nextValue = `${textarea.value.slice(0, start)}${inserted}${textarea.value.slice(end)}`
+  store.setNotes(nextValue)
+  nextTick(() => {
+    textarea.focus()
+    const cursor = selected ? start + inserted.length : start + prefix.length
+    textarea.setSelectionRange(cursor, cursor)
+  })
+}
+
+function onNotesInput(value) {
+  if (value !== state.settings.notes) {
+    noteHistory.value.push(state.settings.notes)
+    if (noteHistory.value.length > 60) noteHistory.value.shift()
+  }
+  store.setNotes(value)
+}
+
+function clearNotes() {
+  noteHistory.value.push(state.settings.notes)
+  store.setNotes('')
+}
+
+function undoNotes() {
+  const previous = noteHistory.value.pop()
+  if (previous !== undefined) store.setNotes(previous)
 }
 
 function openSettings(tab = 'links') {
@@ -96,18 +185,15 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
 
     <main class="main-area">
       <Topbar
-        :title="state.settings.workspaceTitle || 'Lucuro'"
         :engines="state.settings.engines"
         :default-engine-id="state.settings.defaultEngineId"
         :theme="state.settings.theme"
         :query="state.searchQuery"
         :layout-locked="state.settings.layoutLocked"
         :sort-mode="state.settings.sortMode"
-        @toggle-sidebar="sidebarOpen = !sidebarOpen"
         @toggle-theme="toggleTheme"
         @open-settings="openSettings('appearance')"
-        @toggle-lock="store.setSettings({ layoutLocked: !state.settings.layoutLocked })"
-        @toggle-notes="notesOpen = !notesOpen"
+        @toggle-lock="toggleLayoutLock"
         @sort-change="(value) => store.setSettings({ sortMode: value })"
         @search="store.doSearch"
         @engine-change="(id) => store.setSettings({ defaultEngineId: id })"
@@ -143,7 +229,12 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
           >
             <div class="category-head">
               <div>
-                <h3 class="category-title">{{ entry.category.title }}</h3>
+                <h3 class="category-title">
+                  <template v-for="(part, partIndex) in entry.parts" :key="`${part}-${partIndex}`">
+                    <span v-if="partIndex > 0" class="category-breadcrumb-separator" aria-hidden="true">/</span>
+                    <span :class="partIndex === entry.parts.length - 1 ? 'category-breadcrumb-current' : 'category-breadcrumb-parent'">{{ part }}</span>
+                  </template>
+                </h3>
                 <p v-if="entry.category.subtitle" class="category-subtitle">{{ entry.category.subtitle }}</p>
               </div>
               <div class="category-actions">
@@ -219,11 +310,47 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
             <X :size="14" />
           </button>
         </div>
+        <div class="notes-toolbar" aria-label="Markdown formatting">
+          <button class="notes-tool-btn" type="button" :title="t('notes.bold')" :aria-label="t('notes.bold')" @mousedown.prevent @click="insertMarkdown('**', '**')">
+            <Bold :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.italic')" :aria-label="t('notes.italic')" @mousedown.prevent @click="insertMarkdown('*', '*')">
+            <Italic :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.heading1')" :aria-label="t('notes.heading1')" @mousedown.prevent @click="insertMarkdown('# ')">
+            <Heading1 :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.heading2')" :aria-label="t('notes.heading2')" @mousedown.prevent @click="insertMarkdown('## ')">
+            <Heading2 :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.code')" :aria-label="t('notes.code')" @mousedown.prevent @click="insertMarkdown('```\n', '\n```')">
+            <Code2 :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.link')" :aria-label="t('notes.link')" @mousedown.prevent @click="insertMarkdown('[', '](url)')">
+            <Link2 :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.list')" :aria-label="t('notes.list')" @mousedown.prevent @click="insertMarkdown('- ')">
+            <List :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.quote')" :aria-label="t('notes.quote')" @mousedown.prevent @click="insertMarkdown('> ')">
+            <Quote :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.strikethrough')" :aria-label="t('notes.strikethrough')" @mousedown.prevent @click="insertMarkdown('~~', '~~')">
+            <Strikethrough :size="14" />
+          </button>
+          <button class="notes-tool-btn" type="button" :title="t('notes.undo')" :aria-label="t('notes.undo')" @mousedown.prevent @click="undoNotes">
+            <Undo2 :size="14" />
+          </button>
+          <button class="notes-tool-btn notes-danger" type="button" :title="t('notes.clear')" :aria-label="t('notes.clear')" @mousedown.prevent @click="clearNotes">
+            <Trash2 :size="14" />
+          </button>
+        </div>
         <textarea
+          ref="notesTextarea"
           class="notes-input"
           :value="state.settings.notes"
           :placeholder="t('settings.notesPlaceholder')"
-          @input="store.setNotes($event.target.value)"
+          @input="onNotesInput($event.target.value)"
         ></textarea>
       </div>
       <button class="notes-toggle" type="button" :title="t('topbar.toggleNotes')" :aria-label="t('topbar.toggleNotes')" @click="notesOpen = !notesOpen">
