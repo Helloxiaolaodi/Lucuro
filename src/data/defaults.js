@@ -31,12 +31,13 @@ export const DEFAULT_HITOKOTO = [
 
 export const DEFAULT_SETTINGS = {
   theme: 'light',
-  accent: '#0087eb',
+  dataSource: 'browser',
   cardSize: 'default',
   cardRadius: 14,
   cardFontSize: 15,
   background: '',
-  profileName: 'Lucuro Explorer',
+  backgroundBlur: 0,
+  profileName: 'Lucuro',
   profileAvatar: '',
   workspaceTitle: 'Lucuro - 鹿客司南',
   newTabEnabled: true,
@@ -44,7 +45,8 @@ export const DEFAULT_SETTINGS = {
   defaultEngineId: 'google',
   engines: DEFAULT_ENGINES,
   hitokoto: '',
-  notes: ''
+  notes: '',
+  layoutLocked: true
 }
 
 export function normalizeLinks(data) {
@@ -98,9 +100,10 @@ export function normalizeCard(child, index = 0) {
 
 export function normalizeSettings(saved = {}) {
   const engines = Array.isArray(saved.engines) && saved.engines.length ? saved.engines : DEFAULT_ENGINES
+  const { accent, ...safeSettings } = saved
   return {
     ...DEFAULT_SETTINGS,
-    ...saved,
+    ...safeSettings,
     engines
   }
 }

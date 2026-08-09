@@ -23,7 +23,7 @@
 html,
 body {
   width: 360px;
-  height: 340px;
+  height: auto;
   min-height: 0;
   margin: 0;
   overflow: hidden;
@@ -61,7 +61,7 @@ button {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   min-height: 0;
   max-height: 340px;
   overflow: hidden;
@@ -110,13 +110,6 @@ button {
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.08em;
-}
-
-.popup-header p {
-  margin: 4px 0 0;
-  color: var(--ink-faint);
-  font-size: 11px;
-  letter-spacing: 0.04em;
 }
 
 .popup-body {
@@ -238,38 +231,4 @@ button {
   color: var(--danger);
   background: var(--cinnabar-soft);
   border: 1px solid rgba(178, 58, 48, 0.18);
-}
-
-.popup-footer {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 18px;
-  border-top: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.34);
-  color: var(--ink-faint);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-}
-
-.popup-footer button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.5);
-  color: var(--ink-faint);
-  transition: color 0.2s, border-color 0.2s, transform 0.2s;
-}
-
-.popup-footer button:hover {
-  color: var(--azure);
-  border-color: rgba(0, 135, 235, 0.3);
-  transform: translateY(-1px);
 }

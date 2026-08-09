@@ -9,11 +9,8 @@ import {
 } from '../data/defaults'
 import { storage, syncStorage, readFileAsDataUrl, readFileAsText, downloadJson, onStorageChanged } from '../utils/storage'
 import {
-  ensureBookmarkPermission,
   fetchBrowserBookmarkGroups,
-  hasBookmarkPermission,
-  mergeBookmarkGroups,
-  revokeBookmarkPermission
+  mergeBookmarkGroups
 } from '../utils/bookmarks'
 
 const state = reactive({
@@ -26,7 +23,6 @@ const state = reactive({
   searchQuery: '',
   settingsOpen: false,
   settingsTab: 'links',
-  bookmarkEnabled: false,
   cardModal: null,
   categoryModal: null,
   toastMessage: '',
@@ -101,7 +97,6 @@ async function load() {
   if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
   await loadLinks()
-  state.bookmarkEnabled = await hasBookmarkPermission().catch(() => false)
   state.loaded = true
   refreshHitokoto()
   applySettings()
@@ -142,10 +137,11 @@ function applySettings() {
   const root = document.documentElement
   root.dataset.theme = state.settings.theme === 'dark' ? 'dark' : 'light'
   root.dataset.cardSize = state.settings.cardSize || 'default'
-  root.style.setProperty('--accent', state.settings.accent || '#0087eb')
-  root.style.setProperty('--accent-soft', hexToRgba(state.settings.accent || '#0087eb', 0.14))
+  root.style.setProperty('--accent', '#0087eb')
+  root.style.setProperty('--accent-soft', 'rgba(0, 135, 235, 0.14)')
   root.style.setProperty('--card-radius', `${Number(state.settings.cardRadius) || 14}px`)
   root.style.setProperty('--card-font-size', `${Number(state.settings.cardFontSize) || 15}px`)
+  root.style.setProperty('--bg-blur', `${Number(state.settings.backgroundBlur) || 0}px`)
 
   const body = document.body
   if (state.settings.background) {
@@ -153,21 +149,14 @@ function applySettings() {
     const overlay = state.settings.theme === 'dark'
       ? 'linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.55)), '
       : ''
-    body.style.backgroundImage = `${overlay}url("${cssEscape(state.settings.background)}")`
+    root.style.setProperty('--bg-image', `${overlay}url("${cssEscape(state.settings.background)}")`)
+    body.style.backgroundImage = ''
   } else {
     body.classList.remove('has-custom-bg')
+    root.style.removeProperty('--bg-image')
     body.style.backgroundImage = ''
   }
   document.title = state.settings.workspaceTitle || 'Lucuro'
-}
-
-function hexToRgba(hex, alpha) {
-  const clean = String(hex || '').replace('#', '')
-  if (clean.length !== 6 || /[^0-9a-fA-F]/.test(clean)) return `rgba(0, 135, 235, ${alpha})`
-  const r = parseInt(clean.slice(0, 2), 16)
-  const g = parseInt(clean.slice(2, 4), 16)
-  const b = parseInt(clean.slice(4, 6), 16)
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
 function cssEscape(value) {
@@ -193,49 +182,41 @@ function trackClick(card) {
   if (state.settings.sortByClicks) state.links = [...state.links]
 }
 
-async function importBrowserBookmarks() {
+async function importBrowserBookmarks(options = {}) {
   if (state.bookmarkImporting) return
+  const silent = Boolean(options?.silent)
+  const replace = options?.replace !== false
   state.bookmarkImporting = true
   try {
-    const granted = await ensureBookmarkPermission()
-    if (!granted) {
-      state.bookmarkEnabled = false
-      toast(t('toast.bookmarksPermissionDenied'))
-      return
-    }
-    state.bookmarkEnabled = true
     const imported = await fetchBrowserBookmarkGroups()
     if (!imported.length) {
-      toast(t('toast.bookmarksEmpty'))
+      if (replace) {
+        state.links = []
+        await persistLinks().catch(() => {})
+      }
+      if (!silent) toast(t('toast.bookmarksEmpty'))
+      return
+    }
+    if (replace) {
+      state.links = imported
+      await persistLinks().catch(() => {})
+      if (!silent) toast(t('toast.bookmarksImported', { count: imported.reduce((total, group) => total + group.children.length, 0) }))
       return
     }
     const merged = mergeBookmarkGroups(state.links, imported)
     const addedCount = merged.addedCount
     state.links = merged.links
-    if (!addedCount) {
+    if (!addedCount && !silent) {
       toast(t('toast.bookmarksNoNew'))
       return
     }
     await persistLinks().catch(() => {})
-    toast(t('toast.bookmarksImported', { count: addedCount }))
+    if (!silent && addedCount) toast(t('toast.bookmarksImported', { count: addedCount }))
   } catch {
-    toast(t('toast.bookmarksFailed'))
+    if (!silent) toast(t('toast.bookmarksFailed'))
   } finally {
     state.bookmarkImporting = false
   }
-}
-
-async function toggleBookmarkPermission() {
-  if (state.bookmarkEnabled) {
-    await revokeBookmarkPermission()
-    state.bookmarkEnabled = false
-    toast(t('toast.bookmarksDisabled'))
-    return false
-  }
-  const granted = await ensureBookmarkPermission()
-  state.bookmarkEnabled = Boolean(granted)
-  toast(granted ? t('toast.bookmarksEnabled') : t('toast.bookmarksPermissionDenied'))
-  return state.bookmarkEnabled
 }
 
 async function importLinksFile(file) {
@@ -249,18 +230,26 @@ async function importLinksFile(file) {
       toast(t('toast.jsonImportEmpty'))
       return
     }
-    const merged = mergeBookmarkGroups(state.links, imported)
-    state.links = merged.links
-    if (!merged.addedCount) {
-      toast(t('toast.jsonImportNoNew'))
-      return
-    }
-    await persistLinks().catch(() => {})
-    toast(t('toast.jsonImported', { count: merged.addedCount }))
+    state.links = imported
+    state.settings.dataSource = 'json'
+    await Promise.all([
+      persistLinks().catch(() => {}),
+      persistSettings().catch(() => {})
+    ])
+    toast(t('toast.jsonImported', { count: imported.reduce((total, group) => total + group.children.length, 0) }))
   } catch {
     toast(t('toast.jsonImportFailed'))
   } finally {
     state.bookmarkImporting = false
+  }
+}
+
+function setDataSource(source) {
+  const value = source === 'json' ? 'json' : 'browser'
+  state.settings.dataSource = value
+  persistSettings().catch(() => {})
+  if (value === 'browser') {
+    return importBrowserBookmarks({ silent: true, replace: true })
   }
 }
 
@@ -598,15 +587,13 @@ export function useLucuro() {
     uploadBackground,
     uploadAvatar,
     setSettings,
+    setDataSource,
     setHitokoto,
     setNotes,
     refreshHitokoto,
     importBrowserBookmarks,
-    toggleBookmarkPermission,
     importLinksFile,
     exportJson,
-    hasBookmarkPermission,
-    revokeBookmarkPermission,
     splitTitle
   }
 }
