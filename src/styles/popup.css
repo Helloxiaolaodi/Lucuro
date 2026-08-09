@@ -161,6 +161,93 @@ button {
   box-shadow: 0 0 0 3px var(--azure-soft);
 }
 
+.toggle-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+.toggle-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.toggle-title {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.toggle-state {
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--ink-faint);
+  background: rgba(100, 116, 139, 0.12);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.toggle-state.is-on {
+  color: #0b6b4f;
+  background: rgba(15, 118, 110, 0.14);
+}
+
+.toggle-help {
+  margin: 0;
+  color: var(--ink-faint);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 1px solid rgba(100, 116, 139, 0.24);
+  border-radius: 11px;
+  color: var(--ink-soft);
+  background: rgba(148, 163, 184, 0.14);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.toggle-btn.is-on {
+  border-color: rgba(0, 91, 184, 0.5);
+  color: #fff8ec;
+  background: linear-gradient(135deg, rgba(0, 135, 235, 0.94) 0%, rgba(0, 91, 184, 0.96) 100%);
+  box-shadow: 0 10px 22px rgba(0, 135, 235, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.toggle-btn:hover {
+  transform: translateY(-1px);
+}
+
+.toggle-btn.is-on:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 14px 28px rgba(0, 135, 235, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
+}
+
 .select {
   appearance: none;
   background-image:
@@ -171,42 +258,6 @@ button {
     calc(100% - 11px) 50%;
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
-}
-
-.save-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-  margin-top: 2px;
-  border: 1px solid rgba(0, 91, 184, 0.45);
-  border-radius: 11px;
-  background: linear-gradient(135deg, rgba(0, 135, 235, 0.94) 0%, rgba(0, 91, 184, 0.96) 100%);
-  color: #fff8ec;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  box-shadow: 0 10px 22px rgba(0, 135, 235, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.24);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, filter 0.2s;
-}
-
-.save-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-  box-shadow: 0 14px 28px rgba(0, 135, 235, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.save-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.save-btn:disabled {
-  opacity: 0.72;
-  cursor: default;
 }
 
 .popup-success,

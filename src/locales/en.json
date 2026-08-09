@@ -128,15 +128,14 @@
   },
   "popup": {
     "title": "Lucuro - 鹿客司南",
-    "save": "Save settings",
-    "saved": "Applied",
-    "savedMessage": "New tab behavior updated.",
     "readSettingsError": "Could not read settings.",
     "saveFailed": "Save failed. Please try again.",
-    "newTabMode": "New tab startup mode",
-    "newTabModeHelp": "Choose whether new tabs open Lucuro or the browser's default page.",
-    "newTabTakeover": "Lucuro home",
-    "newTabBlank": "Browser default homepage"
+    "extensionToggle": "Lucuro extension",
+    "extensionToggleHelp": "Lucuro takes over new tabs by default. Turning it off restores the browser's default new tab page.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "turnOn": "Enable Lucuro",
+    "turnOff": "Disable Lucuro"
   },
   "toast": {
     "addCategoryFirst": "Add a category first",
