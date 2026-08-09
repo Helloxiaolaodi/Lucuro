@@ -7,7 +7,7 @@ import {
   uid,
   splitTitle
 } from '../data/defaults'
-import { storage, syncStorage, readFileAsDataUrl, onStorageChanged } from '../utils/storage'
+import { storage, syncStorage, readFileAsDataUrl, readFileAsText, downloadJson, onStorageChanged } from '../utils/storage'
 import {
   ensureBookmarkPermission,
   fetchBrowserBookmarkGroups,
@@ -26,6 +26,7 @@ const state = reactive({
   searchQuery: '',
   settingsOpen: false,
   settingsTab: 'links',
+  bookmarkEnabled: false,
   cardModal: null,
   categoryModal: null,
   toastMessage: '',
@@ -100,6 +101,7 @@ async function load() {
   if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
   await loadLinks()
+  state.bookmarkEnabled = await hasBookmarkPermission().catch(() => false)
   state.loaded = true
   refreshHitokoto()
   applySettings()
@@ -143,6 +145,7 @@ function applySettings() {
   root.style.setProperty('--accent', state.settings.accent || '#0087eb')
   root.style.setProperty('--accent-soft', hexToRgba(state.settings.accent || '#0087eb', 0.14))
   root.style.setProperty('--card-radius', `${Number(state.settings.cardRadius) || 14}px`)
+  root.style.setProperty('--card-font-size', `${Number(state.settings.cardFontSize) || 15}px`)
 
   const body = document.body
   if (state.settings.background) {
@@ -196,9 +199,11 @@ async function importBrowserBookmarks() {
   try {
     const granted = await ensureBookmarkPermission()
     if (!granted) {
+      state.bookmarkEnabled = false
       toast(t('toast.bookmarksPermissionDenied'))
       return
     }
+    state.bookmarkEnabled = true
     const imported = await fetchBrowserBookmarkGroups()
     if (!imported.length) {
       toast(t('toast.bookmarksEmpty'))
@@ -211,13 +216,89 @@ async function importBrowserBookmarks() {
       toast(t('toast.bookmarksNoNew'))
       return
     }
-    await persistLinks()
+    await persistLinks().catch(() => {})
     toast(t('toast.bookmarksImported', { count: addedCount }))
   } catch {
     toast(t('toast.bookmarksFailed'))
   } finally {
     state.bookmarkImporting = false
   }
+}
+
+async function toggleBookmarkPermission() {
+  if (state.bookmarkEnabled) {
+    await revokeBookmarkPermission()
+    state.bookmarkEnabled = false
+    toast(t('toast.bookmarksDisabled'))
+    return false
+  }
+  const granted = await ensureBookmarkPermission()
+  state.bookmarkEnabled = Boolean(granted)
+  toast(granted ? t('toast.bookmarksEnabled') : t('toast.bookmarksPermissionDenied'))
+  return state.bookmarkEnabled
+}
+
+async function importLinksFile(file) {
+  if (!file || state.bookmarkImporting) return
+  state.bookmarkImporting = true
+  try {
+    const text = await readFileAsText(file)
+    const parsed = JSON.parse(text)
+    const imported = normalizeLinks(parsed)
+    if (!imported.length) {
+      toast(t('toast.jsonImportEmpty'))
+      return
+    }
+    const merged = mergeBookmarkGroups(state.links, imported)
+    state.links = merged.links
+    if (!merged.addedCount) {
+      toast(t('toast.jsonImportNoNew'))
+      return
+    }
+    await persistLinks().catch(() => {})
+    toast(t('toast.jsonImported', { count: merged.addedCount }))
+  } catch {
+    toast(t('toast.jsonImportFailed'))
+  } finally {
+    state.bookmarkImporting = false
+  }
+}
+
+function exportJson() {
+  const now = new Date()
+  const pad = (value) => String(value).padStart(2, '0')
+  const exportTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+  const date = exportTime.slice(0, 10)
+  const payload = {
+    version: 1,
+    appName: 'Lucuro',
+    exportTime,
+    appVersion: '',
+    icons: state.links.map((category) => ({
+      title: category.title,
+      sort: Number(category.sort) || 0,
+      children: (category.children || []).map((card) => ({
+        icon: {
+          text: card.icon?.text || '',
+          itemType: card.icon?.itemType ?? 2,
+          src: card.icon?.src || '',
+          name: card.icon?.name || '',
+          backgroundColor: card.icon?.backgroundColor || ''
+        },
+        sort: Number(card.sort) || 99999,
+        title: card.title,
+        url: card.url,
+        openMethod: 1,
+        lanUrl: card.lanUrl || '',
+        description: card.description || '',
+        tags: Array.isArray(card.tags) ? card.tags : [],
+        isVpnRequired: Boolean(card.isVpnRequired),
+        clickCount: Number(card.clickCount) || 0
+      }))
+    }))
+  }
+  downloadJson(`lucuro-${date}.json`, payload)
+  toast(t('toast.jsonExported'))
 }
 
 function currentEngine() {
@@ -270,7 +351,40 @@ function sortCards(cards) {
 }
 
 function allTags() {
-  return [...new Set(state.links.flatMap((category) => category.children.flatMap((card) => card.tags || [])))]
+  const settingsTags = Array.isArray(state.settings.customTags) ? state.settings.customTags : []
+  return [
+    ...new Set([
+      ...settingsTags,
+      ...state.links.flatMap((category) => category.children.flatMap((card) => card.tags || []))
+    ])
+  ]
+}
+
+function addTag(raw) {
+  const name = String(raw || '').trim().replace(/\s+/g, ' ')
+  if (!name) return false
+  const tags = Array.isArray(state.settings.customTags) ? [...state.settings.customTags] : []
+  if (!tags.includes(name)) {
+    tags.push(name)
+    state.settings.customTags = tags
+    persistSettings()
+  }
+  return true
+}
+
+function removeTag(name) {
+  state.settings.customTags = (Array.isArray(state.settings.customTags) ? state.settings.customTags : [])
+    .filter((tag) => tag !== name)
+  state.links.forEach((category) => {
+    category.children.forEach((card) => {
+      if (Array.isArray(card.tags)) {
+        card.tags = card.tags.filter((tag) => tag !== name)
+      }
+    })
+  })
+  if (state.activeTag === name) state.activeTag = 'all'
+  persistLinks()
+  persistSettings()
 }
 
 function saveCard(payload) {
@@ -403,11 +517,11 @@ async function uploadBackground(file) {
   if (!file) return
   try {
     state.settings.background = await readFileAsDataUrl(file)
-    await persistSettings()
     applySettings()
     toast(t('toast.backgroundUpdated'))
+    persistSettings().catch(() => {})
   } catch {
-    toast('Could not read image')
+    toast(t('toast.imageReadFailed'))
   }
 }
 
@@ -415,8 +529,8 @@ async function uploadAvatar(file) {
   if (!file) return
   try {
     state.settings.profileAvatar = await readFileAsDataUrl(file)
-    await persistSettings()
     toast(t('toast.avatarUpdated'))
+    persistSettings().catch(() => {})
   } catch {
     toast(t('toast.imageReadFailed'))
   }
@@ -463,6 +577,8 @@ export function useLucuro() {
     applySettings,
     toast,
     allTags,
+    addTag,
+    removeTag,
     filteredCategories,
     currentEngine,
     doSearch,
@@ -486,6 +602,9 @@ export function useLucuro() {
     setNotes,
     refreshHitokoto,
     importBrowserBookmarks,
+    toggleBookmarkPermission,
+    importLinksFile,
+    exportJson,
     hasBookmarkPermission,
     revokeBookmarkPermission,
     splitTitle

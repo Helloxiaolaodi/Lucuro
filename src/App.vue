@@ -88,7 +88,8 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
         :stats="state.stats"
         @select-tag="(tag) => { state.activeTag = tag; state.activeCategory = null }"
         @select-category="(index) => { state.activeCategory = index; sidebarOpen = false }"
-        @manage-links="openSettings('links')"
+        @add-tag="(tag) => { if (store.addTag(tag)) { state.activeTag = tag; state.activeCategory = null } }"
+        @remove-tag="store.removeTag"
         @toggle="sidebarOpen = !sidebarOpen"
       />
     </div>
