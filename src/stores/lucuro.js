@@ -1,11 +1,9 @@
 import { reactive } from 'vue'
 import { i18n } from '../i18n'
 import {
-  DEFAULT_SETTINGS,
   DEFAULT_HITOKOTO,
   normalizeLinks,
   normalizeSettings,
-  buildBackup,
   uid,
   splitTitle
 } from '../data/defaults'
@@ -31,20 +29,8 @@ const state = reactive({
   cardModal: null,
   categoryModal: null,
   toastMessage: '',
-  syncStatus: '',
-  syncIndicator: 'idle',
-  shareCodeOpen: false,
-  shareCode: '',
-  shareCodeExpiresAt: 0,
-  shareCodeLoading: false,
-  shareCodeError: '',
-  claimCodeOpen: false,
-  claimCode: '',
-  claimCodeLoading: false,
-  claimCodeError: '',
   currentHitokoto: '',
-  bookmarkImporting: false,
-  history: []
+  bookmarkImporting: false
 })
 
 function t(key, params) {
@@ -54,7 +40,6 @@ function t(key, params) {
 const STORAGE_LINKS = 'lucuro_links_v1'
 const STORAGE_SETTINGS = 'lucuro_settings_v1'
 const STORAGE_STATS = 'lucuro_stats_v1'
-const STORAGE_HISTORY = 'lucuro_history_v1'
 const SYNC_LINKS = 'lucuro_links_v1'
 const SYNC_SETTINGS = 'lucuro_settings_v1'
 const SYNC_STATS = 'lucuro_stats_v1'
@@ -62,26 +47,21 @@ const SYNC_STATS = 'lucuro_stats_v1'
 let toastTimer = null
 let storageUnsubscribe = null
 let applyingRemoteChange = false
-let snapshotTimer = null
 let notesTimer = null
 let hitokotoTimer = null
-
-function cloneDefault() {
-  return JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
-}
 
 function persistLinks() {
   return Promise.all([
     storage.set(STORAGE_LINKS, state.links),
     syncStorage.set(SYNC_LINKS, state.links)
-  ]).then(() => queueSnapshot())
+  ])
 }
 
 function persistSettings() {
   return Promise.all([
     storage.set(STORAGE_SETTINGS, state.settings),
     syncStorage.set(SYNC_SETTINGS, state.settings)
-  ]).then(() => queueSnapshot())
+  ])
 }
 
 function persistStats() {
@@ -103,14 +83,7 @@ async function loadLinks() {
     await storage.set(STORAGE_LINKS, state.links)
     return
   }
-  try {
-    const response = await fetch('./links.json')
-    const data = await response.json()
-    state.links = normalizeLinks(data.icons || data)
-  } catch (error) {
-    state.links = []
-  }
-  await persistLinks()
+  state.links = []
 }
 
 async function load() {
@@ -128,52 +101,9 @@ async function load() {
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
   await loadLinks()
   state.loaded = true
-  await loadHistory()
   refreshHitokoto()
   applySettings()
   watchStorage()
-}
-
-async function loadHistory() {
-  const saved = await storage.get(STORAGE_HISTORY)
-  state.history = Array.isArray(saved) ? saved.slice(0, 8) : []
-}
-
-function queueSnapshot() {
-  if (!state.loaded) return
-  clearTimeout(snapshotTimer)
-  snapshotTimer = setTimeout(() => {
-    const snapshot = {
-      id: uid('snapshot'),
-      createdAt: Date.now(),
-      links: JSON.parse(JSON.stringify(state.links)),
-      settings: JSON.parse(JSON.stringify(state.settings)),
-      stats: JSON.parse(JSON.stringify(state.stats)),
-      summary: `${state.links.length} ${t('settings.categories')} / ${state.links.reduce((sum, group) => sum + group.children.length, 0)} ${t('settings.cards')}`
-    }
-    state.history = [snapshot, ...state.history].slice(0, 8)
-    storage.set(STORAGE_HISTORY, state.history)
-  }, 1200)
-}
-
-async function restoreSnapshot(id) {
-  const snapshot = state.history.find((item) => item.id === id)
-  if (!snapshot) return
-  if (!window.confirm(t('toast.restoreSnapshot'))) return
-  state.links = normalizeLinks(snapshot.links || [])
-  state.settings = normalizeSettings(snapshot.settings || {})
-  state.stats = snapshot.stats || {}
-  await Promise.all([persistLinks(), persistSettings(), persistStats()])
-  applySettings()
-  refreshHitokoto()
-  toast(t('toast.historyRestored'))
-}
-
-async function clearHistory() {
-  if (!window.confirm(t('toast.clearHistory'))) return
-  state.history = []
-  await storage.remove(STORAGE_HISTORY)
-  toast(t('toast.historyCleared'))
 }
 
 function watchStorage() {
@@ -203,7 +133,6 @@ function watchStorage() {
         applyingRemoteChange = false
       })
     }
-    state.syncIndicator = 'synced'
   })
 }
 
@@ -340,14 +269,6 @@ function sortCards(cards) {
   return sorted
 }
 
-function recommendedCards(limit = 8) {
-  return state.links
-    .flatMap((category) => category.children)
-    .filter((card) => card.url)
-    .sort((a, b) => totalClicks(b) - totalClicks(a))
-    .slice(0, limit)
-}
-
 function allTags() {
   return [...new Set(state.links.flatMap((category) => category.children.flatMap((card) => card.tags || [])))]
 }
@@ -365,7 +286,6 @@ function saveCard(payload) {
     icon: data.icon || {},
     title: data.title || 'Untitled',
     url: data.url || '',
-    openMethod: data.openMethod || 1,
     lanUrl: data.lanUrl || '',
     description: data.description || '',
     tags: data.tags || [],
@@ -471,91 +391,6 @@ function moveCard({ fromSection, fromIndex, toSection, toIndex }) {
   persistLinks()
 }
 
-function shareEndpoint() {
-  const custom = String(state.settings.sync?.shareEndpoint || '').trim().replace(/\/+$/, '')
-  return custom || 'https://lucuro-share.helloxiaolaodi.workers.dev'
-}
-
-async function createShareCode() {
-  state.shareCodeLoading = true
-  state.shareCodeError = ''
-  state.syncStatus = t('syncStatus.creatingShare')
-  try {
-    const response = await fetch(`${shareEndpoint()}/api/share`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: buildBackup(state.links, state.settings, state.stats) })
-    })
-    if (!response.ok) throw new Error('Share create failed')
-    const result = await response.json()
-    if (!result?.code) throw new Error('Missing code')
-    state.shareCode = String(result.code)
-    state.shareCodeExpiresAt = Number(result.expiresAt) || 0
-    state.shareCodeOpen = true
-    state.syncStatus = t('syncStatus.shareReady')
-    toast(t('toast.shareCreated'))
-  } catch {
-    state.shareCodeError = t('toast.shareFailed')
-    state.syncStatus = t('syncStatus.shareFailed')
-    toast(t('toast.shareFailed'))
-  } finally {
-    state.shareCodeLoading = false
-  }
-}
-
-async function claimShareCode() {
-  const code = String(state.claimCode || '').trim()
-  if (!/^\d{6}$/.test(code)) {
-    state.claimCodeError = t('toast.shareCodeRequired')
-    return
-  }
-  state.claimCodeLoading = true
-  state.claimCodeError = ''
-  state.syncStatus = t('syncStatus.claimingShare')
-  try {
-    const response = await fetch(`${shareEndpoint()}/api/share/${code}`)
-    if (!response.ok) throw new Error('Share claim failed')
-    const result = await response.json()
-    const parsed = result?.data
-    if (!parsed) throw new Error('Missing data')
-    const links = parsed.links || parsed.icons || null
-    if (!Array.isArray(links)) throw new Error('Missing links')
-    state.links = normalizeLinks(links)
-    if (parsed.settings) state.settings = normalizeSettings(parsed.settings)
-    if (parsed.stats) state.stats = parsed.stats
-    await Promise.all([persistLinks(), persistSettings(), persistStats()])
-    applySettings()
-    state.claimCodeOpen = false
-    state.claimCode = ''
-    state.syncStatus = t('syncStatus.shareClaimed')
-    toast(t('toast.shareClaimed'))
-    refreshHitokoto()
-  } catch {
-    state.claimCodeError = t('toast.shareExpired')
-    state.syncStatus = t('syncStatus.shareFailed')
-    toast(t('toast.shareExpired'))
-  } finally {
-    state.claimCodeLoading = false
-  }
-}
-
-function closeShareCode() {
-  state.shareCodeOpen = false
-  state.shareCode = ''
-  state.shareCodeExpiresAt = 0
-}
-
-function openClaimCode() {
-  state.claimCodeOpen = true
-  state.claimCodeError = ''
-}
-
-function closeClaimCode() {
-  state.claimCodeOpen = false
-  state.claimCode = ''
-  state.claimCodeError = ''
-}
-
 function openCardModal(section, index = null) {
   state.cardModal = { section, index }
 }
@@ -629,7 +464,6 @@ export function useLucuro() {
     toast,
     allTags,
     filteredCategories,
-    recommendedCards,
     currentEngine,
     doSearch,
     trackClick,
@@ -645,13 +479,6 @@ export function useLucuro() {
     moveCard,
     openCardModal,
     openCategoryModal,
-    resetLinks,
-    clearStats,
-    createShareCode,
-    claimShareCode,
-    closeShareCode,
-    openClaimCode,
-    closeClaimCode,
     uploadBackground,
     uploadAvatar,
     setSettings,
@@ -661,24 +488,6 @@ export function useLucuro() {
     importBrowserBookmarks,
     hasBookmarkPermission,
     revokeBookmarkPermission,
-    restoreSnapshot,
-    clearHistory,
     splitTitle
   }
-}
-
-async function resetLinks() {
-  if (!window.confirm(t('toast.resetAll'))) return
-  await loadLinks()
-  state.activeTag = 'all'
-  state.activeCategory = null
-  toast(t('toast.linksReset'))
-}
-
-function clearStats() {
-  if (!window.confirm(t('toast.clearAllStats'))) return
-  state.stats = {}
-  persistStats()
-  queueSnapshot()
-  toast(t('toast.statsCleared'))
 }

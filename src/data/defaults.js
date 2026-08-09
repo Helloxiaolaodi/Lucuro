@@ -38,23 +38,11 @@ export const DEFAULT_SETTINGS = {
   profileName: 'Lucuro Explorer',
   profileAvatar: '',
   workspaceTitle: 'Lucuro - 鹿客司南',
-  workspaceSubtitle: 'Stay lucky, stay curious',
-  heroTitle: '指引数字世界的琉璃司南',
-  heroSubtitle: 'Stay lucky, stay curious',
-  statusLabel: 'All systems operational',
-  showStatusLegend: true,
-  sortByClicks: true,
-  sortMode: 'default',
-  layoutLocked: false,
   newTabEnabled: true,
   defaultEngineId: 'google',
   engines: DEFAULT_ENGINES,
   hitokoto: '',
-  notes: '',
-  sync: {
-    provider: 'native',
-    shareEndpoint: ''
-  }
+  notes: ''
 }
 
 export function normalizeLinks(data) {
@@ -64,8 +52,20 @@ export function normalizeLinks(data) {
     title: group.title || 'Uncategorized',
     subtitle: group.subtitle || '',
     sort: Number(group.sort) || index,
-    children: (group.children || []).map((child, childIndex) => normalizeCard(child, childIndex))
+    children: (group.children || []).map((child, childIndex) => normalizeChild(child, childIndex))
   }))
+}
+
+function normalizeChild(child, index = 0) {
+  if (Array.isArray(child.children)) {
+    return {
+      id: child.id || `group-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`,
+      title: child.title || 'Untitled folder',
+      subtitle: child.subtitle || '',
+      children: child.children.map((nested, nestedIndex) => normalizeCard(nested, nestedIndex))
+    }
+  }
+  return normalizeCard(child, index)
 }
 
 export function normalizeCard(child, index = 0) {
@@ -82,7 +82,6 @@ export function normalizeCard(child, index = 0) {
     },
     title: child.title || 'Untitled',
     url: child.url || '',
-    openMethod: child.openMethod || 1,
     lanUrl: child.lanUrl || '',
     description: child.description || '',
     tags: Array.isArray(child.tags) ? child.tags : [],
@@ -98,8 +97,7 @@ export function normalizeSettings(saved = {}) {
   return {
     ...DEFAULT_SETTINGS,
     ...saved,
-    engines,
-    sync: { ...DEFAULT_SETTINGS.sync, ...(saved.sync || {}) }
+    engines
   }
 }
 
@@ -110,24 +108,6 @@ export function splitTitle(title) {
     return { main, sub: rest.join(' - ') }
   }
   return { main: title, sub: '' }
-}
-
-export function buildBackup(links, settings, stats) {
-  const safeSettings = JSON.parse(JSON.stringify(settings))
-  if (safeSettings.sync) {
-    safeSettings.sync = {
-      ...safeSettings.sync,
-      shareEndpoint: ''
-    }
-  }
-  return {
-    app: 'Lucuro - 鹿客司南',
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    links,
-    settings: safeSettings,
-    stats
-  }
 }
 
 export function uid(prefix) {

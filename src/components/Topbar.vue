@@ -30,57 +30,59 @@ function onInput(value) {
       <h1>{{ title || 'Lucuro' }}</h1>
     </div>
 
-    <div class="search-wrap">
-      <form class="search-box" @submit.prevent="emit('search')">
-        <input
-          :value="query"
-          class="search-input"
-          type="search"
-          :placeholder="t('topbar.searchPlaceholder')"
-          autocomplete="off"
-          spellcheck="false"
-          @input="onInput($event.target.value)"
-        />
-        <select
-          class="engine-select"
-          :value="defaultEngineId"
-          :aria-label="t('topbar.searchEngine')"
-          @change="$emit('engine-change', $event.target.value)"
-        >
-          <option v-for="engine in engines" :key="engine.id" :value="engine.id">
-            {{ engine.label }}
-          </option>
-        </select>
-        <select
-          class="engine-select sort-select"
-          :value="sortMode"
-          :aria-label="t('topbar.sortMode')"
-          :title="t('topbar.sortMode')"
-          @change="$emit('sort-change', $event.target.value)"
-        >
-          <option value="default">{{ t('topbar.sortDefault') }}</option>
-          <option value="frequency">{{ t('topbar.sortFrequency') }}</option>
-          <option value="alphabetical">{{ t('topbar.sortAlphabetical') }}</option>
-          <option value="added">{{ t('topbar.sortAdded') }}</option>
-        </select>
-      </form>
-    </div>
+    <div class="topbar-tools">
+      <div class="search-wrap">
+        <form class="search-box" @submit.prevent="emit('search')">
+          <input
+            :value="query"
+            class="search-input"
+            type="search"
+            :placeholder="t('topbar.searchPlaceholder')"
+            autocomplete="off"
+            spellcheck="false"
+            @input="onInput($event.target.value)"
+          />
+          <select
+            class="engine-select"
+            :value="defaultEngineId"
+            :aria-label="t('topbar.searchEngine')"
+            @change="$emit('engine-change', $event.target.value)"
+          >
+            <option v-for="engine in engines" :key="engine.id" :value="engine.id">
+              {{ engine.label }}
+            </option>
+          </select>
+          <select
+            class="engine-select sort-select"
+            :value="sortMode"
+            :aria-label="t('topbar.sortMode')"
+            :title="t('topbar.sortMode')"
+            @change="$emit('sort-change', $event.target.value)"
+          >
+            <option value="default">{{ t('topbar.sortDefault') }}</option>
+            <option value="frequency">{{ t('topbar.sortFrequency') }}</option>
+            <option value="alphabetical">{{ t('topbar.sortAlphabetical') }}</option>
+            <option value="added">{{ t('topbar.sortAdded') }}</option>
+          </select>
+        </form>
+      </div>
 
-    <div class="controls">
-      <button class="icon-btn" type="button" :aria-label="t('topbar.toggleLock')" :title="t('topbar.toggleLock')" @click="emit('toggle-lock')">
-        <Lock v-if="layoutLocked" :size="18" />
-        <Unlock v-else :size="18" />
-      </button>
-      <button class="icon-btn" type="button" :aria-label="t('topbar.toggleNotes')" :title="t('topbar.toggleNotes')" @click="emit('toggle-notes')">
-        <NotebookPen :size="18" />
-      </button>
-      <button class="icon-btn" type="button" :aria-label="t('topbar.toggleTheme')" :title="t('topbar.toggleTheme')" @click="emit('toggle-theme')">
-        <Sun v-if="theme === 'light'" :size="18" />
-        <Moon v-else :size="18" />
-      </button>
-      <button class="icon-btn" type="button" :aria-label="t('topbar.settings')" :title="t('topbar.settings')" @click="emit('open-settings')">
-        <Settings :size="18" />
-      </button>
+      <div class="controls">
+        <button class="icon-btn" type="button" :aria-label="t('topbar.toggleLock')" :title="t('topbar.toggleLock')" @click="emit('toggle-lock')">
+          <Lock v-if="layoutLocked" :size="18" />
+          <Unlock v-else :size="18" />
+        </button>
+        <button class="icon-btn" type="button" :aria-label="t('topbar.toggleNotes')" :title="t('topbar.toggleNotes')" @click="emit('toggle-notes')">
+          <NotebookPen :size="18" />
+        </button>
+        <button class="icon-btn" type="button" :aria-label="t('topbar.toggleTheme')" :title="t('topbar.toggleTheme')" @click="emit('toggle-theme')">
+          <Sun v-if="theme === 'light'" :size="18" />
+          <Moon v-else :size="18" />
+        </button>
+        <button class="icon-btn" type="button" :aria-label="t('topbar.settings')" :title="t('topbar.settings')" @click="emit('open-settings')">
+          <Settings :size="18" />
+        </button>
+      </div>
     </div>
   </header>
 </template>

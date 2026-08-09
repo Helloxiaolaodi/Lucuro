@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { ExternalLink, GripVertical, NotebookPen, Pencil, Plus, RefreshCw, Sparkles, Trash2, X } from 'lucide-vue-next'
+import { ExternalLink, GripVertical, NotebookPen, Pencil, Plus, RefreshCw, Trash2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from './stores/lucuro'
 import Sidebar from './components/Sidebar.vue'
@@ -10,7 +10,6 @@ import CardEditorModal from './components/CardEditorModal.vue'
 import CategoryEditorModal from './components/CategoryEditorModal.vue'
 import SortableList from './components/SortableList.vue'
 import SiteIcon from './components/SiteIcon.vue'
-import LucuroLogo from './components/LucuroLogo.vue'
 
 const store = useLucuro()
 const { state, load } = store
@@ -28,21 +27,6 @@ onBeforeUnmount(() => {
 })
 
 const visibleGroups = computed(() => store.filteredCategories())
-const recommendedCards = computed(() => store.recommendedCards(8))
-
-const yearProgress = computed(() => {
-  const now = new Date()
-  const start = new Date(now.getFullYear(), 0, 1)
-  const end = new Date(now.getFullYear() + 1, 0, 1)
-  return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100))
-})
-
-const dayProgress = computed(() => {
-  const now = new Date()
-  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-  return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100))
-})
 
 function handleShortcut(event) {
   const mod = event.ctrlKey || event.metaKey
@@ -75,16 +59,6 @@ function openSettings(tab = 'links') {
   state.settingsTab = tab
 }
 
-function addLink() {
-  if (!state.links.length) {
-    store.openCategoryModal(null)
-    store.toast(t('toast.addCategoryFirst'))
-    return
-  }
-  const section = state.activeCategory === null ? 0 : state.activeCategory
-  store.openCardModal(section, null)
-}
-
 function safeUrl(url) {
   if (!url) return ''
   if (/^(https?:|mailto:|tel:)/i.test(url)) return url
@@ -101,20 +75,23 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
 
 <template>
   <div class="app-shell">
-    <Sidebar
-      :open="sidebarOpen"
-      :categories="state.links"
-      :tags="store.allTags()"
-      :active-tag="state.activeTag"
-      :active-category="state.activeCategory"
-      :settings="state.settings"
-      :stats="state.stats"
-      @select-tag="(tag) => { state.activeTag = tag; state.activeCategory = null }"
-      @select-category="(index) => { state.activeCategory = index; sidebarOpen = false }"
-      @manage-links="openSettings('links')"
-      @toggle="sidebarOpen = !sidebarOpen"
-      @add-link="addLink"
-    />
+    <div class="sidebar-dock" :class="{ open: sidebarOpen }" @mouseenter="sidebarOpen = true" @mouseleave="sidebarOpen = false">
+      <div class="sidebar-hover-zone" aria-hidden="true"></div>
+      <Sidebar
+        @mouseenter="sidebarOpen = true"
+        :open="sidebarOpen"
+        :categories="state.links"
+        :tags="store.allTags()"
+        :active-tag="state.activeTag"
+        :active-category="state.activeCategory"
+        :settings="state.settings"
+        :stats="state.stats"
+        @select-tag="(tag) => { state.activeTag = tag; state.activeCategory = null }"
+        @select-category="(index) => { state.activeCategory = index; sidebarOpen = false }"
+        @manage-links="openSettings('links')"
+        @toggle="sidebarOpen = !sidebarOpen"
+      />
+    </div>
 
     <main class="main-area">
       <Topbar
@@ -140,9 +117,7 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
         <div class="content-wrap">
           <section class="hero-strip" aria-label="Lucuro overview">
             <div>
-              <div class="hero-badge"><LucuroLogo :size="24" /> <span>{{ state.settings.statusLabel || t('hero.status') }}</span></div>
-              <h2 class="hero-title">{{ state.settings.heroTitle || t('hero.title') }}</h2>
-              <p class="hero-subtitle">{{ state.settings.heroSubtitle || t('hero.subtitle') }}</p>
+              <h2 class="hero-title">Stay lucky, stay curious</h2>
               <div class="hitokoto-row">
                 <button class="hitokoto-text" type="button" :title="t('settings.hitokotoRefresh')" @click="store.refreshHitokoto">
                   {{ state.currentHitokoto || t('settings.hitokotoPlaceholder') }}
@@ -152,68 +127,12 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
                 </button>
               </div>
             </div>
-            <button class="btn" type="button" @click="openSettings('links')">
-              <Plus :size="15" />
-              {{ t('app.customize') }}
-            </button>
           </section>
-
-          <div class="progress-row">
-            <div class="progress-card">
-              <div class="progress-head">
-                <span>{{ t('app.yearProgress') }}</span>
-                <strong>{{ Math.round(yearProgress) }}%</strong>
-              </div>
-              <div class="progress-track"><i :style="{ width: `${yearProgress}%` }"></i></div>
-            </div>
-            <div class="progress-card">
-              <div class="progress-head">
-                <span>{{ t('app.dayProgress') }}</span>
-                <strong>{{ Math.round(dayProgress) }}%</strong>
-              </div>
-              <div class="progress-track"><i :style="{ width: `${dayProgress}%` }"></i></div>
-            </div>
-          </div>
-
-          <div v-if="state.settings.showStatusLegend" class="legend-row">
-            <span><i class="legend-dot" style="background: var(--success)"></i>{{ t('legend.categories', { count: state.links.length }) }}</span>
-            <span><i class="legend-dot" style="background: var(--accent)"></i>{{ t('legend.cards', { count: state.links.reduce((sum, group) => sum + group.children.length, 0) }) }}</span>
-            <span><i class="legend-dot" style="background: #f59e0b"></i>{{ t('legend.tags', { count: store.allTags().length }) }}</span>
-          </div>
 
           <div v-if="visibleGroups.length === 0" class="empty-state">
             <p>{{ t('app.noResults') }}</p>
             <button class="btn btn-primary" type="button" @click="openSettings('links')">{{ t('app.manageLinks') }}</button>
           </div>
-
-          <section v-if="!state.searchQuery.trim() && recommendedCards.length" class="category-section recommended-section" aria-label="Recommended links">
-            <div class="category-head">
-              <div>
-                <h3 class="category-title recommended-title"><Sparkles :size="18" /> {{ t('app.recommended') }}</h3>
-                <p class="category-subtitle">{{ t('app.recommendedHelp') }}</p>
-              </div>
-            </div>
-            <div class="card-grid recommended-grid">
-              <article v-for="card in recommendedCards" :key="card.id || card.url" class="card">
-                <a
-                  v-if="card.url"
-                  class="card-hit"
-                  :href="safeUrl(card.url)"
-                  :target="Number(card.openMethod) === 2 ? '_self' : '_blank'"
-                  :rel="Number(card.openMethod) === 2 ? '' : 'noopener noreferrer'"
-                  @click="store.trackClick(card)"
-                ></a>
-                <div class="card-content">
-                  <SiteIcon :card="card" />
-                  <div class="card-copy">
-                    <h4 class="card-title">{{ card.title }}</h4>
-                    <p v-if="card.description" class="card-description">{{ card.description }}</p>
-                  </div>
-                  <ExternalLink v-if="card.url" class="card-open-icon" :size="14" />
-                </div>
-              </article>
-            </div>
-          </section>
 
           <section
             v-for="entry in visibleGroups"
@@ -252,8 +171,8 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
                   v-if="item.card.url"
                   class="card-hit"
                   :href="safeUrl(item.card.url)"
-                  :target="Number(item.card.openMethod) === 2 ? '_self' : '_blank'"
-                  :rel="Number(item.card.openMethod) === 2 ? '' : 'noopener noreferrer'"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   @click="store.trackClick(item.card)"
                 ></a>
                 <span v-else class="card-hit" aria-hidden="true"></span>
@@ -291,11 +210,6 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
       </div>
     </main>
 
-    <button class="fab" type="button" @click="addLink">
-      <Plus :size="18" />
-      {{ t('app.addLink') }}
-    </button>
-
     <div class="notes-dock" :class="{ open: notesOpen }">
       <div v-if="notesOpen" class="notes-panel">
         <div class="notes-head">
@@ -320,7 +234,6 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
       v-if="state.settingsOpen"
       :links="state.links"
       :settings="state.settings"
-      :sync-status="state.syncStatus"
       :active-tab="state.settingsTab"
       @close="state.settingsOpen = false"
       @open-category="store.openCategoryModal"

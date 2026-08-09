@@ -19,7 +19,6 @@ const STORAGE_SETTINGS = 'lucuro_settings_v1'
 const linkTitle = ref('')
 const linkUrl = ref('')
 const selectedCategory = ref('')
-const tagInput = ref('')
 const saveSuccess = ref(false)
 const errorMessage = ref('')
 const newTabEnabled = ref(true)
@@ -43,13 +42,7 @@ onMounted(async () => {
   if (Array.isArray(saved)) {
     categories.value = normalizeLinks(saved)
   } else {
-    try {
-      const response = await fetch('./links.json')
-      const data = await response.json()
-      categories.value = normalizeLinks(data.icons || data)
-    } catch {
-      categories.value = []
-    }
+    categories.value = []
   }
 
   if (categories.value.length) {
@@ -104,12 +97,8 @@ async function saveToLucuro() {
     title: linkTitle.value.trim(),
     url: linkUrl.value.trim(),
     description: '',
-    tags: tagInput.value
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean),
+    tags: [],
     isVpnRequired: false,
-    openMethod: 1,
     clickCount: 0,
     sort: 99999
   })
@@ -201,11 +190,6 @@ async function captureBrowserBookmarks() {
       </div>
 
       <div class="field">
-        <label for="popup-url">{{ t('popup.url') }}</label>
-        <input id="popup-url" v-model="linkUrl" class="input" readonly />
-      </div>
-
-      <div class="field">
         <label for="popup-category">{{ t('popup.category') }}</label>
         <select id="popup-category" v-model="selectedCategory" class="select">
           <option v-if="categories.length === 0" value="">{{ t('popup.noCategories') }}</option>
@@ -213,11 +197,6 @@ async function captureBrowserBookmarks() {
             {{ category.title }}
           </option>
         </select>
-      </div>
-
-      <div class="field">
-        <label for="popup-tags">{{ t('popup.tags') }}</label>
-        <input id="popup-tags" v-model="tagInput" class="input" :placeholder="t('popup.tagsPlaceholder')" />
       </div>
 
       <section class="newtab-mode" aria-label="New tab mode">

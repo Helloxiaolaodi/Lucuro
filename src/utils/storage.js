@@ -135,6 +135,11 @@ export function getBookmarkTree() {
   return promisify(extensionBookmarks.getTree.bind(extensionBookmarks))
 }
 
+export function createBookmark(payload) {
+  if (!extensionBookmarks?.create) return Promise.resolve(false)
+  return promisify(extensionBookmarks.create.bind(extensionBookmarks), payload)
+}
+
 export async function requestOptionalPermission(permission) {
   const api = browser?.permissions || globalThis.chrome?.permissions
   if (!api?.request) return true
