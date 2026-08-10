@@ -88,6 +88,7 @@ const categoryTree = computed(() => {
 })
 
 const sortedTags = computed(() => [...props.tags].sort((a, b) => String(a).localeCompare(String(b))))
+const smartTags = computed(() => [...store.smartTags()].sort((a, b) => String(a).localeCompare(String(b))))
 
 function toTree(children) {
   return [...children.values()].map((node) => ({
@@ -179,6 +180,22 @@ function submitTag() {
           </button>
         </form>
       </div>
+
+      <template v-if="smartTags.length">
+        <div class="side-label">{{ t('sidebar.smartTags') }}</div>
+        <div class="tag-filter smart-tag-filter">
+          <button
+            v-for="tag in smartTags"
+            :key="`smart-${tag}`"
+            type="button"
+            class="tag-chip smart-tag-chip"
+            :class="{ active: activeTag === tag }"
+            @click="emit('select-tag', tag)"
+          >
+            {{ tag }}
+          </button>
+        </div>
+      </template>
 
       <div class="side-label">{{ t('sidebar.categories') }}</div>
       <div class="category-links">

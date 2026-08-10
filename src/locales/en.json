@@ -8,6 +8,7 @@
   },
   "sidebar": {
     "tags": "Tags",
+    "smartTags": "Smart tags",
     "all": "All",
     "profileName": "Sidebar name",
     "tagPlaceholder": "Add tag...",

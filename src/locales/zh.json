@@ -8,6 +8,7 @@
   },
   "sidebar": {
     "tags": "标签",
+    "smartTags": "智能标签",
     "all": "全部",
     "profileName": "侧边栏名称",
     "tagPlaceholder": "添加标签...",
