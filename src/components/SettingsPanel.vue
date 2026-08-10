@@ -19,7 +19,6 @@ const store = useLucuro()
 const { t, locale } = useI18n()
 
 const backgroundInput = ref(null)
-const avatarInput = ref(null)
 const jsonInput = ref(null)
 const showWechatPay = ref(false)
 const cropModalOpen = ref(false)
@@ -48,11 +47,6 @@ async function uploadBackground(event) {
 function applyCroppedBackground(dataUrl) {
   store.setSettings({ background: dataUrl })
   cropModalOpen.value = false
-}
-
-function uploadAvatar(event) {
-  store.uploadAvatar(event.target.files?.[0])
-  event.target.value = ''
 }
 
 function importJson(event) {
@@ -170,7 +164,6 @@ function importJson(event) {
           <div class="appearance-group">
             <div class="appearance-group-head">
               <h3 class="appearance-group-title">{{ t('settings.appearanceBasic') }}</h3>
-              <p class="section-help">{{ t('settings.appearanceBasicHelp') }}</p>
             </div>
             <div class="form-grid">
               <div class="field">
@@ -192,7 +185,6 @@ function importJson(event) {
           <div class="appearance-group">
             <div class="appearance-group-head">
               <h3 class="appearance-group-title">{{ t('settings.appearanceCards') }}</h3>
-              <p class="section-help">{{ t('settings.appearanceCardsHelp') }}</p>
             </div>
             <div class="form-grid appearance-cards-grid">
               <div class="field">
@@ -219,7 +211,6 @@ function importJson(event) {
           <div class="appearance-group">
             <div class="appearance-group-head">
               <h3 class="appearance-group-title">{{ t('settings.appearanceBackground') }}</h3>
-              <p class="section-help">{{ t('settings.appearanceBackgroundHelp') }}</p>
             </div>
             <div class="form-grid appearance-background-grid">
               <div class="field">
@@ -237,16 +228,6 @@ function importJson(event) {
                 <label for="settings-background-blur">{{ t('settings.backgroundBlur') }}</label>
                 <input id="settings-background-blur" class="input" type="range" min="0" max="24" step="1" :value="settings.backgroundBlur" @input="store.setSettings({ backgroundBlur: Number($event.target.value) })" />
               </div>
-              <div class="field">
-                <label>{{ t('settings.profileAvatar') }}</label>
-                <div class="file-field">
-                  <input ref="avatarInput" class="visually-hidden" type="file" accept="image/*" @change="uploadAvatar" />
-                  <button class="btn" type="button" @click="avatarInput?.click()">
-                    <Upload :size="15" />
-                    {{ t('settings.uploadAvatar') }}
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -255,7 +236,6 @@ function importJson(event) {
           <div class="appearance-group">
             <div class="appearance-group-head">
               <h3 class="appearance-group-title">{{ t('settings.appearanceContent') }}</h3>
-              <p class="section-help">{{ t('settings.appearanceContentHelp') }}</p>
             </div>
             <div class="form-grid">
               <div class="field full">
@@ -269,17 +249,6 @@ function importJson(event) {
                 ></textarea>
                 <p class="section-help">{{ t('settings.hitokotoHelp') }}</p>
               </div>
-              <div class="field full">
-                <label for="settings-notes">{{ t('settings.notes') }}</label>
-                <textarea
-                  id="settings-notes"
-                  class="textarea"
-                  :value="settings.notes"
-                  :placeholder="t('settings.notesPlaceholder')"
-                  @input="store.setNotes($event.target.value)"
-                ></textarea>
-                <p class="section-help">{{ t('settings.notesHelp') }}</p>
-              </div>
             </div>
           </div>
         </div>
@@ -290,7 +259,6 @@ function importJson(event) {
               <HeartHandshake :size="20" />
               <div>
                 <h3 class="section-title">{{ t('settings.supportTitle') }}</h3>
-                <p class="section-help">{{ t('settings.supportSubtitle') }}</p>
               </div>
             </div>
             <div class="support-quote">
@@ -332,10 +300,6 @@ function importJson(event) {
             <div class="guide-row">
               <div class="guide-keys"><kbd class="kbd-key">Ctrl</kbd><span class="guide-plus">+</span><kbd class="kbd-key">K</kbd></div>
               <p>{{ t('settings.guidePalette') }}</p>
-            </div>
-            <div class="guide-row">
-              <div class="guide-keys"><kbd class="kbd-key">Alt</kbd><span class="guide-plus">+</span><kbd class="kbd-key">S</kbd></div>
-              <p>{{ t('settings.guideSettingsShortcut') }}</p>
             </div>
             <div class="guide-row">
               <div class="guide-keys"><kbd class="kbd-key">Esc</kbd></div>
