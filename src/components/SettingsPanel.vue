@@ -63,7 +63,7 @@ function importJson(event) {
 async function submitFeedback() {
   const message = feedbackMessage.value.trim()
   if (!message) {
-    store.toast(t('settings.feedbackRequired'))
+    store.toast('Please fill out this field.')
     return
   }
 
@@ -332,7 +332,7 @@ async function submitFeedback() {
               </div>
             </div>
 
-            <form class="feedback-form" @submit.prevent="submitFeedback">
+            <form class="feedback-form" novalidate @submit.prevent="submitFeedback">
               <div class="form-grid">
                 <div class="field">
                   <label for="feedback-name">{{ t('settings.feedbackName') }}</label>
@@ -351,7 +351,6 @@ async function submitFeedback() {
                     id="feedback-message"
                     class="textarea"
                     v-model="feedbackMessage"
-                    required
                     :placeholder="t('settings.feedbackMessagePlaceholder')"
                   ></textarea>
                 </div>
