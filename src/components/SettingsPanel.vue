@@ -28,7 +28,6 @@ const feedbackName = ref('')
 const feedbackEmail = ref('')
 const feedbackMessage = ref('')
 const FEEDBACK_ENDPOINT = 'https://formspree.io/f/xvkpkbwr'
-const FEEDBACK_EMAIL = 'yangsanduo2025@gmail.com'
 
 function setTab(tab) {
   store.state.settingsTab = tab
@@ -321,7 +320,6 @@ async function submitFeedback() {
                 <h3 class="section-title">{{ t('settings.feedbackTitle') }}</h3>
                 <p class="section-help">
                   {{ t('settings.feedbackIntro') }}
-                  <a class="feedback-mail" :href="`mailto:${FEEDBACK_EMAIL}`" target="_blank" rel="noopener noreferrer">{{ FEEDBACK_EMAIL }}</a>
                 </p>
               </div>
             </div>
@@ -366,22 +364,24 @@ async function submitFeedback() {
               <p class="section-help">{{ t('settings.guideHelp') }}</p>
             </div>
           </div>
-          <div class="guide-grid">
-            <div class="guide-row">
-              <div class="guide-keys"><kbd class="kbd-key">/</kbd></div>
-              <p>{{ t('settings.guideSlash') }}</p>
-            </div>
-            <div class="guide-row">
-              <div class="guide-keys"><kbd class="kbd-key">/settings</kbd><kbd class="kbd-key">Enter</kbd></div>
-              <p>{{ t('settings.guideSettings') }}</p>
-            </div>
-            <div class="guide-row">
-              <div class="guide-keys"><kbd class="kbd-key">Ctrl</kbd><span class="guide-plus">+</span><kbd class="kbd-key">K</kbd></div>
-              <p>{{ t('settings.guidePalette') }}</p>
-            </div>
-            <div class="guide-row">
-              <div class="guide-keys"><kbd class="kbd-key">Esc</kbd></div>
-              <p>{{ t('settings.guideEscape') }}</p>
+          <div class="guide-card">
+            <div class="guide-grid">
+              <div class="guide-row">
+                <div class="guide-keys"><kbd class="kbd-key">/</kbd></div>
+                <p>{{ t('settings.guideSlash') }}</p>
+              </div>
+              <div class="guide-row">
+                <div class="guide-keys"><kbd class="kbd-key">/settings</kbd><kbd class="kbd-key">Enter</kbd></div>
+                <p>{{ t('settings.guideSettings') }}</p>
+              </div>
+              <div class="guide-row">
+                <div class="guide-keys"><kbd class="kbd-key">Ctrl</kbd><span class="guide-plus">+</span><kbd class="kbd-key">K</kbd></div>
+                <p>{{ t('settings.guidePalette') }}</p>
+              </div>
+              <div class="guide-row">
+                <div class="guide-keys"><kbd class="kbd-key">Esc</kbd></div>
+                <p>{{ t('settings.guideEscape') }}</p>
+              </div>
             </div>
           </div>
         </div>

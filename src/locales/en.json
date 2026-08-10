@@ -49,7 +49,7 @@
     "guideEscape": "Close the current popup or exit local search mode",
     "feedback": "Feedback",
     "feedbackTitle": "Send feedback",
-    "feedbackIntro": "Thank you for using Lucuro! If you find an issue or have a product suggestion, share it here or email ",
+    "feedbackIntro": "Thank you for using Lucuro! If you find an issue or have a product suggestion, share it here.",
     "feedbackName": "Name (optional)",
     "feedbackNamePlaceholder": "Your name",
     "feedbackEmail": "Email address (optional)",
@@ -152,6 +152,8 @@
   "popup": {
     "title": "Lucuro - 鹿客司南",
     "openManagerFailed": "Could not open the extensions manager.",
+    "managerCopied": "Firefox blocks automatic navigation to about:addons. The address has been copied; paste it into the address bar.",
+    "managerCopyFailed": "Firefox blocks automatic navigation to about:addons. Please open about:addons manually.",
     "extensionToggle": "Lucuro extension",
     "extensionToggleHelp": "Lucuro automatically takes over the new tab page. If you want to restore the browser's default homepage, please disable Lucuro in the extension management page.",
     "extensionToggleHelpZh": "Lucuro 默认接管新标签页。如需恢复浏览器默认主页，请在扩展管理页面中停用 Lucuro。",

@@ -10,18 +10,35 @@ const { t } = useI18n()
 
 function extensionManagerUrl() {
   const ua = navigator.userAgent || ''
-  if (/firefox/i.test(ua)) return 'about:addons'
   if (/edg\//i.test(ua)) return 'edge://extensions/'
+  if (/opr\//i.test(ua)) return 'opera://extensions/'
   return 'chrome://extensions/'
 }
 
 async function openExtensionManager() {
   errorMessage.value = ''
+  const ua = navigator.userAgent || ''
+
+  if (/firefox/i.test(ua)) {
+    try {
+      await navigator.clipboard.writeText('about:addons')
+      errorMessage.value = t('popup.managerCopied')
+    } catch {
+      errorMessage.value = t('popup.managerCopyFailed')
+    }
+    return
+  }
+
+  const url = extensionManagerUrl()
   try {
-    await browser.tabs.create({ url: extensionManagerUrl() })
+    if (typeof chrome !== 'undefined' && chrome.tabs?.create) {
+      await chrome.tabs.create({ url })
+    } else {
+      await browser.tabs.create({ url })
+    }
   } catch {
     try {
-      window.open(extensionManagerUrl(), '_blank')
+      window.open(url, '_blank')
     } catch {
       errorMessage.value = t('popup.openManagerFailed')
     }
