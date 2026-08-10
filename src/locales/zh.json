@@ -148,14 +148,11 @@
   },
   "popup": {
     "title": "Lucuro - 鹿客司南",
-    "readSettingsError": "无法读取设置。",
-    "saveFailed": "保存失败，请稍后重试。",
+    "openManagerFailed": "无法打开扩展管理页面。",
     "extensionToggle": "Lucuro 插件",
-    "extensionToggleHelp": "默认由 Lucuro 接管新标签页。关闭后，新标签页将恢复为浏览器默认主页。",
-    "enabled": "已开启",
-    "disabled": "已关闭",
-    "turnOn": "开启 Lucuro",
-    "turnOff": "关闭 Lucuro"
+    "extensionToggleHelp": "Lucuro 默认接管新标签页。如需恢复浏览器默认主页，请在扩展管理页面中停用或移除 Lucuro。",
+    "enabled": "已启用",
+    "manageExtensions": "前往扩展管理"
   },
   "toast": {
     "addCategoryFirst": "请先添加分类",

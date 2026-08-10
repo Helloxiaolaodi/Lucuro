@@ -244,6 +244,10 @@ button {
   box-shadow: 0 14px 28px rgba(0, 135, 235, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+.manager-btn {
+  width: 100%;
+}
+
 .toggle-btn:active {
   transform: translateY(0);
 }
