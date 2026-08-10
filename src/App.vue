@@ -77,12 +77,6 @@ function handleShortcut(event) {
   }
 
   const mod = event.ctrlKey || event.metaKey
-  if (event.altKey && !mod && !event.shiftKey && event.key.toLowerCase() === 's') {
-    event.preventDefault()
-    state.settingsOpen = !state.settingsOpen
-    return
-  }
-
   if (!mod) return
   if (event.key.toLowerCase() === 'k') {
     event.preventDefault()

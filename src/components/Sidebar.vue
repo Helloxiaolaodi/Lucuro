@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
-import { Plus, X } from 'lucide-vue-next'
+import { Camera, Plus, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './LucuroLogo.vue'
 import CategoryTreeNode from './CategoryTreeNode.vue'
@@ -22,6 +22,7 @@ const store = useLucuro()
 const newTag = ref('')
 const addingTag = ref(false)
 const tagInput = ref(null)
+const avatarInput = ref(null)
 const profileName = ref(String(props.settings.profileName || 'Lucuro'))
 
 watch(() => props.settings.profileName, (value) => {
@@ -32,6 +33,12 @@ function saveProfileName() {
   const name = profileName.value.trim() || 'Lucuro'
   profileName.value = name
   store.setSettings({ profileName: name })
+}
+
+function uploadAvatar(event) {
+  const file = event.target.files?.[0]
+  if (file) store.uploadAvatar(file)
+  event.target.value = ''
 }
 
 function clicksFor(category) {
@@ -190,10 +197,22 @@ function submitTag() {
 
     <div class="sidebar-footer">
       <div class="profile-row">
-        <img v-if="settings.profileAvatar" class="profile-avatar" :src="settings.profileAvatar" alt="Profile avatar" />
-        <div v-else class="profile-avatar profile-avatar-fallback profile-avatar-logo" aria-hidden="true">
-          <LucuroLogo :size="32" />
-        </div>
+        <input ref="avatarInput" class="visually-hidden" type="file" accept="image/*" @change="uploadAvatar" />
+        <button
+          class="profile-avatar-button"
+          type="button"
+          :title="t('sidebar.uploadAvatar')"
+          :aria-label="t('sidebar.uploadAvatar')"
+          @click="avatarInput?.click()"
+        >
+          <img v-if="settings.profileAvatar" class="profile-avatar" :src="settings.profileAvatar" alt="Profile avatar" />
+          <span v-else class="profile-avatar profile-avatar-fallback profile-avatar-logo" aria-hidden="true">
+            <LucuroLogo :size="32" />
+          </span>
+          <span class="profile-avatar-overlay" aria-hidden="true">
+            <Camera :size="14" />
+          </span>
+        </button>
         <div class="profile-copy">
           <input
             v-model="profileName"
