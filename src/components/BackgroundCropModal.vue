@@ -348,4 +348,12 @@ onBeforeUnmount(() => {
   gap: 10px;
   margin-top: 18px;
 }
+
+.crop-actions .btn-primary,
+.crop-actions .btn-primary:hover,
+.crop-actions .btn-primary:focus-visible {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+}
 </style>

@@ -23,6 +23,7 @@ const state = reactive({
   searchQuery: '',
   settingsOpen: false,
   settingsTab: 'links',
+  initializing: true,
   cardModal: null,
   categoryModal: null,
   toastMessage: '',
@@ -50,6 +51,7 @@ let storageUnsubscribe = null
 let applyingRemoteChange = false
 let notesTimer = null
 let hitokotoTimer = null
+const HITOKOTO_ROTATE_MS = 10_000
 
 function persistLinks() {
   const tasks = [
@@ -101,6 +103,13 @@ async function loadLinks() {
   state.links = []
 }
 
+async function persistDataSource() {
+  await Promise.all([
+    storage.set(STORAGE_LOCAL_SOURCE, state.settings.dataSource).catch(() => {}),
+    persistSettings().catch(() => {})
+  ])
+}
+
 async function load() {
   try {
     const [savedSettings, savedStats] = await Promise.all([
@@ -113,9 +122,11 @@ async function load() {
     ])
     state.settings = normalizeSettings(savedSettings || syncedSettings || {})
     const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
-    state.settings.dataSource = savedSource === 'json' || savedSource === 'browser'
-      ? savedSource
-      : null
+    const nextSource = savedSource === 'json' || savedSource === 'browser' ? savedSource : null
+    state.settings.dataSource = nextSource
+    if (nextSource && nextSource !== savedSource) {
+      await storage.set(STORAGE_LOCAL_SOURCE, nextSource).catch(() => {})
+    }
     state.stats = savedStats || syncedStats || {}
     if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
     if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
@@ -124,6 +135,7 @@ async function load() {
       await importBrowserBookmarks({ silent: true, replace: true, startup: true })
     }
   } finally {
+    state.initializing = false
     state.loaded = true
     refreshHitokoto()
     applySettings()
@@ -293,8 +305,7 @@ async function importLinksFile(file) {
 async function setDataSource(source) {
   const value = source === 'json' ? 'json' : 'browser'
   state.settings.dataSource = value
-  storage.set(STORAGE_LOCAL_SOURCE, value).catch(() => {})
-  persistSettings().catch(() => {})
+  await persistDataSource()
   if (value === 'json') {
     const localJson = await storage.get(STORAGE_LOCAL_JSON)
     if (Array.isArray(localJson) && localJson.length) {
@@ -335,7 +346,6 @@ function exportJson() {
         url: card.url,
         openMethod: 1,
         lanUrl: card.lanUrl || '',
-        description: card.description || '',
         tags: Array.isArray(card.tags) ? card.tags : [],
         isVpnRequired: Boolean(card.isVpnRequired),
         clickCount: Number(card.clickCount) || 0
@@ -374,7 +384,6 @@ function localSearch(raw) {
       if (!card?.title && !card?.url) return
       const haystack = [
         card.title,
-        card.description,
         (card.tags || []).join(' '),
         card.url,
         card.lanUrl,
@@ -412,7 +421,7 @@ function filteredCategories() {
         .filter(({ card }) => {
           const tagMatch = state.activeTag === 'all' || (card.tags || []).includes(state.activeTag)
           const categoryMatch = state.activeCategory === null || state.activeCategory === index
-          const haystack = `${card.title} ${card.description || ''} ${(card.tags || []).join(' ')} ${card.url}`.toLowerCase()
+          const haystack = `${card.title} ${(card.tags || []).join(' ')} ${card.url}`.toLowerCase()
           const searchMatch = !term || haystack.includes(term)
           return tagMatch && categoryMatch && searchMatch
         })
@@ -485,7 +494,6 @@ function saveCard(payload) {
     title: data.title || 'Untitled',
     url: data.url || '',
     lanUrl: data.lanUrl || '',
-    description: data.description || '',
     tags: data.tags || [],
     isVpnRequired: Boolean(data.isVpnRequired),
     clickCount: 0,
@@ -513,16 +521,16 @@ function deleteCard(section, index) {
 }
 
 function saveCategory(payload) {
-  const { index, title, subtitle } = payload
+  const { index, title } = payload
   if (index !== null && index !== undefined && state.links[index]) {
     state.links[index].title = title || 'Untitled'
-    state.links[index].subtitle = subtitle || ''
+    state.links[index].subtitle = state.links[index].subtitle || ''
     toast(t('toast.categoryUpdated'))
   } else {
     state.links.push({
       id: uid('category'),
       title: title || 'Untitled',
-      subtitle: subtitle || '',
+      subtitle: '',
       sort: state.links.length,
       children: []
     })
@@ -601,6 +609,7 @@ async function uploadBackground(file) {
   if (!file) return
   try {
     state.settings.background = await readFileAsDataUrl(file)
+    state.settings.backgroundBlur = 0
     applySettings()
     toast(t('toast.backgroundUpdated'))
     persistSettings().catch(() => {})
@@ -636,7 +645,23 @@ function hitokotoPool() {
 
 function refreshHitokoto() {
   const pool = hitokotoPool()
-  state.currentHitokoto = pool[Math.floor(Math.random() * pool.length)] || ''
+  if (!pool.length) {
+    state.currentHitokoto = ''
+    clearTimeout(hitokotoTimer)
+    return
+  }
+  if (pool.length === 1) {
+    state.currentHitokoto = pool[0]
+    clearTimeout(hitokotoTimer)
+    return
+  }
+  let next = state.currentHitokoto
+  while (next === state.currentHitokoto) {
+    next = pool[Math.floor(Math.random() * pool.length)]
+  }
+  state.currentHitokoto = next
+  clearTimeout(hitokotoTimer)
+  hitokotoTimer = setTimeout(refreshHitokoto, HITOKOTO_ROTATE_MS)
 }
 
 function setHitokoto(value) {

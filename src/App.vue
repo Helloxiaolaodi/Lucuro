@@ -227,11 +227,11 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
 
       <div class="scroll-area">
         <div class="content-wrap">
-          <section class="hero-strip" aria-label="Lucuro overview">
-            <div>
+          <section class="hero-strip hero-centered" aria-label="Lucuro overview">
+            <div class="hero-centered-copy">
               <h2 class="hero-title">Stay lucky, stay curious</h2>
               <div class="hitokoto-row">
-                <button class="hitokoto-text" type="button" :title="t('settings.hitokotoRefresh')" @click="store.refreshHitokoto">
+                <button :key="state.currentHitokoto" class="hitokoto-text" type="button" :title="t('settings.hitokotoRefresh')" @click="store.refreshHitokoto">
                   {{ state.currentHitokoto || t('settings.hitokotoPlaceholder') }}
                 </button>
                 <button class="mini-btn" type="button" :title="t('settings.hitokotoRefresh')" :aria-label="t('settings.hitokotoRefresh')" @click="store.refreshHitokoto">
@@ -241,7 +241,7 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
             </div>
           </section>
 
-          <div v-if="visibleGroups.length === 0" class="empty-state">
+          <div v-if="!state.initializing && visibleGroups.length === 0" class="empty-state">
             <p>{{ state.settings.dataSource ? t('app.noResults') : t('app.chooseDataSource') }}</p>
             <button class="btn" type="button" @click="openSettings('links')">
               {{ state.settings.dataSource ? t('app.manageLinks') : t('app.selectDataSource') }}
@@ -311,7 +311,6 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
                   <SiteIcon :card="item.card" />
                   <div class="card-copy">
                     <h4 class="card-title">{{ item.card.title }}</h4>
-                    <p v-if="item.card.description" class="card-description">{{ item.card.description }}</p>
                     <div v-if="item.card.tags?.length" class="card-tags">
                       <span v-for="tag in item.card.tags.slice(0, 3)" :key="tag" class="tag-pill">{{ tag }}</span>
                     </div>

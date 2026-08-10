@@ -4,6 +4,8 @@
 
 公开产品仓库：[https://github.com/Helloxiaolaodi/Lucuro](https://github.com/Helloxiaolaodi/Lucuro)
 
+<a id="readme-top"></a>
+
 ## 快速开始
 
 ```bash
@@ -14,7 +16,34 @@ npm run build
 
 生产构建输出到 `dist/`，每次构建后由 `rollup-plugin-visualizer` 生成 `stats.html`。
 
-商店上传包生成在 `D:\YL2026\Vue\lucuro-chrome-edge-v0.1.0.zip`（Chrome/Edge）与 `D:\YL2026\Vue\lucuro-firefox-v0.1.0.zip`（Firefox），ZIP 根目录直接包含 `manifest.json`。
+商店上传包生成在 `D:\YL2026\Vue\lucuro-edge-v0.1.0.zip`（Chrome/Edge）与 `D:\YL2026\Vue\lucuro-firefox-v0.1.0.zip`（Firefox），ZIP 根目录直接包含 `manifest.json`。
+
+## 本地安装与调试
+
+如果你希望通过源码在本地运行或测试 **Lucuro**，可以按照以下对应浏览器的步骤进行安装。
+
+### 谷歌浏览器 (Chrome)
+
+1. 打开 Chrome 浏览器，在地址栏输入并回车：`chrome://extensions/`
+2. 点击页面右上角，开启 **「开发者模式 (Developer mode)」**。
+3. 点击左上角的 **「加载已解压的扩展程序 (Load unpacked)」**。
+4. 在弹出的文件选择窗口中，选中本项目编译生成的 **`dist/`** 文件夹。
+5. 打开一个新的标签页，即可成功加载并体验 **Lucuro**。
+
+### 微软浏览器 (Edge)
+
+1. 打开 Edge 浏览器，在地址栏输入并回车：`edge://extensions/`
+2. 观察左侧边栏底部，开启 **「开发人员模式 (Developer mode)」** 开关。
+3. 点击顶部的 **「加载解压缩的扩展 (Load unpacked)」**。
+4. 在弹出的文件选择窗口中，选中本项目编译生成的 **`dist/`** 文件夹。
+5. 打开一个新的标签页，即可成功加载并体验 **Lucuro**。
+
+### 火狐浏览器 (Firefox)
+
+1. 打开 Firefox 浏览器，在地址栏输入并回车：`about:debugging#/runtime/this-firefox`
+2. 点击页面右上角的 **「临时加载附加组件... (Load Temporary Add-on...)」** 按钮。
+3. 在弹出的文件选择窗口中，进入 `dist/` 文件夹并选中 **`manifest.json`** 文件（或该目录下的任意文件）。
+4. 打开一个新的标签页，即可成功加载并体验 **Lucuro**。
 
 ## 功能
 
@@ -26,3 +55,13 @@ npm run build
 - 使用 `chrome.storage.sync` 原生同步并保留本地回退
 - 海外赞助使用 Ko-fi，国内赞助使用微信收款码
 - 本地优先，无需账号，无遥测，无外部同步服务
+
+## Additional community link:
+
+- [LINUX DO](https://linux.do/) - A next-generation Linux community
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+[Back to top](#readme-top)

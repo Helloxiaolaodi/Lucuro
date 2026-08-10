@@ -71,15 +71,27 @@ function pushOrMergeGroup(groups, title, cards) {
     (group) => String(group.title || '').trim().toLowerCase() === normalizedTitle.toLowerCase()
   )
   if (existing) {
-    existing.children.push(...cards)
+    existing.children = dedupeCards([...existing.children, ...cards])
     return
   }
   groups.push({
     id: uid('category'),
     title: normalizedTitle,
     subtitle: '',
-    children: cards
+    children: dedupeCards(cards)
   })
+}
+
+function dedupeCards(cards = []) {
+  const seen = new Set()
+  const result = []
+  cards.forEach((card) => {
+    const key = `${normalizeBookmarkUrl(card.url)}|${String(card.title || '').trim().toLowerCase()}`
+    if (!key || seen.has(key)) return
+    seen.add(key)
+    result.push(card)
+  })
+  return result
 }
 
 export async function createBookmarkFolder(title) {

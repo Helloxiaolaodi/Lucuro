@@ -11,14 +11,12 @@ const emit = defineEmits(['save', 'close'])
 const { t } = useI18n()
 
 const form = ref({
-  title: props.category?.title || '',
-  subtitle: props.category?.subtitle || ''
+  title: props.category?.title || ''
 })
 
 function submit() {
   emit('save', {
-    title: form.value.title.trim(),
-    subtitle: form.value.subtitle.trim()
+    title: form.value.title.trim()
   })
 }
 </script>
@@ -38,10 +36,6 @@ function submit() {
           <div class="field full">
             <label for="category-title">{{ t('category.name') }}</label>
             <input id="category-title" v-model="form.title" class="input" :placeholder="t('category.name')" />
-          </div>
-          <div class="field full">
-            <label for="category-subtitle">{{ t('category.subtitle') }}</label>
-            <input id="category-subtitle" v-model="form.subtitle" class="input" :placeholder="t('category.subtitle')" />
           </div>
         </div>
 

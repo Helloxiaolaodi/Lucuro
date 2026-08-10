@@ -14,7 +14,6 @@ const { t } = useI18n()
 const form = ref({
   title: props.card?.title || '',
   url: props.card?.url || '',
-  description: props.card?.description || '',
   tags: (props.card?.tags || []).join(', '),
   isVpnRequired: Boolean(props.card?.isVpnRequired)
 })
@@ -24,7 +23,6 @@ function submit() {
     title: form.value.title.trim() || 'Untitled',
     url: form.value.url.trim(),
     icon: { source: 'auto' },
-    description: form.value.description.trim(),
     tags: form.value.tags
       .split(',')
       .map((tag) => tag.trim())
@@ -53,11 +51,6 @@ function submit() {
           <div class="field">
             <label for="card-url">{{ t('card.url') }}</label>
             <input id="card-url" v-model="form.url" class="input" type="url" placeholder="https://example.com" />
-          </div>
-
-          <div class="field full">
-            <label for="card-desc">{{ t('card.description') }}</label>
-            <textarea id="card-desc" v-model="form.description" class="textarea" :placeholder="t('card.description')"></textarea>
           </div>
 
           <div class="field full">
