@@ -212,6 +212,16 @@ button {
   line-height: 1.55;
 }
 
+.toggle-help-en,
+.toggle-help-zh {
+  display: block;
+}
+
+.toggle-help-zh {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
 .toggle-btn {
   display: inline-flex;
   align-items: center;

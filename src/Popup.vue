@@ -44,7 +44,10 @@ async function openExtensionManager() {
           <span class="toggle-title">{{ t('popup.extensionToggle') }}</span>
           <span class="toggle-state is-on">{{ t('popup.enabled') }}</span>
         </div>
-        <p class="toggle-help">{{ t('popup.extensionToggleHelp') }}</p>
+        <p class="toggle-help">
+          <span class="toggle-help-en">{{ t('popup.extensionToggleHelp') }}</span>
+          <span class="toggle-help-zh">{{ t('popup.extensionToggleHelpZh') }}</span>
+        </p>
         <button
           class="toggle-btn is-on manager-btn"
           type="button"
