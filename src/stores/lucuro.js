@@ -52,6 +52,47 @@ let applyingRemoteChange = false
 let notesTimer = null
 let hitokotoTimer = null
 const HITOKOTO_ROTATE_MS = 10_000
+const SMART_TAG_COUNT = 10
+
+const SMART_STOP_WORDS = new Set([
+  '的', '和', '与', '及', '在', '是', '为', '对', '中', '之', '上', '下',
+  '用', '到', '有', '或', '等', '第', '页', '首页', '官网', '教程', '大全',
+  '搜索', '登录', '注册', '下载', '文档', '资料', '工具', '网站', '地址',
+  '链接', '网址', '最新', '免费', '中文', '英文', '视频', '在线', '使用',
+  '帮助', '中心', '平台', '系统', '管理', '设置', '支持', '服务', '项目',
+  '学习', '课程', '文章', '文件', '模板', '指南', '介绍', '说明', '官方',
+  '论坛', '社区', '博客',
+  'index', 'home', 'login', 'sign', 'log', 'out', 'page', 'main', 'default',
+  'www', 'http', 'https', 'com', 'org', 'net', 'cn', 'html', 'php', 'aspx',
+  'jsp', 'pdf', 'jpg', 'png', 'css', 'js', 'jsx', 'ts', 'tsx', 'api', 'app',
+  'web', 'site', 'online', 'download', 'search', 'docs', 'doc', 'help',
+  'support', 'about', 'contact', 'news', 'newsletter', 'blog', 'wiki', 'readme',
+  'read', 'the', 'and', 'for', 'with', 'from', 'your', 'you', 'this', 'that',
+  'are', 'not', 'tools', 'tool', 'guide', 'tutorial', 'official', 'free',
+  'latest', 'new', 'register', 'manage', 'management', 'setting', 'settings',
+  'config', 'configuration', 'view', 'list', 'group', 'folder', 'bookmark',
+  'bookmarks', 'favorite', 'favorites', 'top', 'more', 'open', 'newtab',
+  'extension', 'lucuro', 'chrome', 'edge', 'firefox', 'browser'
+])
+
+const SMART_DOMAIN_RULES = [
+  { label: 'Git', hosts: ['github.com', 'gitee.com', 'gitlab.com', 'bitbucket.org'] },
+  { label: '文献', hosts: ['ncbi.nlm.nih.gov', 'pubmed.ncbi.nlm.nih.gov', 'nature.com', 'sciencedirect.com', 'springer.com', 'wiley.com', 'ieee.org', 'scholar.google.com', 'researchgate.net', 'arxiv.org', 'semanticscholar.org', 'cnki.net'] },
+  { label: '视频', hosts: ['youtube.com', 'bilibili.com', 'vimeo.com', 'twitch.tv'] },
+  { label: '搜索', hosts: ['google.com', 'bing.com', 'baidu.com', 'duckduckgo.com', 'yahoo.com'] },
+  { label: '开发', hosts: ['stackoverflow.com', 'stackexchange.com', 'csdn.net', 'segmentfault.com', 'dev.to', 'npmjs.com', 'pypi.org', 'mozilla.org', 'developer.mozilla.org'] },
+  { label: '社区', hosts: ['reddit.com', 'zhihu.com', 'v2ex.com', 'linux.do', 'discord.com', 'telegram.org'] },
+  { label: '文档', hosts: ['notion.so', 'obsidian.md', 'evernote.com', 'yuque.com', 'feishu.cn', 'docs.google.com', 'learn.microsoft.com'] },
+  { label: '云服务', hosts: ['cloudflare.com', 'aws.amazon.com', 'azure.microsoft.com', 'cloud.google.com', 'aliyun.com', 'tencentcloud.com'] },
+  { label: '设计', hosts: ['figma.com', 'dribbble.com', 'behance.net', 'canva.com', 'photopea.com'] },
+  { label: '邮箱', hosts: ['mail.google.com', 'outlook.com', 'mail.qq.com', 'mail.163.com', 'proton.me'] }
+]
+
+const SMART_KEYWORD_TAGS = [
+  'AI', 'Python', 'JavaScript', 'TypeScript', 'Java', 'Rust', 'Go', 'Vue',
+  'React', 'Node.js', 'Docker', 'Kubernetes', 'Linux', 'Git', 'Database',
+  'SQL', 'Bioinformatics', 'Machine Learning', 'Deep Learning', 'Data Science'
+]
 
 function persistLinks() {
   const tasks = [
@@ -415,13 +456,19 @@ function filteredCategories() {
   const term = state.searchQuery.trim().toLowerCase()
   const engine = currentEngine()
   if (term && engine?.shortcut && term.startsWith(`${engine.shortcut} `)) return []
+  const smartTagList = smartTags()
+  const smartTagSet = new Set(smartTagList)
 
   return state.links
     .map((category, index) => {
       const items = sortCards(category.children)
         .map((card, cardIndex) => ({ card, cardIndex }))
         .filter(({ card }) => {
-          const tagMatch = state.activeTag === 'all' || (card.tags || []).includes(state.activeTag)
+          const tagMatch = state.activeTag === 'all' || (
+            smartTagSet.has(state.activeTag)
+              ? matchesSmartTag(card, category, state.activeTag)
+              : (card.tags || []).includes(state.activeTag)
+          )
           const categoryMatch = state.activeCategory === null || state.activeCategory === index
           const haystack = `${card.title} ${(card.tags || []).join(' ')} ${card.url}`.toLowerCase()
           const searchMatch = !term || haystack.includes(term)
@@ -453,6 +500,116 @@ function allTags() {
       ...state.links.flatMap((category) => category.children.flatMap((card) => card.tags || []))
     ])
   ]
+}
+
+function smartTagDomainRuleForUrl(rawUrl) {
+  if (!rawUrl) return null
+  try {
+    const hostname = new URL(rawUrl).hostname.replace(/^www\./, '').toLowerCase()
+    const matches = SMART_DOMAIN_RULES
+      .map((entry) => {
+        const host = entry.hosts.find((item) => {
+          const normalized = item.toLowerCase()
+          return hostname === normalized || hostname.endsWith(`.${normalized}`)
+        })
+        return host ? { entry, host } : null
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.host.length - a.host.length)
+    return matches[0]?.entry?.label || null
+  } catch {
+    return null
+  }
+}
+
+function containsKeyword(text, keyword) {
+  const escaped = String(keyword || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(String(text || ''))
+}
+
+function smartTagForText(text) {
+  return SMART_KEYWORD_TAGS.find((tag) => containsKeyword(text, tag)) || null
+}
+
+function smartWordCandidates(text) {
+  const value = String(text || '').toLowerCase()
+  const words = new Set()
+
+  for (const block of value.match(/[\u4e00-\u9fa5]{2,}/g) || []) {
+    if (!SMART_STOP_WORDS.has(block)) words.add(block)
+    if (block.length > 3) {
+      words.add(block.slice(0, 2))
+      words.add(block.slice(-2))
+    }
+  }
+
+  for (const token of value.match(/[a-z][a-z0-9_-]*/g) || []) {
+    if (token.length >= 2 && !SMART_STOP_WORDS.has(token)) words.add(token)
+  }
+
+  return [...words]
+}
+
+function smartUrlWordCandidates(rawUrl) {
+  if (!rawUrl) return []
+  try {
+    const parsed = new URL(rawUrl)
+    const tokens = [
+      ...parsed.hostname.replace(/^www\./, '').split(/[.-]+/),
+      ...parsed.pathname.split(/[/._-]+/)
+    ]
+      .map((token) => String(token || '').toLowerCase())
+      .filter((token) => token.length >= 2 && !SMART_STOP_WORDS.has(token))
+    return [...new Set(tokens)]
+  } catch {
+    return []
+  }
+}
+
+function smartTags() {
+  const counts = new Map()
+  const bump = (tag, weight = 1) => {
+    const name = String(tag || '').trim()
+    if (!name) return
+    counts.set(name, (counts.get(name) || 0) + weight)
+  }
+
+  state.links.forEach((category) => {
+    const categoryText = String(category.title || '')
+    ;(category.children || []).forEach((card) => {
+      const title = String(card.title || '')
+      const url = String(card.url || '')
+      const text = `${categoryText} ${title}`.trim()
+      const domainTag = smartTagDomainRuleForUrl(url)
+      const keywordTag = smartTagForText(text)
+
+      if (domainTag) bump(domainTag, 4)
+      if (keywordTag) bump(keywordTag, 3)
+      smartWordCandidates(text).forEach((word) => bump(word, 1))
+      smartUrlWordCandidates(url).forEach((word) => bump(word, 1))
+    })
+  })
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]), undefined, { sensitivity: 'base' }))
+    .slice(0, SMART_TAG_COUNT)
+    .map(([tag]) => tag)
+}
+
+function matchesSmartTag(card, category, rawTag) {
+  const tag = String(rawTag || '').trim()
+  if (!tag) return false
+  const title = String(card.title || '')
+  const categoryTitle = String(category?.title || '')
+  const url = String(card.url || '')
+  const lowerTag = tag.toLowerCase()
+  const text = `${categoryTitle} ${title}`.toLowerCase()
+
+  if (smartTagDomainRuleForUrl(url) === tag) return true
+  if (smartTagForText(`${categoryTitle} ${title}`) === tag) return true
+  if (text.includes(lowerTag)) return true
+  if ((card.tags || []).some((item) => String(item).toLowerCase() === lowerTag)) return true
+  return smartUrlWordCandidates(url).some((word) => word === lowerTag)
 }
 
 function addTag(raw) {
@@ -688,6 +845,7 @@ export function useLucuro() {
     applySettings,
     toast,
     allTags,
+    smartTags,
     addTag,
     removeTag,
     filteredCategories,

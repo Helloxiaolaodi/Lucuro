@@ -265,6 +265,23 @@ a {
   background: var(--accent-soft);
 }
 
+.smart-tag-filter {
+  margin-bottom: 2px;
+}
+
+.smart-tag-chip {
+  border-color: var(--border-strong);
+  background: linear-gradient(135deg, var(--accent-soft), var(--chip-bg));
+}
+
+.smart-tag-chip:hover,
+.smart-tag-chip.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
 .tag-chip-wrap {
   position: relative;
   display: inline-flex;
