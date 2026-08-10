@@ -49,6 +49,22 @@ export function parseBookmarkTreeToGroups(nodes = []) {
   return groups
 }
 
+function uniqueBookmarkNodes(nodes = []) {
+  const seen = new Set()
+  const result = []
+  const visit = (items = []) => {
+    items.forEach((node) => {
+      if (!node || typeof node !== 'object') return
+      if (seen.has(node)) return
+      seen.add(node)
+      result.push(node)
+      if (Array.isArray(node.children) && node.children.length) visit(node.children)
+    })
+  }
+  visit(nodes)
+  return result
+}
+
 function pushOrMergeGroup(groups, title, cards) {
   const normalizedTitle = String(title || 'Imported bookmarks').trim()
   const existing = groups.find(
@@ -119,5 +135,40 @@ export function mergeBookmarkGroups(currentLinks, groups = []) {
 export async function fetchBrowserBookmarkGroups() {
   const tree = await getBookmarkTree()
   const root = tree?.[0]
-  return parseBookmarkTreeToGroups(root?.children || [])
+  const candidates = [
+    root?.children || [],
+    root ? [root] : [],
+    tree || []
+  ]
+
+  for (const nodes of candidates) {
+    const groups = parseBookmarkTreeToGroups(nodes)
+    if (groups.length) return groups
+  }
+
+  const uniqueNodes = uniqueBookmarkNodes(tree || [])
+  if (uniqueNodes.length) {
+    const directNodes = uniqueNodes.filter((node) => node?.url)
+    const folderNodes = uniqueNodes.filter((node) => Array.isArray(node?.children))
+    const fallbackGroups = parseBookmarkTreeToGroups(folderNodes)
+    const directCards = parseBookmarkNodes(directNodes)
+    if (directCards.length) {
+      const existing = fallbackGroups.find(
+        (group) => String(group.title || '').trim().toLowerCase() === 'imported bookmarks'
+      )
+      if (existing) {
+        existing.children.push(...directCards)
+      } else {
+        fallbackGroups.push({
+          id: uid('category'),
+          title: 'Imported bookmarks',
+          subtitle: '',
+          children: directCards
+        })
+      }
+    }
+    if (fallbackGroups.length) return fallbackGroups
+  }
+
+  return []
 }
