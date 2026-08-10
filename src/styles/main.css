@@ -1896,11 +1896,6 @@ html[data-card-size='compact'] .card-icon {
   line-height: 1.8;
 }
 
-.support-quote .support-quote-en {
-  color: var(--muted);
-  font-size: 11px;
-}
-
 .support-meta {
   display: flex;
   justify-content: flex-end;
