@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Copy, Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Send, Trash2, Upload, X } from 'lucide-vue-next'
+import { Copy, Download, FolderPlus, GripVertical, HeartHandshake, Info, Link2, Pencil, QrCode, RefreshCw, Send, Trash2, Upload, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from '../stores/lucuro'
 import { setSavedLocale } from '../i18n'
@@ -20,6 +20,7 @@ const { t, locale } = useI18n()
 
 const backgroundInput = ref(null)
 const jsonInput = ref(null)
+const showJsonGuide = ref(false)
 const showWechatPay = ref(false)
 const cropModalOpen = ref(false)
 const pendingBackgroundDataUrl = ref('')
@@ -204,6 +205,16 @@ async function copyJsonTemplate() {
                   <Upload :size="15" />
                   {{ t('settings.importJson') }}
                 </button>
+                <button
+                  class="btn btn-ghost small json-guide-toggle"
+                  type="button"
+                  :aria-expanded="showJsonGuide"
+                  aria-controls="json-guide-panel"
+                  @click="showJsonGuide = !showJsonGuide"
+                >
+                  <Info :size="14" />
+                  {{ t('settings.jsonGuideToggle') }}
+                </button>
               </template>
               <template v-else-if="settings.dataSource === 'browser'">
                 <button
@@ -226,6 +237,22 @@ async function copyJsonTemplate() {
               </button>
             </div>
           </div>
+
+          <section id="json-guide-panel" v-show="showJsonGuide" class="json-guide">
+            <div class="json-guide-head">
+              <div>
+                <h3 class="section-title">{{ t('settings.jsonGuideTitle') }}</h3>
+                <p class="section-help">{{ t('settings.jsonGuideHelp') }}</p>
+              </div>
+              <button class="btn btn-ghost small json-guide-copy" type="button" @click="copyJsonTemplate">
+                <Copy :size="14" />
+                {{ t('settings.jsonGuideCopy') }}
+              </button>
+            </div>
+            <div class="json-guide-code">
+              <pre class="json-guide-pre"><code v-text="JSON_TEMPLATE"></code></pre>
+            </div>
+          </section>
 
           <SortableList
             item-class="category-row"
@@ -253,22 +280,6 @@ async function copyJsonTemplate() {
               </div>
             </div>
           </SortableList>
-
-          <section class="json-guide">
-            <div class="json-guide-head">
-              <div>
-                <h3 class="section-title">{{ t('settings.jsonGuideTitle') }}</h3>
-                <p class="section-help">{{ t('settings.jsonGuideHelp') }}</p>
-              </div>
-              <button class="btn btn-ghost small json-guide-copy" type="button" @click="copyJsonTemplate">
-                <Copy :size="14" />
-                {{ t('settings.jsonGuideCopy') }}
-              </button>
-            </div>
-            <div class="json-guide-code">
-              <pre class="json-guide-pre"><code v-text="JSON_TEMPLATE"></code></pre>
-            </div>
-          </section>
         </div>
 
         <div v-else-if="activeTab === 'appearance'" class="settings-section appearance-settings">

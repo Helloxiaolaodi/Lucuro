@@ -108,6 +108,7 @@
     "exportJson": "Export JSON",
     "jsonGuideTitle": "Local JSON format guide",
     "jsonGuideHelp": "When writing or generating bookmark data by hand, follow this structure and field types.",
+    "jsonGuideToggle": "Format guide",
     "jsonGuideCopy": "Copy template",
     "jsonGuideCopied": "JSON template copied.",
     "jsonGuideCopyFailed": "Could not copy the JSON template.",
