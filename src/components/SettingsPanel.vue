@@ -198,23 +198,29 @@ async function copyJsonTemplate() {
               <h3 class="section-title">{{ t('settings.categories') }}</h3>
               <p class="section-help">{{ t('settings.categoriesHelp') }}</p>
             </div>
-            <div class="row-actions">
+            <div class="row-actions row-actions-nowrap">
               <template v-if="settings.dataSource === 'json'">
                 <input ref="jsonInput" class="visually-hidden" type="file" accept=".json,application/json" @change="importJson" />
-                <button class="btn" type="button" :disabled="store.state.bookmarkImporting" @click="jsonInput?.click()">
-                  <Upload :size="15" />
-                  {{ t('settings.importJson') }}
-                </button>
-                <button
-                  class="btn btn-ghost small json-guide-toggle"
-                  type="button"
-                  :aria-expanded="showJsonGuide"
-                  aria-controls="json-guide-panel"
-                  @click="showJsonGuide = !showJsonGuide"
-                >
-                  <Info :size="14" />
-                  {{ t('settings.jsonGuideToggle') }}
-                </button>
+                <div class="action-group">
+                  <button class="action-group-btn" type="button" :disabled="store.state.bookmarkImporting" @click="jsonInput?.click()">
+                    <Upload :size="14" />
+                    {{ t('settings.importJson') }}
+                  </button>
+                  <button class="action-group-btn" type="button" @click="store.exportJson">
+                    <Download :size="14" />
+                    {{ t('settings.exportJson') }}
+                  </button>
+                  <button
+                    class="action-group-btn json-guide-toggle"
+                    type="button"
+                    :aria-expanded="showJsonGuide"
+                    aria-controls="json-guide-panel"
+                    @click="showJsonGuide = !showJsonGuide"
+                  >
+                    <Info :size="14" />
+                    {{ t('settings.jsonGuideToggle') }}
+                  </button>
+                </div>
               </template>
               <template v-else-if="settings.dataSource === 'browser'">
                 <button
@@ -226,12 +232,12 @@ async function copyJsonTemplate() {
                   <RefreshCw :size="15" />
                   {{ t('settings.syncBrowserBookmarks') }}
                 </button>
+                <button class="btn" type="button" @click="store.exportJson">
+                  <Download :size="15" />
+                  {{ t('settings.exportJson') }}
+                </button>
               </template>
-              <button class="btn" type="button" @click="store.exportJson">
-                <Download :size="15" />
-                {{ t('settings.exportJson') }}
-              </button>
-              <button class="btn" type="button" @click="emit('open-category', null)">
+              <button class="btn btn-primary add-category-btn" type="button" @click="emit('open-category', null)">
                 <FolderPlus :size="15" />
                 {{ t('settings.addCategory') }}
               </button>
