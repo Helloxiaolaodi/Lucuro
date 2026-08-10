@@ -51,7 +51,7 @@ async function uploadBackground(event) {
 }
 
 function applyCroppedBackground(dataUrl) {
-  store.setSettings({ background: dataUrl })
+  store.setSettings({ background: dataUrl, backgroundBlur: 0 })
   cropModalOpen.value = false
 }
 
@@ -100,7 +100,7 @@ async function submitFeedback() {
 
 <template>
   <div class="modal-backdrop" @mousedown.self="emit('close')">
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Lucuro settings">
+    <div class="modal-panel settings-modal" role="dialog" aria-modal="true" aria-label="Lucuro settings">
       <div class="modal-header">
         <h2>{{ t('settings.title') }}</h2>
         <button class="modal-close" type="button" :aria-label="t('settings.close')" @click="emit('close')">
@@ -224,8 +224,6 @@ async function submitFeedback() {
             </div>
           </div>
 
-          <hr class="settings-divider" />
-
           <div class="appearance-group">
             <div class="appearance-group-head">
               <h3 class="appearance-group-title">{{ t('settings.appearanceCards') }}</h3>
@@ -245,8 +243,6 @@ async function submitFeedback() {
               </div>
             </div>
           </div>
-
-          <hr class="settings-divider" />
 
           <div class="appearance-group">
             <div class="appearance-group-head">
@@ -270,8 +266,6 @@ async function submitFeedback() {
               </div>
             </div>
           </div>
-
-          <hr class="settings-divider" />
 
           <div class="appearance-group">
             <div class="appearance-group-head">
@@ -356,7 +350,7 @@ async function submitFeedback() {
                 </div>
               </div>
               <div class="feedback-actions">
-                <button class="btn" type="submit" :disabled="isSubmittingFeedback">
+                <button class="btn btn-primary" type="submit" :disabled="isSubmittingFeedback">
                   <Send :size="15" />
                   {{ isSubmittingFeedback ? t('settings.feedbackSending') : t('settings.feedbackSubmit') }}
                 </button>

@@ -2,9 +2,7 @@ export const DEFAULT_ENGINES = [
   { id: 'google', label: 'Google', url: 'https://www.google.com/search?q={q}', shortcut: 'g' },
   { id: 'bing', label: 'Bing', url: 'https://www.bing.com/search?q={q}', shortcut: 'b' },
   { id: 'baidu', label: 'Baidu', url: 'https://www.baidu.com/s?wd={q}', shortcut: '' },
-  { id: 'duckduckgo', label: 'DuckDuckGo', url: 'https://duckduckgo.com/?q={q}', shortcut: 'd' },
-  { id: 'github', label: 'GitHub', url: 'https://github.com/search?q={q}', shortcut: '' },
-  { id: 'pubmed', label: 'PubMed', url: 'https://pubmed.ncbi.nlm.nih.gov/?term={q}', shortcut: 'p' }
+  { id: 'github', label: 'GitHub', url: 'https://github.com/search?q={q}', shortcut: '' }
 ]
 
 export const DEFAULT_HITOKOTO = [
@@ -99,11 +97,16 @@ export function normalizeCard(child, index = 0) {
 }
 
 export function normalizeSettings(saved = {}) {
-  const engines = Array.isArray(saved.engines) && saved.engines.length ? saved.engines : DEFAULT_ENGINES
+  const allowedEngineIds = new Set(DEFAULT_ENGINES.map((engine) => engine.id))
+  const savedEngines = Array.isArray(saved.engines)
+    ? saved.engines.filter((engine) => engine && allowedEngineIds.has(engine.id))
+    : []
+  const engines = savedEngines.length ? savedEngines : DEFAULT_ENGINES
   const { accent, ...safeSettings } = saved
   return {
     ...DEFAULT_SETTINGS,
     ...safeSettings,
+    defaultEngineId: engines.some((engine) => engine.id === saved.defaultEngineId) ? saved.defaultEngineId : 'google',
     engines
   }
 }
