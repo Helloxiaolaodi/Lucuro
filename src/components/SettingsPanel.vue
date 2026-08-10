@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Send, Trash2, Upload, X } from 'lucide-vue-next'
+import { Copy, Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Send, Trash2, Upload, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from '../stores/lucuro'
 import { setSavedLocale } from '../i18n'
@@ -28,6 +28,37 @@ const feedbackName = ref('')
 const feedbackEmail = ref('')
 const feedbackMessage = ref('')
 const FEEDBACK_ENDPOINT = 'https://formspree.io/f/xvkpkbwr'
+const JSON_TEMPLATE = `{
+  "version": 1,
+  "appName": "Lucuro",
+  "exportTime": "2026-08-10 19:22:53",
+  "appVersion": "",
+  "icons": [
+    {
+      "title": "书签栏 - 读研学习 - google",
+      "sort": 0,
+      "children": [
+        {
+          "icon": {
+            "text": "",
+            "itemType": 2,
+            "src": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fgemini.google.com%2F&sz=128",
+            "name": "",
+            "backgroundColor": ""
+          },
+          "sort": 99999,
+          "title": "Google Gemini",
+          "url": "https://gemini.google.com/",
+          "openMethod": 1,
+          "lanUrl": "",
+          "tags": [],
+          "isVpnRequired": false,
+          "clickCount": 0
+        }
+      ]
+    }
+  ]
+}`
 
 function setTab(tab) {
   store.state.settingsTab = tab
@@ -93,6 +124,27 @@ async function submitFeedback() {
     store.toast(t('settings.feedbackNetworkError'))
   } finally {
     isSubmittingFeedback.value = false
+  }
+}
+
+async function copyJsonTemplate() {
+  try {
+    await navigator.clipboard.writeText(JSON_TEMPLATE)
+    store.toast(t('settings.jsonGuideCopied'))
+  } catch {
+    try {
+      const textarea = document.createElement('textarea')
+      textarea.value = JSON_TEMPLATE
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      textarea.remove()
+      store.toast(t('settings.jsonGuideCopied'))
+    } catch {
+      store.toast(t('settings.jsonGuideCopyFailed'))
+    }
   }
 }
 </script>
@@ -201,6 +253,22 @@ async function submitFeedback() {
               </div>
             </div>
           </SortableList>
+
+          <section class="json-guide">
+            <div class="json-guide-head">
+              <div>
+                <h3 class="section-title">{{ t('settings.jsonGuideTitle') }}</h3>
+                <p class="section-help">{{ t('settings.jsonGuideHelp') }}</p>
+              </div>
+              <button class="btn btn-ghost small json-guide-copy" type="button" @click="copyJsonTemplate">
+                <Copy :size="14" />
+                {{ t('settings.jsonGuideCopy') }}
+              </button>
+            </div>
+            <div class="json-guide-code">
+              <pre class="json-guide-pre"><code v-text="JSON_TEMPLATE"></code></pre>
+            </div>
+          </section>
         </div>
 
         <div v-else-if="activeTab === 'appearance'" class="settings-section appearance-settings">
