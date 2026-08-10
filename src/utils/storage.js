@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 
 const extensionStorage = browser?.storage?.local || globalThis.chrome?.storage?.local
 const extensionSyncStorage = browser?.storage?.sync || globalThis.chrome?.storage?.sync
-const extensionBookmarks = browser?.bookmarks || globalThis.chrome?.bookmarks
+const extensionBookmarks = browser?.bookmarks || globalThis.browser?.bookmarks || globalThis.chrome?.bookmarks
 
 export const storage = {
   async get(key) {
@@ -136,7 +136,7 @@ export async function getBookmarkTree() {
   if (!extensionBookmarks?.getTree) {
     throw new Error('Bookmarks API is unavailable')
   }
-  const tree = await callBookmarksApi(extensionBookmarks.getTree.bind(extensionBookmarks))
+  const tree = await callBookmarksApi(extensionBookmarks.getTree.bind(extensionBookmarks), [], [])
   return Array.isArray(tree) ? tree : []
 }
 
@@ -154,7 +154,9 @@ async function callBookmarksApi(apiMethod, args = []) {
     }
     if (result !== undefined) return result
   } catch (error) {
-    throw error
+    // Some Chrome contexts only expose callback-style APIs. Calling the
+    // method without a callback throws, so retry with a callback below.
+    console.warn('[Lucuro] Falling back to callback-style bookmarks API', error)
   }
 
   return new Promise((resolve, reject) => {
