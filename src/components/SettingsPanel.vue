@@ -357,7 +357,7 @@ async function submitFeedback() {
                 </div>
               </div>
               <div class="feedback-actions">
-                <button class="btn btn-primary" type="submit" :disabled="isSubmittingFeedback">
+                <button class="btn" type="submit" :disabled="isSubmittingFeedback">
                   <Send :size="15" />
                   {{ isSubmittingFeedback ? t('settings.feedbackSending') : t('settings.feedbackSubmit') }}
                 </button>
