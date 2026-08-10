@@ -10,6 +10,7 @@ import CardEditorModal from './components/CardEditorModal.vue'
 import CategoryEditorModal from './components/CategoryEditorModal.vue'
 import SortableList from './components/SortableList.vue'
 import SiteIcon from './components/SiteIcon.vue'
+import { storage } from './utils/storage'
 
 const store = useLucuro()
 const { state, load } = store
@@ -18,12 +19,18 @@ const sidebarOpen = ref(false)
 const notesOpen = ref(false)
 const notesTextarea = ref(null)
 const noteHistory = ref([])
+const localResults = computed(() => store.localSearch(state.searchQuery))
+const guideVisible = ref(false)
+const GUIDE_STORAGE_KEY = 'lucuro_has_seen_guide'
 const AUTO_LOCK_DELAY = 30000
 let autoLockTimer = null
+let guideShowTimer = null
+let guideHideTimer = null
 
 onMounted(() => {
   load()
     .catch(() => {})
+  maybeShowGuide()
   window.addEventListener('keydown', handleShortcut)
   window.addEventListener('pointerdown', handleActivity, { passive: true })
   window.addEventListener('pointermove', handleActivity, { passive: true })
@@ -40,6 +47,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('wheel', handleActivity)
   window.removeEventListener('touchstart', handleActivity)
   clearTimeout(autoLockTimer)
+  clearTimeout(guideShowTimer)
+  clearTimeout(guideHideTimer)
 })
 
 function categoryParts(title) {
@@ -56,7 +65,24 @@ const visibleGroups = computed(() => store.filteredCategories().map((entry) => (
 })))
 
 function handleShortcut(event) {
+  if (event.key === 'Escape') {
+    if (state.cardModal) state.cardModal = null
+    if (state.categoryModal) state.categoryModal = null
+    if (state.settingsOpen) state.settingsOpen = false
+    if (String(state.searchQuery).trim().startsWith('/')) {
+      state.searchQuery = ''
+      document.activeElement?.blur?.()
+    }
+    return
+  }
+
   const mod = event.ctrlKey || event.metaKey
+  if (event.altKey && !mod && !event.shiftKey && event.key.toLowerCase() === 's') {
+    event.preventDefault()
+    state.settingsOpen = !state.settingsOpen
+    return
+  }
+
   if (!mod) return
   if (event.key.toLowerCase() === 'k') {
     event.preventDefault()
@@ -143,6 +169,41 @@ function openSettings(tab = 'links') {
   state.settingsTab = tab
 }
 
+async function maybeShowGuide() {
+  try {
+    const seen = await storage.get(GUIDE_STORAGE_KEY)
+    if (seen) return
+    guideShowTimer = setTimeout(() => {
+      guideVisible.value = true
+      guideHideTimer = setTimeout(dismissGuide, 3000)
+    }, 1000)
+  } catch {
+    // Keep the guide hidden if extension storage is unavailable.
+  }
+}
+
+function dismissGuide() {
+  guideVisible.value = false
+  clearTimeout(guideShowTimer)
+  clearTimeout(guideHideTimer)
+  storage.set(GUIDE_STORAGE_KEY, true).catch(() => {})
+}
+
+function exitCommandMode() {
+  if (String(state.searchQuery).trim().startsWith('/')) {
+    state.searchQuery = ''
+    document.activeElement?.blur?.()
+  }
+}
+
+function openLocalResult(result) {
+  const url = safeUrl(result?.card?.url)
+  if (!url) return
+  window.open(url, '_blank', 'noopener,noreferrer')
+  store.trackClick(result.card)
+  state.searchQuery = ''
+}
+
 function safeUrl(url) {
   if (!url) return ''
   if (/^(https?:|mailto:|tel:)/i.test(url)) return url
@@ -186,6 +247,8 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
         :query="state.searchQuery"
         :layout-locked="state.settings.layoutLocked"
         :sort-mode="state.settings.sortMode"
+        :local-results="localResults"
+        :guide-visible="guideVisible"
         @toggle-theme="toggleTheme"
         @open-settings="openSettings('appearance')"
         @toggle-lock="toggleLayoutLock"
@@ -193,6 +256,9 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
         @search="store.doSearch"
         @engine-change="(id) => store.setSettings({ defaultEngineId: id })"
         @query-change="(value) => { state.searchQuery = value }"
+        @local-select="openLocalResult"
+        @guide-dismiss="dismissGuide"
+        @escape-command="exitCommandMode"
       />
 
       <div class="scroll-area">

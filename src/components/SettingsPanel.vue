@@ -74,6 +74,7 @@ function importJson(event) {
       <div class="tabs">
         <button class="tab-btn" :class="{ active: activeTab === 'links' }" type="button" @click="setTab('links')">{{ t('settings.links') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'appearance' }" type="button" @click="setTab('appearance')">{{ t('settings.appearance') }}</button>
+        <button class="tab-btn" :class="{ active: activeTab === 'guide' }" type="button" @click="setTab('guide')">{{ t('settings.guide') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'support' }" type="button" @click="setTab('support')">{{ t('settings.support') }}</button>
       </div>
 
@@ -308,6 +309,37 @@ function importJson(event) {
             </div>
             <div class="support-meta">
               <span>{{ t('settings.supportAuthor') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="activeTab === 'guide'" class="settings-section">
+          <div class="guide-head">
+            <div>
+              <h3 class="section-title">{{ t('settings.guideTitle') }}</h3>
+              <p class="section-help">{{ t('settings.guideHelp') }}</p>
+            </div>
+          </div>
+          <div class="guide-grid">
+            <div class="guide-row">
+              <div class="guide-keys"><kbd class="kbd-key">/</kbd></div>
+              <p>{{ t('settings.guideSlash') }}</p>
+            </div>
+            <div class="guide-row">
+              <div class="guide-keys"><kbd class="kbd-key">/settings</kbd><kbd class="kbd-key">Enter</kbd></div>
+              <p>{{ t('settings.guideSettings') }}</p>
+            </div>
+            <div class="guide-row">
+              <div class="guide-keys"><kbd class="kbd-key">Ctrl</kbd><span class="guide-plus">+</span><kbd class="kbd-key">K</kbd></div>
+              <p>{{ t('settings.guidePalette') }}</p>
+            </div>
+            <div class="guide-row">
+              <div class="guide-keys"><kbd class="kbd-key">Alt</kbd><span class="guide-plus">+</span><kbd class="kbd-key">S</kbd></div>
+              <p>{{ t('settings.guideSettingsShortcut') }}</p>
+            </div>
+            <div class="guide-row">
+              <div class="guide-keys"><kbd class="kbd-key">Esc</kbd></div>
+              <p>{{ t('settings.guideEscape') }}</p>
             </div>
           </div>
         </div>

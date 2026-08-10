@@ -39,6 +39,8 @@ function t(key, params) {
 const STORAGE_LINKS = 'lucuro_links_v1'
 const STORAGE_SETTINGS = 'lucuro_settings_v1'
 const STORAGE_STATS = 'lucuro_stats_v1'
+const STORAGE_LOCAL_JSON = 'lucuro_local_json_data'
+const STORAGE_LOCAL_SOURCE = 'lucuro_data_source'
 const SYNC_LINKS = 'lucuro_links_v1'
 const SYNC_SETTINGS = 'lucuro_settings_v1'
 const SYNC_STATS = 'lucuro_stats_v1'
@@ -50,10 +52,14 @@ let notesTimer = null
 let hitokotoTimer = null
 
 function persistLinks() {
-  return Promise.all([
+  const tasks = [
     storage.set(STORAGE_LINKS, state.links),
     syncStorage.set(SYNC_LINKS, state.links)
-  ])
+  ]
+  if (state.settings.dataSource === 'json') {
+    tasks.push(storage.set(STORAGE_LOCAL_JSON, state.links))
+  }
+  return Promise.all(tasks)
 }
 
 function persistSettings() {
@@ -71,6 +77,14 @@ function persistStats() {
 }
 
 async function loadLinks() {
+  if (state.settings.dataSource === 'json') {
+    const localJson = await storage.get(STORAGE_LOCAL_JSON)
+    if (Array.isArray(localJson) && localJson.length) {
+      state.links = normalizeLinks(localJson)
+      return
+    }
+  }
+
   const saved = await storage.get(STORAGE_LINKS)
   if (Array.isArray(saved) && saved.length) {
     state.links = normalizeLinks(saved)
@@ -95,6 +109,8 @@ async function load() {
     syncStorage.get(SYNC_STATS)
   ])
   state.settings = normalizeSettings(savedSettings || syncedSettings || {})
+  const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
+  if (savedSource === 'json') state.settings.dataSource = 'json'
   state.stats = savedStats || syncedStats || {}
   if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
@@ -247,6 +263,8 @@ async function importLinksFile(file) {
     state.links = imported
     state.settings.dataSource = 'json'
     await Promise.all([
+      storage.set(STORAGE_LOCAL_JSON, imported),
+      storage.set(STORAGE_LOCAL_SOURCE, 'json'),
       persistLinks().catch(() => {}),
       persistSettings().catch(() => {})
     ])
@@ -258,10 +276,20 @@ async function importLinksFile(file) {
   }
 }
 
-function setDataSource(source) {
+async function setDataSource(source) {
   const value = source === 'json' ? 'json' : 'browser'
   state.settings.dataSource = value
+  storage.set(STORAGE_LOCAL_SOURCE, value).catch(() => {})
   persistSettings().catch(() => {})
+  if (value === 'json') {
+    const localJson = await storage.get(STORAGE_LOCAL_JSON)
+    if (Array.isArray(localJson) && localJson.length) {
+      state.links = normalizeLinks(localJson)
+    } else {
+      state.links = []
+    }
+    return
+  }
   if (value === 'browser') {
     return importBrowserBookmarks({ silent: true, replace: true })
   }
@@ -317,6 +345,45 @@ function doSearch() {
   const query = raw.startsWith(shortcut) ? raw.slice(shortcut.length) : raw
   const url = engine.url.replace(/\{q\}/g, encodeURIComponent(query))
   window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+function localSearch(raw) {
+  const command = String(raw || '').trim()
+  if (!command.startsWith('/') || command.length < 2) return []
+  const term = command.slice(1).trim().toLowerCase()
+  if (!term) return []
+
+  const tokens = term.split(/\s+/).filter(Boolean)
+  const results = []
+  state.links.forEach((category, categoryIndex) => {
+    (category.children || []).forEach((card, cardIndex) => {
+      if (!card?.title && !card?.url) return
+      const haystack = [
+        card.title,
+        card.description,
+        (card.tags || []).join(' '),
+        card.url,
+        card.lanUrl,
+        category.title
+      ].filter(Boolean).join(' ').toLowerCase()
+      if (!tokens.every((token) => haystack.includes(token))) return
+
+      const lowerTitle = String(card.title || '').toLowerCase()
+      const titleMatch = tokens.some((token) => lowerTitle.includes(token))
+      const tagMatch = (card.tags || []).some((tag) => tokens.some((token) => String(tag).toLowerCase().includes(token)))
+      results.push({
+        type: 'card',
+        card,
+        categoryTitle: category.title,
+        categoryIndex,
+        cardIndex,
+        score: (titleMatch ? 0 : 1) + (tagMatch ? 0 : 2)
+      })
+    })
+  })
+  return results
+    .sort((a, b) => a.score - b.score || String(a.card.title || '').localeCompare(String(b.card.title || ''), undefined, { sensitivity: 'base' }))
+    .slice(0, 24)
 }
 
 function filteredCategories() {
@@ -585,6 +652,7 @@ export function useLucuro() {
     filteredCategories,
     currentEngine,
     doSearch,
+    localSearch,
     trackClick,
     totalClicks,
     saveCard,
