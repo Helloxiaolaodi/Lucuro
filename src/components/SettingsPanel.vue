@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Trash2, Upload, X } from 'lucide-vue-next'
+import { Download, FolderPlus, GripVertical, HeartHandshake, Link2, Pencil, QrCode, RefreshCw, Send, Trash2, Upload, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from '../stores/lucuro'
 import { setSavedLocale } from '../i18n'
@@ -23,6 +23,12 @@ const jsonInput = ref(null)
 const showWechatPay = ref(false)
 const cropModalOpen = ref(false)
 const pendingBackgroundDataUrl = ref('')
+const isSubmittingFeedback = ref(false)
+const feedbackName = ref('')
+const feedbackEmail = ref('')
+const feedbackMessage = ref('')
+const FEEDBACK_ENDPOINT = 'https://formspree.io/f/xvkpkbwr'
+const FEEDBACK_EMAIL = 'yangsanduo2025@gmail.com'
 
 function setTab(tab) {
   store.state.settingsTab = tab
@@ -53,6 +59,43 @@ function importJson(event) {
   store.importLinksFile(event.target.files?.[0])
   event.target.value = ''
 }
+
+async function submitFeedback() {
+  const message = feedbackMessage.value.trim()
+  if (!message) {
+    store.toast(t('settings.feedbackRequired'))
+    return
+  }
+
+  isSubmittingFeedback.value = true
+  try {
+    const response = await fetch(FEEDBACK_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: feedbackName.value.trim(),
+        email: feedbackEmail.value.trim(),
+        message
+      })
+    })
+
+    if (response.ok) {
+      feedbackName.value = ''
+      feedbackEmail.value = ''
+      feedbackMessage.value = ''
+      store.toast(t('settings.feedbackSuccess'))
+    } else {
+      store.toast(t('settings.feedbackFailed'))
+    }
+  } catch {
+    store.toast(t('settings.feedbackNetworkError'))
+  } finally {
+    isSubmittingFeedback.value = false
+  }
+}
 </script>
 
 <template>
@@ -69,6 +112,7 @@ function importJson(event) {
         <button class="tab-btn" :class="{ active: activeTab === 'links' }" type="button" @click="setTab('links')">{{ t('settings.links') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'appearance' }" type="button" @click="setTab('appearance')">{{ t('settings.appearance') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'guide' }" type="button" @click="setTab('guide')">{{ t('settings.guide') }}</button>
+        <button class="tab-btn" :class="{ active: activeTab === 'feedback' }" type="button" @click="setTab('feedback')">{{ t('settings.feedback') }}</button>
         <button class="tab-btn" :class="{ active: activeTab === 'support' }" type="button" @click="setTab('support')">{{ t('settings.support') }}</button>
       </div>
 
@@ -188,10 +232,6 @@ function importJson(event) {
             </div>
             <div class="form-grid appearance-cards-grid">
               <div class="field">
-                <label for="settings-radius">{{ t('settings.cardRadius') }}</label>
-                <input id="settings-radius" class="input" type="range" min="0" max="28" step="2" :value="settings.cardRadius" @input="store.setSettings({ cardRadius: Number($event.target.value) })" />
-              </div>
-              <div class="field">
                 <label for="settings-size">{{ t('settings.cardSize') }}</label>
                 <select id="settings-size" class="select" :value="settings.cardSize" @change="store.setSettings({ cardSize: $event.target.value })">
                   <option value="compact">{{ t('settings.compact') }}</option>
@@ -277,6 +317,52 @@ function importJson(event) {
             <div class="support-meta">
               <span>{{ t('settings.supportAuthor') }}</span>
             </div>
+          </div>
+        </div>
+
+        <div v-else-if="activeTab === 'feedback'" class="settings-section">
+          <div class="feedback-card">
+            <div class="feedback-head">
+              <div>
+                <h3 class="section-title">{{ t('settings.feedbackTitle') }}</h3>
+                <p class="section-help">
+                  {{ t('settings.feedbackIntro') }}
+                  <a class="feedback-mail" :href="`mailto:${FEEDBACK_EMAIL}`" target="_blank" rel="noopener noreferrer">{{ FEEDBACK_EMAIL }}</a>
+                </p>
+              </div>
+            </div>
+
+            <form class="feedback-form" @submit.prevent="submitFeedback">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="feedback-name">{{ t('settings.feedbackName') }}</label>
+                  <input id="feedback-name" class="input" v-model="feedbackName" type="text" :placeholder="t('settings.feedbackNamePlaceholder')" />
+                </div>
+                <div class="field">
+                  <label for="feedback-email">{{ t('settings.feedbackEmail') }}</label>
+                  <input id="feedback-email" class="input" v-model="feedbackEmail" type="email" :placeholder="t('settings.feedbackEmailPlaceholder')" />
+                </div>
+                <div class="field full">
+                  <label for="feedback-message">
+                    {{ t('settings.feedbackMessage') }}
+                    <span class="required-mark">*</span>
+                  </label>
+                  <textarea
+                    id="feedback-message"
+                    class="textarea"
+                    v-model="feedbackMessage"
+                    required
+                    :placeholder="t('settings.feedbackMessagePlaceholder')"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="feedback-actions">
+                <button class="btn btn-primary" type="submit" :disabled="isSubmittingFeedback">
+                  <Send :size="15" />
+                  {{ isSubmittingFeedback ? t('settings.feedbackSending') : t('settings.feedbackSubmit') }}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 

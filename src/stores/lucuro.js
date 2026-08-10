@@ -83,10 +83,8 @@ async function loadLinks() {
   }
   if (state.settings.dataSource === 'json') {
     const localJson = await storage.get(STORAGE_LOCAL_JSON)
-    if (Array.isArray(localJson) && localJson.length) {
-      state.links = normalizeLinks(localJson)
-      return
-    }
+    state.links = normalizeLinks(localJson)
+    return
   }
 
   const saved = await storage.get(STORAGE_LINKS)
@@ -104,30 +102,33 @@ async function loadLinks() {
 }
 
 async function load() {
-  const [savedSettings, savedStats] = await Promise.all([
-    storage.get(STORAGE_SETTINGS),
-    storage.get(STORAGE_STATS)
-  ])
-  const [syncedSettings, syncedStats] = await Promise.all([
-    syncStorage.get(SYNC_SETTINGS),
-    syncStorage.get(SYNC_STATS)
-  ])
-  state.settings = normalizeSettings(savedSettings || syncedSettings || {})
-  const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
-  state.settings.dataSource = savedSource === 'json' || savedSource === 'browser'
-    ? savedSource
-    : null
-  state.stats = savedStats || syncedStats || {}
-  if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
-  if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
-  await loadLinks()
-  if (state.settings.dataSource === 'browser') {
-    await importBrowserBookmarks({ silent: true, replace: true, startup: true })
+  try {
+    const [savedSettings, savedStats] = await Promise.all([
+      storage.get(STORAGE_SETTINGS),
+      storage.get(STORAGE_STATS)
+    ])
+    const [syncedSettings, syncedStats] = await Promise.all([
+      syncStorage.get(SYNC_SETTINGS),
+      syncStorage.get(SYNC_STATS)
+    ])
+    state.settings = normalizeSettings(savedSettings || syncedSettings || {})
+    const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
+    state.settings.dataSource = savedSource === 'json' || savedSource === 'browser'
+      ? savedSource
+      : null
+    state.stats = savedStats || syncedStats || {}
+    if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
+    if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
+    await loadLinks()
+    if (state.settings.dataSource === 'browser') {
+      await importBrowserBookmarks({ silent: true, replace: true, startup: true })
+    }
+  } finally {
+    state.loaded = true
+    refreshHitokoto()
+    applySettings()
+    watchStorage()
   }
-  state.loaded = true
-  refreshHitokoto()
-  applySettings()
-  watchStorage()
 }
 
 function watchStorage() {
@@ -135,6 +136,7 @@ function watchStorage() {
   storageUnsubscribe = onStorageChanged((changes, areaName) => {
     if (areaName !== 'sync' || applyingRemoteChange) return
     if (changes[SYNC_LINKS]?.newValue) {
+      if (state.settings.dataSource === 'json') return
       applyingRemoteChange = true
       state.links = normalizeLinks(changes[SYNC_LINKS].newValue)
       storage.set(STORAGE_LINKS, state.links).finally(() => {
@@ -147,6 +149,12 @@ function watchStorage() {
       storage.set(STORAGE_SETTINGS, state.settings).finally(() => {
         applyingRemoteChange = false
       })
+      storage.get(STORAGE_LOCAL_SOURCE).then((savedSource) => {
+        const nextSource = savedSource === 'json' || savedSource === 'browser' ? savedSource : null
+        state.settings.dataSource = nextSource
+        if (nextSource === 'json') return loadLinks()
+        return null
+      }).catch(() => {})
       refreshHitokoto()
       applySettings()
     }
