@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { Bold, ChevronRight, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
+import { ArrowLeft, Bold, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from './stores/lucuro'
 import Sidebar from './components/Sidebar.vue'
@@ -59,10 +59,12 @@ function categoryParts(title) {
   return parts.length ? parts : ['Uncategorized']
 }
 
-const visibleGroups = computed(() => store.filteredCategories().map((entry) => ({
-  ...entry,
-  parts: categoryParts(entry.category.title)
-})))
+function currentFolderName(title) {
+  const parts = categoryParts(title)
+  return parts[parts.length - 1]
+}
+
+const visibleGroups = computed(() => store.filteredCategories())
 
 function handleShortcut(event) {
   if (event.key === 'Escape') {
@@ -272,8 +274,10 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
           </section>
 
           <div v-if="visibleGroups.length === 0" class="empty-state">
-            <p>{{ t('app.noResults') }}</p>
-            <button class="btn btn-primary" type="button" @click="openSettings('links')">{{ t('app.manageLinks') }}</button>
+            <p>{{ state.settings.dataSource ? t('app.noResults') : t('app.chooseDataSource') }}</p>
+            <button class="btn btn-primary" type="button" @click="openSettings('links')">
+              {{ state.settings.dataSource ? t('app.manageLinks') : t('app.selectDataSource') }}
+            </button>
           </div>
 
           <section
@@ -285,10 +289,17 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
             <div class="category-head">
               <div>
                 <h3 class="category-title">
-                  <template v-for="(part, partIndex) in entry.parts" :key="`${part}-${partIndex}`">
-                    <ChevronRight v-if="partIndex > 0" :size="14" class="category-breadcrumb-separator" aria-hidden="true" />
-                    <span :class="partIndex === entry.parts.length - 1 ? 'category-breadcrumb-current' : 'category-breadcrumb-parent'">{{ part }}</span>
-                  </template>
+                  <button
+                    v-if="state.activeCategory !== null"
+                    class="category-back-btn"
+                    type="button"
+                    :title="t('app.backToOverview')"
+                    :aria-label="t('app.backToOverview')"
+                    @click="state.activeCategory = null"
+                  >
+                    <ArrowLeft :size="18" />
+                  </button>
+                  <span class="category-folder-name">{{ currentFolderName(entry.category.title) }}</span>
                 </h3>
                 <p v-if="entry.category.subtitle" class="category-subtitle">{{ entry.category.subtitle }}</p>
               </div>

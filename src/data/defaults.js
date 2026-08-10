@@ -31,7 +31,7 @@ export const DEFAULT_HITOKOTO = [
 
 export const DEFAULT_SETTINGS = {
   theme: 'light',
-  dataSource: 'browser',
+  dataSource: null,
   cardSize: 'default',
   cardRadius: 14,
   cardFontSize: 15,
