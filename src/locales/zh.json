@@ -150,7 +150,7 @@
     "title": "Lucuro - 鹿客司南",
     "openManagerFailed": "无法打开扩展管理页面。",
     "extensionToggle": "Lucuro 插件",
-    "extensionToggleHelp": "Lucuro 默认接管新标签页。如需恢复浏览器默认主页，请在扩展管理页面中停用 Lucuro。",
+    "extensionToggleHelp": "Lucuro automatically takes over the new tab page. If you want to restore the browser's default homepage, please disable Lucuro in the extension management page.",
     "extensionToggleHelpZh": "Lucuro 默认接管新标签页。如需恢复浏览器默认主页，请在扩展管理页面中停用 Lucuro。",
     "enabled": "已启用",
     "manageExtensions": "前往扩展管理"
