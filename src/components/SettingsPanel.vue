@@ -261,10 +261,6 @@ function importJson(event) {
                 <h3 class="section-title">{{ t('settings.supportTitle') }}</h3>
               </div>
             </div>
-            <div class="support-quote">
-              <p>{{ t('settings.supportQuote') }}</p>
-              <p class="support-quote-en">{{ t('settings.supportQuoteEn') }}</p>
-            </div>
             <div class="support-actions">
               <a class="btn btn-primary support-button" href="https://ko-fi.com/helloxiaolaodi" target="_blank" rel="noopener noreferrer">
                 <HeartHandshake :size="15" />
