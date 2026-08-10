@@ -78,7 +78,7 @@ body.has-custom-bg {
 body.has-custom-bg::before {
   content: '';
   position: fixed;
-  inset: -24px;
+  inset: 0;
   z-index: 0;
   background-image: var(--bg-image, none);
   background-size: cover;
@@ -86,8 +86,13 @@ body.has-custom-bg::before {
   background-repeat: no-repeat;
   background-attachment: fixed;
   filter: blur(var(--bg-blur));
-  transform: scale(1.06);
+  transform: none;
   pointer-events: none;
+}
+
+body.has-custom-bg.bg-blurred::before {
+  inset: -24px;
+  transform: scale(1.06);
 }
 
 button,

@@ -21,6 +21,10 @@ let drag = null
 
 const handles = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
 
+function screenAspectRatio() {
+  return window.innerWidth / window.innerHeight
+}
+
 const stageStyle = computed(() => {
   if (!display.value.width || !display.value.height) return {}
   return {
@@ -46,13 +50,12 @@ function loadImage() {
       width: Math.max(1, Math.round(image.naturalWidth * scale)),
       height: Math.max(1, Math.round(image.naturalHeight * scale))
     }
-    const width = Math.max(24, Math.round(display.value.width * 0.84))
-    const height = Math.max(24, Math.round(display.value.height * 0.64))
+    const fitted = fitToDisplay(display.value.width, display.value.height)
     box.value = {
-      x: Math.round((display.value.width - width) / 2),
-      y: Math.round((display.value.height - height) / 2),
-      width,
-      height
+      x: Math.round((display.value.width - fitted.width) / 2),
+      y: Math.round((display.value.height - fitted.height) / 2),
+      width: Math.round(fitted.width),
+      height: Math.round(fitted.height)
     }
     sourceImage.value = image
   }
@@ -70,16 +73,68 @@ function eventPoint(event) {
 
 function clampBox(next) {
   const minSize = 24
-  const x = Math.max(0, Math.min(next.x, display.value.width - minSize))
-  const y = Math.max(0, Math.min(next.y, display.value.height - minSize))
-  const right = Math.min(display.value.width, Math.max(x + minSize, next.x + next.width))
-  const bottom = Math.min(display.value.height, Math.max(y + minSize, next.y + next.height))
-  return {
-    x,
-    y,
-    width: right - x,
-    height: bottom - y
+  let width = Math.max(minSize, next.width)
+  let height = Math.max(minSize, next.height)
+  const fitted = fitToDisplay(width, height)
+  width = fitted.width
+  height = fitted.height
+  const x = Math.max(0, Math.min(next.x, display.value.width - width))
+  const y = Math.max(0, Math.min(next.y, display.value.height - height))
+  return { x, y, width, height }
+}
+
+function fitToDisplay(width, height) {
+  const ratio = width / height
+  if (ratio > screenAspectRatio()) {
+    height = width / screenAspectRatio()
+  } else {
+    width = height * screenAspectRatio()
   }
+  const scale = Math.min(
+    1,
+    display.value.width / width,
+    display.value.height / height
+  )
+  const fittedWidth = Math.max(24, width * scale)
+  const fittedHeight = Math.max(24, height * scale)
+  const fitScale = Math.min(
+    1,
+    display.value.width / fittedWidth,
+    display.value.height / fittedHeight
+  )
+  return {
+    width: fittedWidth * fitScale,
+    height: fittedHeight * fitScale
+  }
+}
+
+function resizeFromHandle(handle, origin, dx, dy) {
+  let x = origin.x
+  let y = origin.y
+  let width = origin.width
+  let height = origin.height
+
+  if (handle === 'e' || handle === 'w') {
+    width = handle === 'e' ? origin.width + dx : origin.width - dx
+    height = width / screenAspectRatio()
+    if (handle === 'w') x = origin.x + origin.width - width
+  } else if (handle === 's' || handle === 'n') {
+    height = handle === 's' ? origin.height + dy : origin.height - dy
+    width = height * screenAspectRatio()
+    if (handle === 'n') y = origin.y + origin.height - height
+  } else {
+    const useWidth = Math.abs(dx) >= Math.abs(dy)
+    if (useWidth) {
+      width = handle.includes('e') ? origin.width + dx : origin.width - dx
+      height = width / screenAspectRatio()
+    } else {
+      height = handle.includes('s') ? origin.height + dy : origin.height - dy
+      width = height * screenAspectRatio()
+    }
+    if (handle.includes('w')) x = origin.x + origin.width - width
+    if (handle.includes('n')) y = origin.y + origin.height - height
+  }
+  return clampBox({ x, y, width, height })
 }
 
 function startMove(event) {
@@ -120,20 +175,9 @@ function onPointerMove(event) {
   }
 
   const { handle, origin } = drag
-  let { x, y, width, height } = origin
   const dx = point.x - drag.startX
   const dy = point.y - drag.startY
-  if (handle.includes('e')) width = origin.width + dx
-  if (handle.includes('s')) height = origin.height + dy
-  if (handle.includes('w')) {
-    x = origin.x + dx
-    width = origin.width - dx
-  }
-  if (handle.includes('n')) {
-    y = origin.y + dy
-    height = origin.height - dy
-  }
-  box.value = clampBox({ x, y, width, height })
+  box.value = resizeFromHandle(handle, origin, dx, dy)
 }
 
 function onPointerUp() {

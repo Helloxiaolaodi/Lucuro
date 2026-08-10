@@ -193,6 +193,7 @@ function applySettings() {
   const body = document.body
   if (state.settings.background) {
     body.classList.add('has-custom-bg')
+    body.classList.toggle('bg-blurred', Number(state.settings.backgroundBlur) > 0)
     const overlay = state.settings.theme === 'dark'
       ? 'linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.55)), '
       : ''
@@ -200,6 +201,7 @@ function applySettings() {
     body.style.backgroundImage = ''
   } else {
     body.classList.remove('has-custom-bg')
+    body.classList.remove('bg-blurred')
     root.style.removeProperty('--bg-image')
     body.style.backgroundImage = ''
   }
