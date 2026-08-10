@@ -165,7 +165,18 @@ async function load() {
     const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
     const nextSource = savedSource === 'json' ? 'json' : 'browser'
     state.settings.dataSource = nextSource
-    if (nextSource !== savedSource) {
+    if (nextSource === 'json') {
+      const localJson = await storage.get(STORAGE_LOCAL_JSON)
+      if (!Array.isArray(localJson) || !localJson.length) {
+        // A stale empty JSON selection is the common cause of a blank new tab.
+        // Revert to browser bookmarks so startup populates automatically.
+        state.settings.dataSource = 'browser'
+        await Promise.all([
+          storage.set(STORAGE_LOCAL_SOURCE, 'browser').catch(() => {}),
+          persistSettings().catch(() => {})
+        ])
+      }
+    } else if (nextSource !== savedSource) {
       await storage.set(STORAGE_LOCAL_SOURCE, nextSource).catch(() => {})
     }
     state.stats = savedStats || syncedStats || {}
