@@ -122,9 +122,9 @@ async function load() {
     ])
     state.settings = normalizeSettings(savedSettings || syncedSettings || {})
     const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
-    const nextSource = savedSource === 'json' || savedSource === 'browser' ? savedSource : null
+    const nextSource = savedSource === 'json' ? 'json' : 'browser'
     state.settings.dataSource = nextSource
-    if (nextSource && nextSource !== savedSource) {
+    if (nextSource !== savedSource) {
       await storage.set(STORAGE_LOCAL_SOURCE, nextSource).catch(() => {})
     }
     state.stats = savedStats || syncedStats || {}
