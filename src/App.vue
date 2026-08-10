@@ -21,6 +21,7 @@ const notesTextarea = ref(null)
 const noteHistory = ref([])
 const localResults = computed(() => store.localSearch(state.searchQuery))
 const guideVisible = ref(false)
+const localSearchActive = ref(false)
 const GUIDE_STORAGE_KEY = 'lucuro_has_seen_guide'
 let guideShowTimer = null
 let guideHideTimer = null
@@ -58,8 +59,9 @@ function handleShortcut(event) {
     if (state.cardModal) state.cardModal = null
     if (state.categoryModal) state.categoryModal = null
     if (state.settingsOpen) state.settingsOpen = false
-    if (String(state.searchQuery).trim().startsWith('/')) {
+    if (String(state.searchQuery).trim().startsWith('/') || localSearchActive.value) {
       state.searchQuery = ''
+      localSearchActive.value = false
       document.activeElement?.blur?.()
     }
     return
@@ -69,6 +71,7 @@ function handleShortcut(event) {
   if (!mod) return
   if (event.key.toLowerCase() === 'k') {
     event.preventDefault()
+    localSearchActive.value = true
     document.querySelector('.search-input')?.focus()
     return
   }
@@ -129,6 +132,7 @@ function undoNotes() {
 }
 
 function openSettings(tab = 'links') {
+  localSearchActive.value = false
   state.settingsOpen = true
   state.settingsTab = tab
 }
@@ -154,10 +158,9 @@ function dismissGuide() {
 }
 
 function exitCommandMode() {
-  if (String(state.searchQuery).trim().startsWith('/')) {
-    state.searchQuery = ''
-    document.activeElement?.blur?.()
-  }
+  localSearchActive.value = false
+  state.searchQuery = ''
+  document.activeElement?.blur?.()
 }
 
 function openLocalResult(result) {
@@ -166,6 +169,23 @@ function openLocalResult(result) {
   window.open(url, '_blank', 'noopener,noreferrer')
   store.trackClick(result.card)
   state.searchQuery = ''
+  localSearchActive.value = false
+}
+
+function setTheme(mode) {
+  store.setSettings({ theme: mode === 'dark' ? 'dark' : 'light' })
+  localSearchActive.value = false
+}
+
+function openAddCard() {
+  const section = state.activeCategory ?? (state.links.length ? 0 : null)
+  store.openCardModal(section, null)
+  localSearchActive.value = false
+}
+
+function exportJson() {
+  store.exportJson()
+  localSearchActive.value = false
 }
 
 function safeUrl(url) {
@@ -212,9 +232,13 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
         :layout-locked="state.settings.layoutLocked"
         :sort-mode="state.settings.sortMode"
         :local-results="localResults"
+        :local-search-mode="localSearchActive"
         :guide-visible="guideVisible"
         @toggle-theme="toggleTheme"
         @open-settings="openSettings('appearance')"
+        @set-theme="setTheme"
+        @open-add-card="openAddCard"
+        @export-json="exportJson"
         @toggle-lock="toggleLayoutLock"
         @sort-change="(value) => store.setSettings({ sortMode: value })"
         @search="store.doSearch"

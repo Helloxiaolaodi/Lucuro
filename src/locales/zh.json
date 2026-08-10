@@ -9,6 +9,8 @@
   "sidebar": {
     "tags": "标签",
     "smartTags": "智能标签",
+    "showSmartTags": "显示智能标签",
+    "hideSmartTags": "隐藏智能标签",
     "all": "全部",
     "profileName": "侧边栏名称",
     "tagPlaceholder": "添加标签...",
@@ -31,11 +33,18 @@
     "sortDefault": "默认顺序",
     "sortFrequency": "使用频率",
     "sortAlphabetical": "字母顺序",
-    "commandPlaceholder": "输入 / 检索本地链接，或输入 /settings",
+    "commandPlaceholder": "输入 / 执行命令，或按 Ctrl/Cmd + K 搜索书签",
+    "commandPalette": "命令面板",
     "localSearch": "本地极速检索",
+    "localSearchPlaceholder": "搜索书签...",
     "openSettings": "打开 Lucuro 设置",
+    "commandSettings": "打开 Lucuro 设置",
+    "commandDark": "切换到深色模式",
+    "commandLight": "切换到浅色模式",
+    "commandAdd": "添加新卡片",
+    "commandExport": "导出 JSON 备份",
     "noLocalResults": "没有找到匹配的链接",
-    "onboardingTip": "试试在输入框敲击 / 开启本地极速检索"
+    "onboardingTip": "试试 Ctrl/Cmd + K 或输入 / 搜索本地书签"
   },
   "settings": {
     "title": "Lucuro 设置",
@@ -46,7 +55,7 @@
     "guideHelp": "命令框、键盘快捷键和 Esc 退出键，让你可以完全脱离鼠标完成高频操作。",
     "guideSlash": "唤醒本地书签与标签极速检索",
     "guideSettings": "极速打开设置面板",
-    "guidePalette": "聚焦顶部命令搜索框",
+    "guidePalette": "使用 Ctrl/Cmd + K 搜索书签",
     "guideEscape": "退出当前弹窗 / 退出检索模式",
     "feedback": "反馈",
     "feedbackTitle": "使用反馈",

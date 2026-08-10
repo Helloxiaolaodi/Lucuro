@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
-import { Camera, Plus, X } from 'lucide-vue-next'
+import { Camera, Eye, EyeOff, Plus, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './LucuroLogo.vue'
 import CategoryTreeNode from './CategoryTreeNode.vue'
@@ -182,8 +182,20 @@ function submitTag() {
       </div>
 
       <template v-if="smartTags.length">
-        <div class="side-label">{{ t('sidebar.smartTags') }}</div>
-        <div class="tag-filter smart-tag-filter">
+        <div class="side-label side-label-row">
+          <span>{{ t('sidebar.smartTags') }}</span>
+          <button
+            class="side-label-toggle"
+            type="button"
+            :title="t(settings.smartTagsVisible === false ? 'sidebar.showSmartTags' : 'sidebar.hideSmartTags')"
+            :aria-label="t(settings.smartTagsVisible === false ? 'sidebar.showSmartTags' : 'sidebar.hideSmartTags')"
+            @click="store.setSettings({ smartTagsVisible: settings.smartTagsVisible === false })"
+          >
+            <EyeOff v-if="settings.smartTagsVisible === false" :size="14" />
+            <Eye v-else :size="14" />
+          </button>
+        </div>
+        <div v-if="settings.smartTagsVisible !== false" class="tag-filter smart-tag-filter">
           <button
             v-for="tag in smartTags"
             :key="`smart-${tag}`"
