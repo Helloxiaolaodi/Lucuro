@@ -9,6 +9,8 @@
   "sidebar": {
     "tags": "Tags",
     "smartTags": "Smart tags",
+    "showSmartTags": "Show smart tags",
+    "hideSmartTags": "Hide smart tags",
     "all": "All",
     "profileName": "Sidebar name",
     "tagPlaceholder": "Add tag...",
@@ -31,11 +33,18 @@
     "sortDefault": "Default",
     "sortFrequency": "Most used",
     "sortAlphabetical": "Alphabetical",
-    "commandPlaceholder": "Type / to search local links, or /settings",
+    "commandPlaceholder": "Type / for commands, or press Ctrl/Cmd + K to search bookmarks",
+    "commandPalette": "Command palette",
     "localSearch": "Local search",
+    "localSearchPlaceholder": "Search bookmarks...",
     "openSettings": "Open Lucuro settings",
+    "commandSettings": "Open Lucuro settings",
+    "commandDark": "Switch to dark mode",
+    "commandLight": "Switch to light mode",
+    "commandAdd": "Add a new card",
+    "commandExport": "Export JSON backup",
     "noLocalResults": "No matching links found",
-    "onboardingTip": "Try typing / in the search box for local link search"
+    "onboardingTip": "Try Ctrl/Cmd + K or type / for local bookmark search"
   },
   "settings": {
     "title": "Lucuro settings",
@@ -46,7 +55,7 @@
     "guideHelp": "The command box, keyboard shortcuts, and escape key give you a mouse-free workflow.",
     "guideSlash": "Open local bookmark and tag search",
     "guideSettings": "Open Lucuro settings instantly",
-    "guidePalette": "Focus the command box",
+    "guidePalette": "Search bookmarks with Ctrl/Cmd + K",
     "guideEscape": "Close the current popup or exit local search mode",
     "feedback": "Feedback",
     "feedbackTitle": "Send feedback",

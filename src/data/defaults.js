@@ -44,7 +44,8 @@ export const DEFAULT_SETTINGS = {
   engines: DEFAULT_ENGINES,
   hitokoto: '',
   notes: '',
-  layoutLocked: true
+  layoutLocked: true,
+  smartTagsVisible: true
 }
 
 export function normalizeLinks(data) {

@@ -427,8 +427,8 @@ function doSearch() {
 
 function localSearch(raw) {
   const command = String(raw || '').trim()
-  if (!command.startsWith('/') || command.length < 2) return []
-  const term = command.slice(1).trim().toLowerCase()
+  if (command.startsWith('/') && command.length < 2) return []
+  const term = (command.startsWith('/') ? command.slice(1) : command).trim().toLowerCase()
   if (!term) return []
 
   const tokens = term.split(/\s+/).filter(Boolean)

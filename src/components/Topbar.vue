@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { CornerDownLeft, Lock, Moon, Search, Settings, Slash, Sun, Unlock, X } from 'lucide-vue-next'
+import { CornerDownLeft, Download, Lock, Moon, Plus, Search, Settings, Slash, Sun, Unlock, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import SiteIcon from './SiteIcon.vue'
 
@@ -14,12 +14,16 @@ const props = defineProps({
   layoutLocked: { type: Boolean, default: false },
   sortMode: { type: String, default: 'default' },
   localResults: { type: Array, default: () => [] },
-  guideVisible: { type: Boolean, default: false }
+  guideVisible: { type: Boolean, default: false },
+  localSearchMode: { type: Boolean, default: false }
 })
 
 const emit = defineEmits([
   'toggle-theme',
   'open-settings',
+  'set-theme',
+  'open-add-card',
+  'export-json',
   'search',
   'engine-change',
   'query-change',
@@ -32,7 +36,23 @@ const emit = defineEmits([
 
 const activeIndex = ref(0)
 const commandMode = computed(() => props.query.trim().startsWith('/'))
-const settingsCommand = computed(() => props.query.trim().toLowerCase() === '/settings')
+const commands = [
+  { id: 'settings', kind: 'command', command: '/settings', labelKey: 'topbar.commandSettings', icon: Settings },
+  { id: 'dark', kind: 'command', command: '/dark', labelKey: 'topbar.commandDark', icon: Moon },
+  { id: 'light', kind: 'command', command: '/light', labelKey: 'topbar.commandLight', icon: Sun },
+  { id: 'add', kind: 'command', command: '/add', labelKey: 'topbar.commandAdd', icon: Plus },
+  { id: 'export', kind: 'command', command: '/export', labelKey: 'topbar.commandExport', icon: Download }
+]
+const matchingCommands = computed(() => {
+  const raw = props.query.trim().toLowerCase()
+  if (!raw.startsWith('/')) return []
+  if (raw === '/') return commands
+  return commands.filter((item) => item.command.startsWith(raw))
+})
+const paletteItems = computed(() => {
+  if (commandMode.value && matchingCommands.value.length) return matchingCommands.value
+  return props.localResults
+})
 
 function onInput(value) {
   activeIndex.value = 0
@@ -40,15 +60,14 @@ function onInput(value) {
 }
 
 function onCommandKeydown(event) {
-  if (!commandMode.value) return
+  if (!commandMode.value && !props.localSearchMode) return
+  const count = paletteItems.value.length
   if (event.key === 'ArrowDown') {
     event.preventDefault()
-    const count = localResults.length
     if (!count) return
     activeIndex.value = (activeIndex.value + 1) % count
   } else if (event.key === 'ArrowUp') {
     event.preventDefault()
-    const count = localResults.length
     if (!count) return
     activeIndex.value = (activeIndex.value - 1 + count) % count
   } else if (event.key === 'Escape') {
@@ -58,18 +77,40 @@ function onCommandKeydown(event) {
 }
 
 function submitSearch() {
-  if (!commandMode.value) {
-    emit('search')
+  if (commandMode.value) {
+    const selected = paletteItems.value[activeIndex.value] || paletteItems.value[0]
+    if (selected?.kind === 'command') {
+      executeCommand(selected)
+      return
+    }
+    const result = selected || props.localResults[0]
+    if (result?.card?.url) {
+      selectResult(result)
+    }
     return
   }
-  if (settingsCommand.value) {
+  if (props.localSearchMode) {
+    const selected = paletteItems.value[activeIndex.value] || props.localResults[0]
+    if (selected?.card?.url) {
+      selectResult(selected)
+      return
+    }
+  }
+  emit('search')
+}
+
+function executeCommand(item) {
+  if (!item) return
+  activeIndex.value = 0
+  emit('query-change', '')
+  if (item.id === 'settings') {
     emit('open-settings')
-    emit('query-change', '')
-    return
-  }
-  const result = localResults[activeIndex.value] || localResults[0]
-  if (result) {
-    selectResult(result)
+  } else if (item.id === 'dark' || item.id === 'light') {
+    emit('set-theme', item.id)
+  } else if (item.id === 'add') {
+    emit('open-add-card')
+  } else if (item.id === 'export') {
+    emit('export-json')
   }
 }
 
@@ -79,7 +120,7 @@ function selectResult(result) {
   activeIndex.value = 0
 }
 
-watch(() => props.query, () => {
+watch(() => [props.query, props.localSearchMode, props.localResults.length], () => {
   activeIndex.value = 0
 })
 </script>
@@ -88,19 +129,19 @@ watch(() => props.query, () => {
   <header class="topbar">
     <div class="topbar-tools">
       <div class="search-wrap">
-        <form class="search-box" :class="{ 'command-mode': commandMode }" @submit.prevent="submitSearch">
+        <form class="search-box" :class="{ 'command-mode': commandMode || localSearchMode }" @submit.prevent="submitSearch">
           <input
             :value="query"
             class="search-input"
             type="search"
-            :placeholder="commandMode ? t('topbar.commandPlaceholder') : t('topbar.searchPlaceholder')"
+            :placeholder="commandMode ? t('topbar.commandPlaceholder') : localSearchMode ? t('topbar.localSearchPlaceholder') : t('topbar.searchPlaceholder')"
             autocomplete="off"
             spellcheck="false"
             @input="onInput($event.target.value)"
             @keydown="onCommandKeydown"
           />
           <select
-            v-if="!commandMode"
+            v-if="!commandMode && !localSearchMode"
             class="engine-select"
             :value="defaultEngineId"
             :aria-label="t('topbar.searchEngine')"
@@ -111,7 +152,7 @@ watch(() => props.query, () => {
             </option>
           </select>
           <select
-            v-if="!commandMode"
+            v-if="!commandMode && !localSearchMode"
             class="engine-select sort-select"
             :value="sortMode"
             :aria-label="t('topbar.sortMode')"
@@ -125,44 +166,37 @@ watch(() => props.query, () => {
         </form>
 
         <transition name="command-pop">
-          <div v-if="commandMode" class="command-palette" role="listbox" :aria-label="t('topbar.localSearch')">
+          <div v-if="commandMode || localSearchMode" class="command-palette" role="listbox" :aria-label="t('topbar.localSearch')">
             <div class="command-palette-head">
-              <span><Slash :size="14" /> {{ t('topbar.localSearch') }}</span>
-              <span v-if="localResults.length" class="command-palette-count">{{ localResults.length }}</span>
+              <span>
+                <Slash v-if="commandMode" :size="14" />
+                <Search v-else :size="14" />
+                {{ commandMode ? t('topbar.commandPalette') : t('topbar.localSearch') }}
+              </span>
+              <span v-if="paletteItems.length" class="command-palette-count">{{ paletteItems.length }}</span>
             </div>
             <button
-              v-if="settingsCommand"
-              class="command-result command-action"
-              type="button"
-              @mouseenter="activeIndex = -1"
-              @click="submitSearch"
-            >
-              <span class="command-result-icon"><Settings :size="17" /></span>
-              <span class="command-result-copy">
-                <span class="command-result-title">{{ t('topbar.openSettings') }}</span>
-                <span class="command-result-meta">/settings</span>
-              </span>
-              <CornerDownLeft :size="15" />
-            </button>
-            <button
-              v-for="(result, index) in localResults"
-              :key="`${result.card?.id || result.card?.url}-${index}`"
+              v-for="(item, index) in paletteItems"
+              :key="item.kind === 'command' ? item.id : `${item.card?.id || item.card?.url}-${index}`"
               class="command-result"
-              :class="{ active: activeIndex === index }"
+              :class="{ active: activeIndex === index, 'command-action': item.kind === 'command' }"
               type="button"
               @mouseenter="activeIndex = index"
-              @click="selectResult(result)"
+              @click="item.kind === 'command' ? executeCommand(item) : selectResult(item)"
             >
-              <span class="command-result-icon"><SiteIcon :card="result.card" :size="28" /></span>
+              <span v-if="item.kind === 'command'" class="command-result-icon">
+                <component :is="item.icon" :size="17" />
+              </span>
+              <span v-else class="command-result-icon"><SiteIcon :card="item.card" :size="28" /></span>
               <span class="command-result-copy">
-                <span class="command-result-title">{{ result.card.title }}</span>
+                <span class="command-result-title">{{ item.kind === 'command' ? t(item.labelKey) : item.card.title }}</span>
                 <span class="command-result-meta">
-                  {{ result.categoryTitle }}<template v-if="result.card.tags?.length"> · {{ result.card.tags.slice(0, 2).join(', ') }}</template>
+                  {{ item.kind === 'command' ? item.command : `${item.categoryTitle}${item.card.tags?.length ? ` · ${item.card.tags.slice(0, 2).join(', ')}` : ''}` }}
                 </span>
               </span>
               <CornerDownLeft :size="15" />
             </button>
-            <div v-if="!localResults.length && !settingsCommand" class="command-empty">
+            <div v-if="!paletteItems.length" class="command-empty">
               <Search :size="16" />
               <span>{{ t('topbar.noLocalResults') }}</span>
             </div>
