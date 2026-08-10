@@ -79,7 +79,7 @@ function importJson(event) {
             <div class="segmented-row">
               <button
                 class="segment-btn"
-                :class="{ active: settings.dataSource !== 'json' }"
+                :class="{ active: settings.dataSource === 'browser' }"
                 type="button"
                 @click="store.setDataSource('browser')"
               >
@@ -110,7 +110,7 @@ function importJson(event) {
                   {{ t('settings.importJson') }}
                 </button>
               </template>
-              <template v-else>
+              <template v-else-if="settings.dataSource === 'browser'">
                 <button
                   class="btn"
                   type="button"

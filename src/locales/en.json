@@ -1,7 +1,10 @@
 {
   "app": {
     "noResults": "No matching cards found. Try another search, or add a new link from the settings panel.",
-    "manageLinks": "Manage links"
+    "manageLinks": "Manage links",
+    "chooseDataSource": "Choose a data source in settings: browser bookmarks or local JSON.",
+    "selectDataSource": "Choose data source",
+    "backToOverview": "Back to overview"
   },
   "sidebar": {
     "tags": "Tags",

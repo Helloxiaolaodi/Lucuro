@@ -77,6 +77,10 @@ function persistStats() {
 }
 
 async function loadLinks() {
+  if (!state.settings.dataSource) {
+    state.links = []
+    return
+  }
   if (state.settings.dataSource === 'json') {
     const localJson = await storage.get(STORAGE_LOCAL_JSON)
     if (Array.isArray(localJson) && localJson.length) {
@@ -110,22 +114,14 @@ async function load() {
   ])
   state.settings = normalizeSettings(savedSettings || syncedSettings || {})
   const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
-  if (savedSource === 'json') state.settings.dataSource = 'json'
+  state.settings.dataSource = savedSource === 'json' || savedSource === 'browser'
+    ? savedSource
+    : null
   state.stats = savedStats || syncedStats || {}
   if (!savedSettings && syncedSettings) await storage.set(STORAGE_SETTINGS, state.settings)
   if (!savedStats && syncedStats) await storage.set(STORAGE_STATS, state.stats)
   await loadLinks()
-  if (state.settings.dataSource === 'json') {
-    const localJson = await storage.get(STORAGE_LOCAL_JSON)
-    if (!Array.isArray(localJson) || !localJson.length) {
-      // A stale "local JSON" mode is the common cause of an empty new-tab
-      // page. Revert to browser bookmarks so the page populates on its own.
-      state.settings.dataSource = 'browser'
-      storage.set(STORAGE_LOCAL_SOURCE, 'browser').catch(() => {})
-      persistSettings().catch(() => {})
-    }
-  }
-  if (state.settings.dataSource !== 'json') {
+  if (state.settings.dataSource === 'browser') {
     await importBrowserBookmarks({ silent: true, replace: true, startup: true })
   }
   state.loaded = true

@@ -1,7 +1,10 @@
 {
   "app": {
     "noResults": "没有找到匹配的卡片。试试其他关键词，或者从设置面板添加新链接。",
-    "manageLinks": "管理链接"
+    "manageLinks": "管理链接",
+    "chooseDataSource": "请先在设置中选择数据源：浏览器书签或本地 JSON。",
+    "selectDataSource": "选择数据源",
+    "backToOverview": "返回总览"
   },
   "sidebar": {
     "tags": "标签",
