@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { ArrowLeft, Bold, Code2, ExternalLink, GripVertical, Heading1, Heading2, Italic, Link2, List, NotebookPen, Pencil, Plus, Quote, RefreshCw, Strikethrough, Trash2, Undo2, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useLucuro } from './stores/lucuro'
@@ -22,8 +22,6 @@ const noteHistory = ref([])
 const localResults = computed(() => store.localSearch(state.searchQuery))
 const guideVisible = ref(false)
 const GUIDE_STORAGE_KEY = 'lucuro_has_seen_guide'
-const AUTO_LOCK_DELAY = 30000
-let autoLockTimer = null
 let guideShowTimer = null
 let guideHideTimer = null
 
@@ -32,21 +30,10 @@ onMounted(() => {
     .catch(() => {})
   maybeShowGuide()
   window.addEventListener('keydown', handleShortcut)
-  window.addEventListener('pointerdown', handleActivity, { passive: true })
-  window.addEventListener('pointermove', handleActivity, { passive: true })
-  window.addEventListener('keydown', handleActivity, { passive: true })
-  window.addEventListener('wheel', handleActivity, { passive: true })
-  window.addEventListener('touchstart', handleActivity, { passive: true })
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleShortcut)
-  window.removeEventListener('pointerdown', handleActivity)
-  window.removeEventListener('pointermove', handleActivity)
-  window.removeEventListener('keydown', handleActivity)
-  window.removeEventListener('wheel', handleActivity)
-  window.removeEventListener('touchstart', handleActivity)
-  clearTimeout(autoLockTimer)
   clearTimeout(guideShowTimer)
   clearTimeout(guideHideTimer)
 })
@@ -106,25 +93,6 @@ function toggleTheme() {
 function toggleLayoutLock() {
   store.setSettings({ layoutLocked: !state.settings.layoutLocked })
 }
-
-function scheduleAutoLock() {
-  clearTimeout(autoLockTimer)
-  autoLockTimer = setTimeout(() => {
-    if (!state.settings.layoutLocked) store.setSettings({ layoutLocked: true })
-  }, AUTO_LOCK_DELAY)
-}
-
-function handleActivity() {
-  if (!state.settings.layoutLocked) scheduleAutoLock()
-}
-
-watch(() => state.settings.layoutLocked, (locked) => {
-  if (locked) {
-    clearTimeout(autoLockTimer)
-  } else {
-    scheduleAutoLock()
-  }
-})
 
 function insertMarkdown(prefix, suffix = '') {
   const textarea = notesTextarea.value
@@ -275,7 +243,7 @@ function reorderVisibleCards(entry, oldFilteredIndex, newFilteredIndex) {
 
           <div v-if="visibleGroups.length === 0" class="empty-state">
             <p>{{ state.settings.dataSource ? t('app.noResults') : t('app.chooseDataSource') }}</p>
-            <button class="btn btn-primary" type="button" @click="openSettings('links')">
+            <button class="btn" type="button" @click="openSettings('links')">
               {{ state.settings.dataSource ? t('app.manageLinks') : t('app.selectDataSource') }}
             </button>
           </div>

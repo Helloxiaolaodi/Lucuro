@@ -1586,10 +1586,6 @@ html[data-card-size='compact'] .card-icon {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.appearance-background-grid .field:last-child {
-  grid-column: 1 / -1;
-}
-
 .appearance-settings .textarea {
   min-height: 92px;
 }
@@ -1920,6 +1916,61 @@ html[data-card-size='compact'] .card-icon {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px;
+}
+
+.feedback-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--surface-strong), var(--surface-soft));
+  box-shadow: var(--shadow);
+}
+
+.feedback-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.feedback-head .section-title {
+  margin: 0 0 6px;
+}
+
+.feedback-head .section-help {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.feedback-mail {
+  color: var(--accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.feedback-mail:hover {
+  text-decoration: underline;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.required-mark {
+  margin-left: 2px;
+  color: var(--danger);
 }
 
 .guide-head {
