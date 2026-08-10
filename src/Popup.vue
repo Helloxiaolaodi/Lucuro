@@ -1,45 +1,30 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { Power, PowerOff } from 'lucide-vue-next'
-import { storage, syncStorage } from './utils/storage'
-import { normalizeSettings } from './data/defaults'
+import { ref } from 'vue'
+import { Settings } from 'lucide-vue-next'
+import browser from 'webextension-polyfill'
 import { useI18n } from 'vue-i18n'
 import LucuroLogo from './components/LucuroLogo.vue'
 
-const STORAGE_SETTINGS = 'lucuro_settings_v1'
-
-const lucuroEnabled = ref(true)
 const errorMessage = ref('')
 const { t } = useI18n()
 
-onMounted(async () => {
-  try {
-    const [saved, synced] = await Promise.all([
-      storage.get(STORAGE_SETTINGS),
-      syncStorage.get(STORAGE_SETTINGS)
-    ])
-    const settings = normalizeSettings(saved || synced || {})
-    lucuroEnabled.value = settings.newTabEnabled !== false
-  } catch {
-    errorMessage.value = t('popup.readSettingsError')
-  }
-})
+function extensionManagerUrl() {
+  const ua = navigator.userAgent || ''
+  if (/firefox/i.test(ua)) return 'about:addons'
+  if (/edg\//i.test(ua)) return 'edge://extensions/'
+  return 'chrome://extensions/'
+}
 
-async function toggleLucuro() {
+async function openExtensionManager() {
   errorMessage.value = ''
-  const nextValue = !lucuroEnabled.value
   try {
-    const [saved, synced] = await Promise.all([
-      storage.get(STORAGE_SETTINGS),
-      syncStorage.get(STORAGE_SETTINGS)
-    ])
-    const settings = normalizeSettings(saved || synced || {})
-    settings.newTabEnabled = nextValue
-    await storage.set(STORAGE_SETTINGS, settings)
-    await syncStorage.set(STORAGE_SETTINGS, settings).catch(() => {})
-    lucuroEnabled.value = nextValue
+    await browser.tabs.create({ url: extensionManagerUrl() })
   } catch {
-    errorMessage.value = t('popup.saveFailed')
+    try {
+      window.open(extensionManagerUrl(), '_blank')
+    } catch {
+      errorMessage.value = t('popup.openManagerFailed')
+    }
   }
 }
 </script>
@@ -57,21 +42,16 @@ async function toggleLucuro() {
       <div class="toggle-card">
         <div class="toggle-summary">
           <span class="toggle-title">{{ t('popup.extensionToggle') }}</span>
-          <span class="toggle-state" :class="{ 'is-on': lucuroEnabled }">
-            {{ lucuroEnabled ? t('popup.enabled') : t('popup.disabled') }}
-          </span>
+          <span class="toggle-state is-on">{{ t('popup.enabled') }}</span>
         </div>
         <p class="toggle-help">{{ t('popup.extensionToggleHelp') }}</p>
         <button
-          class="toggle-btn"
-          :class="{ 'is-on': lucuroEnabled }"
+          class="toggle-btn is-on manager-btn"
           type="button"
-          :aria-pressed="lucuroEnabled"
-          @click="toggleLucuro"
+          @click="openExtensionManager"
         >
-          <Power v-if="lucuroEnabled" :size="16" />
-          <PowerOff v-else :size="16" />
-          {{ lucuroEnabled ? t('popup.turnOff') : t('popup.turnOn') }}
+          <Settings :size="16" />
+          {{ t('popup.manageExtensions') }}
         </button>
       </div>
 
