@@ -2,7 +2,7 @@
 
 Private source repository for **Lucuro - 鹿客司南**, a lightweight local-first browser new tab extension built with Vue 3, Vite, Manifest V3, and webextension-polyfill.
 
-Public product repository: [https://github.com/Helloxiaolaodi/Lucuro](https://github.com/Helloxiaolaodi/Lucuro)
+Language: **English** | [简体中文](./README.zh-CN.md) | [Issues](https://github.com/Helloxiaolaodi/Lucuro/issues)
 
 ## Quick Start
 

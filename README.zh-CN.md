@@ -2,9 +2,9 @@
 
 **Lucuro - 鹿客司南** 的私有源码仓库，一个基于 Vue 3、Vite、Manifest V3 与 webextension-polyfill 的轻量本地优先浏览器新标签页扩展。
 
-公开产品仓库：[https://github.com/Helloxiaolaodi/Lucuro](https://github.com/Helloxiaolaodi/Lucuro)
-
 <a id="readme-top"></a>
+
+语言：**简体中文** | [English](./README.md) | [Issues](https://github.com/Helloxiaolaodi/Lucuro/issues)
 
 ## 快速开始
 
