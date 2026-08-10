@@ -66,7 +66,7 @@ function submit() {
 
         <div class="modal-actions">
           <button class="btn" type="button" @click="emit('close')">{{ t('card.cancel') }}</button>
-          <button class="btn btn-primary" type="button" @click="submit">{{ t('card.save') }}</button>
+          <button class="btn btn-primary card-save-submit" type="button" @click="submit">{{ t('card.save') }}</button>
         </div>
       </div>
     </div>
