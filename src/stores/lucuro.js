@@ -49,6 +49,8 @@ const SYNC_STATS = 'lucuro_stats_v1'
 let toastTimer = null
 let storageUnsubscribe = null
 let applyingRemoteChange = false
+let ownSyncWrites = 0
+let lastLocalJson = null
 let notesTimer = null
 let hitokotoTimer = null
 const HITOKOTO_ROTATE_MS = 10_000
@@ -95,28 +97,47 @@ const SMART_KEYWORD_TAGS = [
 ]
 
 function persistLinks() {
-  const tasks = [
-    storage.set(STORAGE_LINKS, state.links),
-    syncStorage.set(SYNC_LINKS, state.links)
-  ]
+  const tasks = [storage.set(STORAGE_LINKS, state.links)]
   if (state.settings.dataSource === 'json') {
     tasks.push(storage.set(STORAGE_LOCAL_JSON, state.links))
+  } else {
+    tasks.push(writeSync(SYNC_LINKS, state.links))
   }
-  return Promise.all(tasks)
+  return Promise.all(tasks).catch((error) => {
+    console.warn('[Lucuro] Failed to persist links', error)
+  })
+}
+
+async function writeSync(key, value) {
+  ownSyncWrites += 1
+  try {
+    await syncStorage.set(key, value)
+  } finally {
+    ownSyncWrites -= 1
+  }
+}
+
+function syncSettingsPayload() {
+  const { background, profileAvatar, smartTagsVisible, ...syncable } = state.settings
+  return syncable
 }
 
 function persistSettings() {
   return Promise.all([
     storage.set(STORAGE_SETTINGS, state.settings),
-    syncStorage.set(SYNC_SETTINGS, state.settings)
-  ])
+    writeSync(SYNC_SETTINGS, syncSettingsPayload())
+  ]).catch((error) => {
+    console.warn('[Lucuro] Failed to persist settings', error)
+  })
 }
 
 function persistStats() {
   return Promise.all([
     storage.set(STORAGE_STATS, state.stats),
-    syncStorage.set(SYNC_STATS, state.stats)
-  ])
+    writeSync(SYNC_STATS, state.stats)
+  ]).catch((error) => {
+    console.warn('[Lucuro] Failed to persist stats', error)
+  })
 }
 
 async function loadLinks() {
@@ -125,8 +146,14 @@ async function loadLinks() {
     return
   }
   if (state.settings.dataSource === 'json') {
-    const localJson = await storage.get(STORAGE_LOCAL_JSON)
+    let localJson = await storage.get(STORAGE_LOCAL_JSON)
+    const usingFallback = !Array.isArray(localJson) || !localJson.length
+    if (usingFallback) localJson = lastLocalJson
+    lastLocalJson = Array.isArray(localJson) ? localJson : lastLocalJson
     state.links = normalizeLinks(localJson)
+    if (usingFallback && state.links.length) {
+      await storage.set(STORAGE_LOCAL_JSON, state.links).catch(() => {})
+    }
     return
   }
 
@@ -197,37 +224,46 @@ async function load() {
 
 function watchStorage() {
   if (storageUnsubscribe) return
-  storageUnsubscribe = onStorageChanged((changes, areaName) => {
-    if (areaName !== 'sync' || applyingRemoteChange) return
-    if (changes[SYNC_LINKS]?.newValue) {
-      if (state.settings.dataSource === 'json') return
-      applyingRemoteChange = true
-      state.links = normalizeLinks(changes[SYNC_LINKS].newValue)
-      storage.set(STORAGE_LINKS, state.links).finally(() => {
-        applyingRemoteChange = false
-      })
-    }
-    if (changes[SYNC_SETTINGS]?.newValue) {
-      applyingRemoteChange = true
-      state.settings = normalizeSettings(changes[SYNC_SETTINGS].newValue)
-      storage.set(STORAGE_SETTINGS, state.settings).finally(() => {
-        applyingRemoteChange = false
-      })
-      storage.get(STORAGE_LOCAL_SOURCE).then((savedSource) => {
-        const nextSource = savedSource === 'json' || savedSource === 'browser' ? savedSource : null
-        state.settings.dataSource = nextSource
-        if (nextSource === 'json') return loadLinks()
-        return null
-      }).catch(() => {})
-      refreshHitokoto()
-      applySettings()
-    }
-    if (changes[SYNC_STATS]?.newValue) {
-      applyingRemoteChange = true
-      state.stats = changes[SYNC_STATS].newValue || {}
-      storage.set(STORAGE_STATS, state.stats).finally(() => {
-        applyingRemoteChange = false
-      })
+  storageUnsubscribe = onStorageChanged(async (changes, areaName) => {
+    if (areaName !== 'sync' || ownSyncWrites > 0 || applyingRemoteChange) return
+    applyingRemoteChange = true
+    let settingsChanged = false
+    try {
+      if (changes[SYNC_LINKS]?.newValue && state.settings.dataSource !== 'json') {
+        const incomingLinks = normalizeLinks(changes[SYNC_LINKS].newValue)
+        if (JSON.stringify(incomingLinks) !== JSON.stringify(state.links)) {
+          state.links = incomingLinks
+          await storage.set(STORAGE_LINKS, state.links)
+        }
+      }
+      if (changes[SYNC_SETTINGS]?.newValue) {
+        settingsChanged = true
+        const remoteSettings = changes[SYNC_SETTINGS].newValue
+        if (JSON.stringify(remoteSettings) !== JSON.stringify(syncSettingsPayload())) {
+          const localSettings = await storage.get(STORAGE_SETTINGS)
+          state.settings = normalizeSettings({
+            ...(localSettings || {}),
+            ...remoteSettings
+          })
+          await storage.set(STORAGE_SETTINGS, state.settings)
+          const savedSource = await storage.get(STORAGE_LOCAL_SOURCE)
+          const nextSource = savedSource === 'json' || savedSource === 'browser' ? savedSource : null
+          state.settings.dataSource = nextSource
+          if (nextSource === 'json') await loadLinks()
+        }
+      }
+      if (changes[SYNC_STATS]?.newValue) {
+        state.stats = changes[SYNC_STATS].newValue || {}
+        await storage.set(STORAGE_STATS, state.stats)
+      }
+    } catch (error) {
+      console.warn('[Lucuro] Failed to apply synced storage', error)
+    } finally {
+      applyingRemoteChange = false
+      if (settingsChanged) {
+        refreshHitokoto()
+        applySettings()
+      }
     }
   })
 }
@@ -341,6 +377,7 @@ async function importLinksFile(file) {
       return
     }
     state.links = imported
+    lastLocalJson = imported
     state.settings.dataSource = 'json'
     await Promise.all([
       storage.set(STORAGE_LOCAL_JSON, imported),
@@ -361,9 +398,12 @@ async function setDataSource(source) {
   state.settings.dataSource = value
   await persistDataSource()
   if (value === 'json') {
-    const localJson = await storage.get(STORAGE_LOCAL_JSON)
+    let localJson = await storage.get(STORAGE_LOCAL_JSON)
+    if (!Array.isArray(localJson) || !localJson.length) localJson = lastLocalJson
     if (Array.isArray(localJson) && localJson.length) {
       state.links = normalizeLinks(localJson)
+      lastLocalJson = localJson
+      await persistLinks().catch(() => {})
     } else {
       state.links = []
     }
@@ -801,6 +841,9 @@ async function uploadAvatar(file) {
 
 function setSettings(patch) {
   Object.assign(state.settings, patch)
+  if (patch.smartTagsVisible === false && smartTags().includes(state.activeTag)) {
+    state.activeTag = 'all'
+  }
   persistSettings()
   applySettings()
 }
