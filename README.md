@@ -4,6 +4,18 @@ Private source repository for **Lucuro - 鹿客司南**, a lightweight local-fir
 
 Language: **English** | [简体中文](./README.zh-CN.md) | [Issues](https://github.com/Helloxiaolaodi/Lucuro/issues)
 
+## Screenshots
+
+<p align="center">
+  <img src="./docs/screenshots/lucuro-dark.png" alt="Lucuro Dark Mode" width="45%" />
+  &nbsp;
+  <img src="./docs/screenshots/lucuro-light.png" alt="Lucuro Light Mode" width="45%" />
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/lucuro-sidebar.png" alt="Lucuro Sidebar" width="45%" />
+</p>
+
 ## Quick Start
 
 ```bash

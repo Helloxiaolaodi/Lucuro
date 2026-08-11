@@ -6,6 +6,18 @@
 
 语言：**简体中文** | [English](./README.md) | [Issues](https://github.com/Helloxiaolaodi/Lucuro/issues)
 
+## 截图
+
+<p align="center">
+  <img src="./docs/screenshots/lucuro-dark.png" alt="Lucuro 深色模式" width="45%" />
+  &nbsp;
+  <img src="./docs/screenshots/lucuro-light.png" alt="Lucuro 浅色模式" width="45%" />
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/lucuro-sidebar.png" alt="Lucuro 侧边栏" width="45%" />
+</p>
+
 ## 快速开始
 
 ```bash
