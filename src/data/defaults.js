@@ -1,3 +1,5 @@
+import { isAutoFaviconServiceUrl } from '../utils/favicons'
+
 export const DEFAULT_ENGINES = [
   { id: 'google', label: 'Google', url: 'https://www.google.com/search?q={q}', shortcut: 'g' },
   { id: 'bing', label: 'Bing', url: 'https://www.bing.com/search?q={q}', shortcut: 'b' },
@@ -35,6 +37,7 @@ export const DEFAULT_SETTINGS = {
   cardFontSize: 15,
   background: '',
   backgroundBlur: 0,
+  backgroundMaskOpacity: 0.4,
   profileName: 'Lucuro',
   profileAvatar: '',
   workspaceTitle: 'Lucuro - 鹿客司南',
@@ -75,14 +78,15 @@ export function normalizeCard(child, index = 0) {
   const icon = child.icon && typeof child.icon === 'object' ? child.icon : {}
   const rawSrc = String(icon.src || '')
   const src = /^(https?:|data:|blob:|\/\/)/i.test(rawSrc) ? rawSrc : ''
+  const autoFavicon = src ? isAutoFaviconServiceUrl(src) : false
   return {
     id: child.id || `card-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`,
     icon: {
       text: icon.text || '',
       itemType: icon.itemType ?? 2,
-      src,
+      src: autoFavicon ? '' : src,
       name: icon.name || '',
-      source: icon.source || (src ? 'image' : 'auto'),
+      source: autoFavicon ? 'auto' : (icon.source || (src ? 'image' : 'auto')),
       backgroundColor: icon.backgroundColor || ''
     },
     title: child.title || 'Untitled',

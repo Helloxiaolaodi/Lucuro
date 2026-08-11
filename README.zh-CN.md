@@ -16,7 +16,7 @@ npm run build
 
 生产构建输出到 `dist/`，每次构建后由 `rollup-plugin-visualizer` 生成 `stats.html`。
 
-商店上传包生成在 `D:\YL2026\Vue\lucuro-edge-v0.1.0.zip`（Chrome/Edge）与 `D:\YL2026\Vue\lucuro-firefox-v0.1.0.zip`（Firefox），ZIP 根目录直接包含 `manifest.json`。
+商店上传包生成在 `D:\YL2026\Vue\Release\`，包括 `lucuro-chrome-v0.2.0.zip`、`lucuro-edge-v0.2.0.zip`、`lucuro-firefox-v0.2.0.zip` 与 `lucuro-source-v0.2.0.zip`。
 
 ## 本地安装与调试
 
@@ -51,7 +51,7 @@ npm run build
 - 工具栏弹窗：切换新标签页启动方式，可选 Lucuro 主页或浏览器默认主页；浏览器默认主页通过 `tabs.create({})` 打开浏览器原生新标签页
 - 通过内置 `bookmarks` 权限自动导入浏览器原生书签树
 - 数据来源互斥切换：浏览器书签或用户上传的本地 JSON 文件
-- 背景图片支持模糊与选区裁剪，默认头像使用 Lucuro 标识
+- 背景图片支持模糊、选区裁剪与可调节遮罩层，默认头像使用 Lucuro 标识
 - 使用 `chrome.storage.sync` 原生同步并保留本地回退
 - 海外赞助使用 Ko-fi，国内赞助使用微信收款码
 - 本地优先，无需账号，无遥测，无外部同步服务

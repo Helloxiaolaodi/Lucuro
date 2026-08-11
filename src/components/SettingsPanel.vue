@@ -43,7 +43,7 @@ const JSON_TEMPLATE = `{
           "icon": {
             "text": "",
             "itemType": 2,
-            "src": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fgemini.google.com%2F&sz=128",
+            "src": "",
             "name": "",
             "backgroundColor": ""
           },
@@ -82,7 +82,7 @@ async function uploadBackground(event) {
 }
 
 function applyCroppedBackground(dataUrl) {
-  store.setSettings({ background: dataUrl, backgroundBlur: 0 })
+  store.setSettings({ background: dataUrl, backgroundBlur: 0, backgroundMaskOpacity: 0.4 })
   cropModalOpen.value = false
 }
 
@@ -347,6 +347,11 @@ async function copyJsonTemplate() {
               <div class="field">
                 <label for="settings-background-blur">{{ t('settings.backgroundBlur') }}</label>
                 <input id="settings-background-blur" class="input" type="range" min="0" max="24" step="1" :value="settings.backgroundBlur" @input="store.setSettings({ backgroundBlur: Number($event.target.value) })" />
+              </div>
+              <div class="field">
+                <label for="settings-background-mask">{{ t('settings.backgroundMask') }}</label>
+                <input id="settings-background-mask" class="input" type="range" min="0" max="0.9" step="0.05" :value="settings.backgroundMaskOpacity" @input="store.setSettings({ backgroundMaskOpacity: Number($event.target.value) })" />
+                <p class="section-help">{{ t('settings.backgroundMaskHelp') }}</p>
               </div>
             </div>
           </div>
