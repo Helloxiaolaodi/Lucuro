@@ -16,6 +16,7 @@
   --card-radius: 14px;
   --card-font-size: 15px;
   --bg-blur: 0px;
+  --bg-mask-opacity: 0.4;
   --shadow: 0 8px 28px rgba(0, 135, 235, 0.12);
   --bg-image: none;
   --card-size: 220px;
@@ -86,8 +87,21 @@ body.has-custom-bg::before {
   background-repeat: no-repeat;
   background-attachment: fixed;
   filter: blur(var(--bg-blur));
-  transform: none;
   pointer-events: none;
+}
+
+body.has-custom-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(255, 255, 255, var(--bg-mask-opacity));
+  transition: background 0.3s ease;
+}
+
+html[data-theme='dark'] body.has-custom-bg::after {
+  background: rgba(2, 6, 23, var(--bg-mask-opacity));
 }
 
 body.has-custom-bg.bg-blurred::before {
@@ -126,7 +140,7 @@ a {
   width: 100%;
   height: 100%;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   isolation: isolate;
 }
 

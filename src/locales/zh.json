@@ -91,6 +91,8 @@
     "dataSourceHelp": "浏览器书签会自动同步：一键捕获 Chrome、Edge、Firefox 等浏览器的书签，并按文件夹生成 Lucuro 分类；本地 JSON 只显示导入的网址。",
     "syncBrowserBookmarks": "同步浏览器书签",
     "backgroundBlur": "背景模糊",
+    "backgroundMask": "背景遮罩",
+    "backgroundMaskHelp": "遮罩层可提升复杂背景下文字的清晰度。",
     "cardRadius": "卡片圆角",
     "cardFontSize": "卡片文字大小",
     "cardSize": "卡片大小",

@@ -91,6 +91,8 @@
     "dataSourceHelp": "Browser bookmarks sync automatically: capture Chrome, Edge, and Firefox bookmarks and turn them into Lucuro categories by folder; local JSON shows only imported URLs.",
     "syncBrowserBookmarks": "Sync browser bookmarks",
     "backgroundBlur": "Background blur",
+    "backgroundMask": "Background mask",
+    "backgroundMaskHelp": "Overlay improves text readability on busy backgrounds.",
     "cardRadius": "Card radius",
     "cardFontSize": "Card text size",
     "cardSize": "Card size",

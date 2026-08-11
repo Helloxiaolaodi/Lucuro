@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lucuro - 鹿客司南",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A minimalist glassmorphism startpage guiding your digital exploration.",
   "chrome_url_overrides": {
     "newtab": "index.html"
@@ -23,7 +23,6 @@
   "permissions": [
     "storage",
     "unlimitedStorage",
-    "activeTab",
     "bookmarks"
   ],
   "host_permissions": [
