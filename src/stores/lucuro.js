@@ -118,7 +118,7 @@ async function writeSync(key, value) {
 }
 
 function syncSettingsPayload() {
-  const { background, profileAvatar, smartTagsVisible, ...syncable } = state.settings
+  const { background, backgroundMaskOpacity, profileAvatar, smartTagsVisible, ...syncable } = state.settings
   return syncable
 }
 
@@ -282,15 +282,15 @@ function applySettings() {
   if (state.settings.background) {
     body.classList.add('has-custom-bg')
     body.classList.toggle('bg-blurred', Number(state.settings.backgroundBlur) > 0)
-    const overlay = state.settings.theme === 'dark'
-      ? 'linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.55)), '
-      : ''
-    root.style.setProperty('--bg-image', `${overlay}url("${cssEscape(state.settings.background)}")`)
+    root.style.setProperty('--bg-image', `url("${cssEscape(state.settings.background)}")`)
+    const maskOpacity = Number(state.settings.backgroundMaskOpacity)
+    root.style.setProperty('--bg-mask-opacity', isNaN(maskOpacity) ? '0.4' : String(maskOpacity))
     body.style.backgroundImage = ''
   } else {
     body.classList.remove('has-custom-bg')
     body.classList.remove('bg-blurred')
     root.style.removeProperty('--bg-image')
+    root.style.removeProperty('--bg-mask-opacity')
     body.style.backgroundImage = ''
   }
   document.title = state.settings.workspaceTitle || 'Lucuro'
@@ -820,6 +820,7 @@ async function uploadBackground(file) {
   try {
     state.settings.background = await readFileAsDataUrl(file)
     state.settings.backgroundBlur = 0
+    state.settings.backgroundMaskOpacity = 0.4
     applySettings()
     toast(t('toast.backgroundUpdated'))
     persistSettings().catch(() => {})
